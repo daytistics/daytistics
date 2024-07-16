@@ -1,0 +1,8 @@
+Database connection: postgresql://postgres:***@127.0.0.1:5432/daytistics_test
+Database connection: postgresql://postgres:***@127.0.0.1:5432/daytistics_test
+Database connection: postgresql://postgres:***@127.0.0.1:5432/daytistics_test
+Database connection: postgresql://postgres:***@127.0.0.1:5432/daytistics_test
+Database connection: postgresql://postgres:***@127.0.0.1:5432/daytistics_test
+Database connection: postgresql://postgres:***@127.0.0.1:5432/daytistics_test
+Database connection: postgresql://postgres:***@127.0.0.1:5432/daytistics_test
+Database connection: postgresql://postgres:***@127.0.0.1:5432/daytistics_test

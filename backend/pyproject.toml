@@ -1,0 +1,27 @@
+[tool.poetry]
+name = "daytistics"
+version = "0.1.0"
+description = "App for tracking and analyzing the use of time to integrate new habits"
+authors = ["Leo Gall"]
+license = "MIT"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+Flask = "^3.0.3"
+Flask-SQLAlchemy = "^3.1.1"
+pandas = "^2.2.2"
+numpy = "^2.0.0"
+matplotlib = "^3.9.1"
+seaborn = "^0.13.2"
+Flask-Bcrypt = "^1.0.1"
+pytest = "^8.2.2"
+flask-migrate = "^4.0.7"
+python-dotenv = "^1.0.1"
+psycopg2-binary = "^2.9.9"
+pytest-print = "^1.0.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
