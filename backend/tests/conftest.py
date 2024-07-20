@@ -1,9 +1,10 @@
 import pytest
-from application import create_app
+from src import create_app
 from dotenv import load_dotenv
-from application.extensions import db as _db
+from src.extensions import db as _db
+from src.models.users import Verificator
 from config import TestConfig
-from application.models import User
+from src.models import User
 
 @pytest.fixture(scope='session')
 def app():
@@ -23,6 +24,12 @@ def db(app):
         _db.session.remove()
         _db.session.rollback()
         _db.drop_all()
+
+@pytest.fixture(scope='function')
+def verificator():
+    verificator = Verificator()
+    yield verificator
+    del verificator
 
 @pytest.fixture(autouse=True)
 def setup_db(db):

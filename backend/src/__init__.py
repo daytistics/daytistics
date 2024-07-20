@@ -1,8 +1,8 @@
 from flask import Flask
-from application.extensions import db
+from src.extensions import db
 from config import Config
 from flask_migrate import Migrate
-from application.commands import load_commands
+from src.commands import load_commands
 
 from dotenv import load_dotenv
 
@@ -22,9 +22,13 @@ def create_app(config_class=Config):
         except Exception as e:
             print(e)
 
-        from application.main import bp as main_bp
+        from src.main import bp as main_bp
         app.register_blueprint(main_bp)
 
+        from src.development import bp as dev_bp
+        app.register_blueprint(dev_bp)
+
         load_commands(app)
+
 
         return app

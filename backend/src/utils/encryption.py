@@ -1,5 +1,5 @@
-from application import db
-from application.models.users import User
+from src import db
+from src.models.users import User
 from flask_bcrypt import Bcrypt
 from flask import current_app
 
@@ -16,7 +16,7 @@ def encrypt_string(string: str, rounds=None, prefix=None) -> str:
     with current_app.app_context():
         bcrypt = Bcrypt(current_app)
 
-        return bcrypt.generate_password_hash(string, rounds, prefix).decode('utf-8')
+        return bcrypt.generate_password_hash(string, rounds, prefix).decode("utf-8")
 
 
 def check_hashed_value(value: str, hashed_value: str) -> bool:

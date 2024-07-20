@@ -20,8 +20,19 @@ flask-migrate = "^4.0.7"
 python-dotenv = "^1.0.1"
 psycopg2-binary = "^2.9.9"
 pytest-print = "^1.0.0"
+flask-mail = "^0.10.0"
+flask-email = "^1.4.4"
+schedule = "^1.2.2"
 
 
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+[virtualenvs]
+in-project = true
+
+[tool.pytest.ini_options]
+pythonpath = [
+  "."
+]

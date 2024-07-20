@@ -9,12 +9,12 @@ def is_string_content_allowed(string: str) -> bool:
     """
 
     current_dir = os.path.dirname(os.path.abspath(__file__))
-    with open(os.path.join(current_dir, '..', 'data', 'explicit_words', 'de')) as f:
+    with open(os.path.join(current_dir, "..", "data", "explicit_words", "de")) as f:
         de = f.read().splitlines()
         if string in de:
             return False
 
-    with open(os.path.join(current_dir, '..', 'data', 'explicit_words', 'en')) as f:
+    with open(os.path.join(current_dir, "..", "data", "explicit_words", "en")) as f:
         en = f.read().splitlines()
         if string in en:
             return False
