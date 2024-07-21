@@ -1,5 +1,3 @@
-from src import db
-from src.models.users import User
 from flask_bcrypt import Bcrypt
 from flask import current_app
 

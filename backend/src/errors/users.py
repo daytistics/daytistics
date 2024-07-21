@@ -53,9 +53,3 @@ class SamePasswordError(Exception):
 
     pass
 
-class VerificationError(Exception):
-    """
-    Exception raised when the verification of a critical operation fails.
-    """
-
-    pass

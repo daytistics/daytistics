@@ -2,11 +2,12 @@ from datetime import datetime, timezone
 from src.utils.whitelist import is_string_content_allowed
 from src.utils.users import is_valid_username, is_good_password
 from src.utils.emails import send_verification_email, is_valid_email, is_email_in_use
-from src.extensions import db
+from src.extensions import db, verificator
 import src.errors as errors
 from datetime import datetime
 import re
-from src.utils.verify import Verificator
+from src.services.verify import Verificator
+from src.utils.encryption import encrypt_string
 
 class User(db.Model):
     """
@@ -16,7 +17,7 @@ class User(db.Model):
     __tablename__ = "users"
 
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(64), index=True, unique=True)
+    username = db.Column(db.String(64), index=True, unique=False)
     password_hash = db.Column(db.String(128))
     email = db.Column(db.String(120), index=True, unique=True)
     created_at = db.Column(
@@ -62,9 +63,51 @@ def get_user_by_id(user_id: int) -> User or None:  # type: ignore
     user = User.query.filter_by(id=user_id).first()
     return user
 
+def get_user_by_email(email: str) -> User or None: # type: ignore
+    """
+    Retrieve a user by their email.
 
-# TODO: Write tests for this function
-def register_user(_verificator: Verificator, username: str, password: str, email: str) -> None:  
+    Args:
+        email (str): The email of the user to retrieve.
+
+    Returns:
+        User or None: The user object if found, None otherwise.
+
+    Raises:
+        UserNotFoundError: If no user is found with the given email.
+    """
+
+    if not is_valid_email(email):
+        raise errors.InvalidEmailError("Email is invalid")
+
+    if not is_email_in_use(email):
+        raise errors.UserNotFoundError("No user found with this email")
+
+    user = User.query.filter_by(email=email).first()
+    return user
+
+def register_user(verificator: Verificator, username: str, password: str, email: str) -> None:
+    """
+    Register a new user with the provided username, password, and email.
+
+    Args:
+        verificator (Verificator): The verificator object used for verification.
+        username (str): The username of the user.
+        password (str): The password of the user.
+        email (str): The email of the user.
+
+    Raises:
+        MissingFieldError: If the username or password is not provided.<br>
+        InvalidNameError: If the username is invalid.<br>
+        InvalidEmailError: If the email is invalid.<br>
+        EmailInUseError: If the email is already in use.<br>
+        ExplicitContentError: If the username contains explicit content.<br>
+        BadPasswordError: If the password is too weak or invalid.<br>
+
+    Returns:
+        None
+    """
+
     if username is None or password is None or username == "" or password == "":
         raise errors.MissingFieldError("Username or password is not provided")
 
@@ -89,18 +132,16 @@ def register_user(_verificator: Verificator, username: str, password: str, email
             "Password is too weak or invalid (must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, one digit, and one special character)"
         )
 
-    from src.utils.encryption import encrypt_string
-
-    code = _verificator.add_verification_request(
-        type=_verificator.REGISTRATION,
+    code = verificator.add_verification_request(
+        type=verificator.REGISTRATION,
         email=email,
         username=username,
         password_hash=encrypt_string(password),
+        role="user"
     )
     send_verification_email(email, code)
 
-# TODO: Write tests for this function
-def verify_action(type: int, email: str, code: str) -> bool:
+def verify_action(verificator: Verificator, type: int, email: str, code: str) -> bool:
     """
     Verifies the action based on the provided type, email, and code.
 
@@ -203,7 +244,7 @@ def change_user_role(user_id: int, new_role: str) -> User or None:  # type: igno
     return user
 
 
-def delete_user(user_id: int, password: str) -> bool:
+def delete_user(_verificator: Verificator, user_id: int, password: str) -> None:
     """
     Deletes a user from the database.
 
@@ -232,9 +273,11 @@ def delete_user(user_id: int, password: str) -> bool:
         )
 
     user = User.query.filter_by(id=user_id).first()
-    db.session.delete(user)
-    db.session.commit()
-    return True
+
+    if user is None:
+        raise errors.UserNotFoundError("No user found with this ID")
+    
+    verificator.add_verification_request(verificator.DELETE_ACCOUNT, user_id=user_id, email=user.email)
 
 
 def check_user_password(user_id: int, password: str) -> bool:
@@ -270,7 +313,7 @@ def check_user_password(user_id: int, password: str) -> bool:
     return is_correct
 
 
-def change_user_password(user_id: int, new_password: str, password: str) -> bool:  # type: ignore
+def change_user_password(_verificator: Verificator, user_id: int, new_password: str, password: str) -> None:
     """
     Change the password of a user.
 
@@ -313,13 +356,15 @@ def change_user_password(user_id: int, new_password: str, password: str) -> bool
             "Cannot verify action. Password is incorrect"
         )
 
+    
+
+
     user = User.query.filter_by(id=user_id).first()
 
-    from src.utils.encryption import encrypt_string
-
-    user.password_hash = encrypt_string(new_password)
-    db.session.commit()
-    return True
+    if user is None:
+        raise errors.UserNotFoundError("No user found with this ID")
+    
+    verificator.add_verification_request(verificator.CHANGE_PASSWORD, user_id=user_id, new_password=encrypt_string(new_password), email=user.email)
 
 
 def change_username(user_id: int, new_username: str) -> User or None:  # type: ignore
@@ -364,6 +409,9 @@ def change_username(user_id: int, new_username: str) -> User or None:  # type: i
     return user
 
 
+# TODO: Implement password reset functionality (using verificator)
+
+
 def get_all_users() -> list:
     """
     Retrieve all users from the database.
@@ -371,3 +419,17 @@ def get_all_users() -> list:
     Returns:
         list: A list of tuples containing the user ID, the username, the email, the role, and the creation date of each user.
     """
+    
+    users = User.query.all()
+    user_list = []
+    for user in users:
+        user_list.append(
+            (
+                user.id,
+                user.username,
+                user.email,
+                user.role,
+                user.created_at,
+            )
+        )
+    return user_list

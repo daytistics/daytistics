@@ -1,5 +1,5 @@
 from flask_sqlalchemy import SQLAlchemy
-from src.utils.verify import Verificator
+from src.services.verify import Verificator
 
 verificator = Verificator()
 db = SQLAlchemy()

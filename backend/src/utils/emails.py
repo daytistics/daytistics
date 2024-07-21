@@ -37,14 +37,23 @@ def is_email_in_use(email: str) -> bool:
 
 def send_email(to: str, sender: str, subject: str, body: str) -> None:
 
-    with open("../email-test.txt", "w") as f:
-        f.write(f"Email sent to {to} from {sender} with subject {subject} and body {body}")
+    with open("../../emails.txt", "a") as f:
+        current_app.logger.info(f"New Email:\nTo: {to}\nFrom: {sender}\nSubject: {subject}\nBody: {body}\n\n")
+        f.write(f"New Email:\nTo: {to}\nFrom: {sender}\nSubject: {subject}\nBody: {body}\n\n")
 
     # with current_app.app_context():
     #     mail = Mail(current_app)
     #     msg = Message(subject, sender=sender, recipients=[to])
     #     msg.body = body
     #     mail.send(msg)
+
+def send_password_reset_email(to: str, new_password: str) -> None:
+    """
+    Sends a password reset email
+    :param to: The recipient
+    """
+
+    send_email(to=to, sender="noreply@daytistics.de", subject="Your new password", body=f"Your new password is: {new_password}")
 
 def send_verification_email(to: str, code: str) -> None:
     """

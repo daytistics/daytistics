@@ -6,7 +6,11 @@ __pycache__/
 # C extensions
 *.so
 
+tests.env
+.gpt-runner/
+
 # Distribution / packaging
+
 .Python
 build/
 develop-eggs/

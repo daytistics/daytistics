@@ -23,6 +23,8 @@ pytest-print = "^1.0.0"
 flask-mail = "^0.10.0"
 flask-email = "^1.4.4"
 schedule = "^1.2.2"
+flask-restful = "^0.3.10"
+requests = "^2.32.3"
 
 
 [build-system]

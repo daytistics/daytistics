@@ -5,6 +5,9 @@ from src.extensions import db as _db
 from src.models.users import Verificator
 from config import TestConfig
 from src.models import User
+from flask import Flask
+from flask_restful import Api
+
 
 @pytest.fixture(scope='session')
 def app():
@@ -29,6 +32,7 @@ def db(app):
 def verificator():
     verificator = Verificator()
     yield verificator
+    verificator.stop_scheduler()
     del verificator
 
 @pytest.fixture(autouse=True)

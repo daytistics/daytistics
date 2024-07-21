@@ -1,5 +1,6 @@
 import os
 from dotenv import load_dotenv, dotenv_values
+import ast
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 
@@ -26,9 +27,8 @@ class Config:
     MAIL_USERNAME = os.environ.get("MAIL_USERNAME")
     MAIL_PASSWORD = os.environ.get("MAIL_PASSWORD")
 
-    # TODO: Do not set these values hardcoded
-    MAIL_USE_TLS = True # bool(os.environ.get('MAIL_USE_TLS', 'False'))
-    MAIL_USE_SSL = False # bool(os.environ.get('MAIL_USE_SSL', 'False'))
+    MAIL_USE_TLS = bool(ast.literal_eval(os.environ.get('MAIL_USE_TLS')))
+    MAIL_USE_SSL = bool(ast.literal_eval(os.environ.get('MAIL_USE_SSL')))
 
 
 class TestConfig(Config):
