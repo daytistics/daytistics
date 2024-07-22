@@ -15,7 +15,7 @@ class Verificator:
         self.delete_account_requests = {}
         self._stop_event = threading.Event()
         self._scheduler_thread = threading.Thread(target=self._remove_expired_requests_loop)
-        self._scheduler_thread.daemon = True
+        self._scheduler_thread.daemon = True  # Keep this as True for now
         self._scheduler_thread.start()
 
     def __new__(cls):
@@ -45,10 +45,10 @@ class Verificator:
                 del self.delete_account_requests[email]
 
     def _remove_expired_requests_loop(self):
-
         while not self._stop_event.is_set():
             self.remove_expired_requests()
-            time.sleep(10)  # Sleep for 10 seconds
+            if not self._stop_event.is_set():
+                time.sleep(10)
 
     def stop_scheduler(self):
 
@@ -76,7 +76,7 @@ class Verificator:
                 raise errors.VerificationError("A registration request with this email already exists.")
     
             self.registration_requests[email] = {
-                "code": self.generate_verification_code(),
+                "code": generate_verification_code(),
                 "timestamp": datetime.now(),
                 "email": email,
                 "username": username,
@@ -95,7 +95,7 @@ class Verificator:
             raise errors.VerificationError("A change password request with this email already exists.")
 
         self.change_password_requests[email] = {
-            "code": self.generate_verification_code(),
+            "code": generate_verification_code(),
             "timestamp": datetime.now(),
             "email": email,
             "new_password": new_password,
@@ -103,21 +103,6 @@ class Verificator:
 
         return self.change_password_requests[email]["code"]
     
-    def add_reset_password_request(self, email) -> str:
-                        
-        if email == None or email == "":
-            raise errors.MissingFieldError("Email is required.")
-
-        if self.exists_reset_password_request(email):
-            raise errors.VerificationError("A reset password request with this email already exists.")
-
-        self.reset_password_requests[email] = {
-            "code": self.generate_verification_code(),
-            "timestamp": datetime.now(),
-            "email": email,
-        }
-
-        return self.reset_password_requests[email]["code"]
 
     def add_delete_account_request(self, email) -> str:
                                 
@@ -128,7 +113,7 @@ class Verificator:
             raise errors.VerificationError("A delete account request with this email already exists.")
 
         self.delete_account_requests[email] = {
-            "code": self.generate_verification_code(),
+            "code": generate_verification_code(),
             "timestamp": datetime.now(),
             "email": email,
         }
@@ -153,20 +138,10 @@ class Verificator:
         
         if self.change_password_requests[email]["code"] == code:
             from src.models.users import User
-            User.query.filter_by(email=email).update(dict(password_hash=self.change_password_requests[email]["new_password"]))
-            del self.change_password_requests[email]
-            return True
-        else:
-            return False
 
-    def verify_reset_password_request(self, email, code) -> bool:
-        if not self.exists_reset_password_request(email):
-            raise errors.VerificationError("No reset password request with this email exists.")
-        
-        if self.reset_password_requests[email]["code"] == code:
-            from src.models.users import User
-            User.query.filter_by(email=email).update(dict(password_hash=self.generate_verification_code()))
-            del self.reset_password_requests[email]
+            User.query.filter_by(email=email).update(dict(password_hash=self.change_password_requests[email]["new_password"]))
+
+            del self.change_password_requests[email]
             return True
         else:
             return False

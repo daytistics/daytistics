@@ -5,6 +5,7 @@ class InvalidEmailError(Exception):
 
     pass
 
+
 class EmailInUseError(Exception):
     """
     Exception raised when an email is already in use.

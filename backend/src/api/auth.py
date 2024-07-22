@@ -42,6 +42,9 @@ class ExistsChangePasswordRequest(BaseResource):
 
             if email is None or not email.strip():
                 return {"error": "Missing or invalid email"}, 400
+            
+            if not is_valid_email(email):
+                return {"error": "Invalid email"}, 400
 
             return {"exists": verificator.exists_change_password_request(email)}, 200
         except Exception as e:
@@ -60,6 +63,9 @@ class ExistsResetPasswordRequest(BaseResource):
 
             if email is None or not email.strip():
                 return {"error": "Missing or invalid email"}, 400
+            
+            if not is_valid_email(email):
+                return {"error": "Invalid email"}, 400
 
             return {"exists": verificator.exists_reset_password_request(email)}, 200
         except Exception as e:
@@ -78,6 +84,9 @@ class ExistsDeleteAccountRequest(BaseResource):
 
             if email is None or not email.strip():
                 return {"error": "Missing or invalid email"}, 400
+            
+            if not is_valid_email(email):
+                return {"error": "Invalid email"}, 400
 
             return {"exists": verificator.exists_delete_account_request(email)}, 200
         except Exception as e:

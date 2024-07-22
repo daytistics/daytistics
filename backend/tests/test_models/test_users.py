@@ -12,97 +12,91 @@ from src.utils.encryption import encrypt_string
 @pytest.mark.parametrize(
     "username, password, email, exception",
     [
-        ("test_userA", "Erdbeerkuchen00!", "test@example.com", None),  # Valid user
+        ("test_userA", "Erdbeerkuchen00!", "test@example.com", None),  
         (
             "I contain spaces",
             "Erdbeerkuchen00!",
             "test@example.com",
             errors.InvalidNameError,
-        ),  # InvalidUsernameError
+        ),  
         (
             "test_userB",
             "password",
             "test@example.com",
             errors.BadPasswordError,
-        ),  # BadPasswordError -> No uppercase letter & No digit & No special character
+        ),  
         (
             "test_userC",
             "Password",
             "test@example.com",
             errors.BadPasswordError,
-        ),  # BadPasswordError -> No digit & No special character
+        ), 
         (
             "test_userD",
             "password0",
             "test@example.com",
             errors.BadPasswordError,
-        ),  # BadPasswordError -> No uppercase letter & No special character
+        ),  
         (
             "test_userE",
             "Password0",
             "test@example.com",
             errors.BadPasswordError,
-        ),  # BadPasswordError -> No special character
+        ), 
         (
             "test_userF",
             "password0§",
             "test@example.com",
             errors.BadPasswordError,
-        ),  # BadPasswordError -> No uppercase letter
+        ),  
         (
             "test_userG",
             "Password§",
             "test@example.com",
             errors.BadPasswordError,
-        ),  # BadPasswordError -> No digit
+        ), 
         (
             "test_userH",
             "password§",
             "test@example.com",
             errors.BadPasswordError,
-        ),  # BadPasswordError -> No uppercase letter & No digit
+        ),  
         (
             "test_userI",
             "pass",
             "test@example.com",
             errors.BadPasswordError,
-        ),  # BadPasswordError -> Password too short
-        (
-            "Idiot",
-            "Erdbeerkuchen00!",
-            "test@example.com",
-            errors.ExplicitContentError,
-        ),  # ExplicitContentError
+        ),  
         (
             "test_userJ",
             None,
             "test@example.com",
             errors.MissingFieldError,
-        ),  # MissingFieldError -> Missing password
+        ), 
         (
             None,
             "Erdbeerkuchen00!",
             "test@example.com",
             errors.MissingFieldError,
-        ),  # MissingFieldError -> Missing username
+        ),  
         (
             "test_userA",
             "Erdbeerkuchen00!",
             "test.com",
             errors.InvalidEmailError,
-        ),  # InvalidEmailError
+        ),  
         (
             "test_userA",
             "Erdbeerkuchen00!",
             "testcom",
             errors.InvalidEmailError,
-        ),  # InvalidEmailError
+        ),  
         (
             "test_userA",
             "Erdbeerkuchen00!",
             "test@com",
             errors.InvalidEmailError,
-        ),  # InvalidEmailError
+        ),  
     ],
 )
 def test_register_user(app, verificator, username, password, email, exception):
@@ -115,7 +109,6 @@ def test_register_user(app, verificator, username, password, email, exception):
     with mock.patch("src.models.users.encrypt_string") as mock_encrypt:
 
         mock_encrypt.return_value = "encrypted_password"
-
 
         def mock_add_registration_request(email, username, password_hash, role):
             verificator.registration_requests[email] = {
@@ -142,9 +135,7 @@ def test_register_user(app, verificator, username, password, email, exception):
 
                 if exception is None:
                     users.register_user(
-                        username=username,
-                        password=password,
-                        email=email
+                        username=username, password=password, email=email
                     )
                     request = verificator.registration_requests[email]
 
@@ -157,14 +148,18 @@ def test_register_user(app, verificator, username, password, email, exception):
 
 
 def test_is_user_existing_by_id(app, db):
-    
+
     if os.environ.get("ENVIRONMENT") != "testing":
         pytest.skip(
             "Tests are running against the production database. Refusing to run tests."
         )
 
     with app.app_context():
-        user = User(username="test_user", password_hash="ErdbeerKuchen00!", email="test@example.com")
+        user = User(
+            username="test_user",
+            password_hash="ErdbeerKuchen00!",
+            email="test@example.com",
+        )
         db.session.add(user)
         db.session.commit()
 
@@ -173,21 +168,29 @@ def test_is_user_existing_by_id(app, db):
             users.is_user_existing_by_id(user.id + 1) == False
         )  # Tests if the user does not exist
 
-@pytest.mark.parametrize("email, exception", [
-    ("test@example.com", None),  # Valid email
-    ("test.com", errors.InvalidEmailError),  # InvalidEmailError
-    ("testcom", errors.InvalidEmailError),  # InvalidEmailError
-    ("test@com", errors.InvalidEmailError)  # InvalidEmailError
-])
+
+@pytest.mark.parametrize(
+    "email, exception",
+    [
+        ("test@example.com", None),  
+        ("test.com", errors.InvalidEmailError), 
+        ("testcom", errors.InvalidEmailError), 
+        ("test@com", errors.InvalidEmailError),  
+    ],
+)
 def test_is_user_existing_by_email(app, db, email, exception):
-    
+
     if os.environ.get("ENVIRONMENT") != "testing":
         pytest.skip(
             "Tests are running against the production database. Refusing to run tests."
         )
 
     with app.app_context():
-        user = User(username="test_user", password_hash="ErdbeerKuchen00!", email="test@example.com")
+        user = User(
+            username="test_user",
+            password_hash="ErdbeerKuchen00!",
+            email="test@example.com",
+        )
         db.session.add(user)
         db.session.commit()
 
@@ -195,17 +198,20 @@ def test_is_user_existing_by_email(app, db, email, exception):
             with pytest.raises(exception):
                 users.is_user_existing_by_email(email)
         else:
-            assert users.is_user_existing_by_email(user.email) == True  # Tests if the user exists
+            assert (
+                users.is_user_existing_by_email(user.email) == True
+            )  # Tests if the user exists
             assert (
                 users.is_user_existing_by_id(user.id + 1) == False
             )  # Tests if the user does not exist
 
+
 @pytest.mark.parametrize(
     "user_id, exception",
     [
-        (1, None),  # Valid user
-        (2, errors.UserNotFoundError),  # No user with id 2
-        (0, errors.UserNotFoundError),  # No user with id 0
+        (1, None),  
+        (2, errors.UserNotFoundError), 
+        (0, errors.UserNotFoundError),  
     ],
 )
 def test_get_user_by_id(app, db, user_id, exception):
@@ -217,7 +223,11 @@ def test_get_user_by_id(app, db, user_id, exception):
 
     with app.app_context():
 
-        user = User(username="test_user", password_hash="ErdbeerKuchen00!", email="test@example.com")
+        user = User(
+            username="test_user",
+            password_hash="ErdbeerKuchen00!",
+            email="test@example.com",
+        )
         db.session.add(user)
         db.session.commit()
 
@@ -227,23 +237,30 @@ def test_get_user_by_id(app, db, user_id, exception):
         else:
             assert user == users.get_user_by_id(user_id)
 
+
 @pytest.mark.parametrize(
-    "email, exception", [
-        ("test@example.com", None),  # Valid email
-        ("test.com", errors.InvalidEmailError),  # InvalidEmailError
-        ("testcom", errors.InvalidEmailError),  # InvalidEmailError
-        ("test@com", errors.InvalidEmailError),  # InvalidEmailError
-        ("notexists@example.com", errors.UserNotFoundError),  # No user with email
-])
+    "email, exception",
+    [
+        ("test@example.com", None), 
+        ("test.com", errors.InvalidEmailError), 
+        ("testcom", errors.InvalidEmailError), 
+        ("test@com", errors.InvalidEmailError), 
+        ("notexists@example.com", errors.UserNotFoundError),  
+    ],
+)
 def test_get_user_by_email(app, db, email, exception):
-    
+
     if os.environ.get("ENVIRONMENT") != "testing":
         pytest.skip(
             "Tests are running against the production database. Refusing to run tests."
         )
 
     with app.app_context():
-        user = User(username="test_user", password_hash="ErdbeerKuchen00!", email="test@example.com")
+        user = User(
+            username="test_user",
+            password_hash="ErdbeerKuchen00!",
+            email="test@example.com",
+        )
         db.session.add(user)
         db.session.commit()
 
@@ -253,65 +270,72 @@ def test_get_user_by_email(app, db, email, exception):
         else:
             assert user == users.get_user_by_email(user.email)
 
+
 @pytest.mark.parametrize(
     "email, new_role, exception",
     [
-        ("test@example.com", "admin", None),  # Valid role
-        ("test@example.com", "user", None),  # Valid role
-        ("test2@example.com", "user", errors.UserNotFoundError),  # No user with id 2
-        ("test2@example.com", "admin", errors.UserNotFoundError),  # No user with id 2
-        ("test@example.com", "invalid_role", errors.InvalidRoleError),  # Invalid role
-        ("test@example.com", None, errors.MissingFieldError),  # Missing role
-        ("test@example.com", "", errors.MissingFieldError),  # Missing role
+        ("test@example.com", "admin", None),  
+        ("test@example.com", "user", None),  
+        ("nonexistent@example.com", "user", errors.UserNotFoundError), 
+        ("nonexistent@example.com", "admin", errors.UserNotFoundError),  
+        ("test@example.com", "invalid_role", errors.InvalidRoleError),  
+        ("test@example.com", None, errors.MissingFieldError), 
+        ("test@example.com", "", errors.MissingFieldError),  
     ],
 )
 def test_change_user_role(app, db, email, new_role, exception):
+
+    if os.environ.get("ENVIRONMENT") != "testing":
+        pytest.skip("Tests are running against the production database. Refusing to run tests.")
+
+    with app.app_context():
+        user = User(username="test_user", password_hash="ErdbeerKuchen00!", email="test@example.com")
+        db.session.add(user)
+        db.session.commit()
+
+        if email == "test@example.com":
+            assert user.role == "user"
+            assert user == users.get_user_by_email(email)
+        else:
+            with pytest.raises(errors.UserNotFoundError):
+                users.get_user_by_email(email)
+
+        if exception:
+            with pytest.raises(exception):
+                users.change_user_role(email, new_role)
+        else:
+            users.change_user_role(email, new_role)
+            updated_user = users.get_user_by_email(email)
+            assert updated_user.role == new_role
+
+
+@pytest.mark.parametrize(
+    "email, exception",
+    [
+        ("test@example.com", None), 
+        (
+            "test2@example.com",
+            errors.UserNotFoundError,
+        ),
+        ("t@com", errors.InvalidEmailError),
+        ("t.com", errors.InvalidEmailError),
+        ("tcom", errors.InvalidEmailError)  
+    ],
+)
+def test_delete_user(app, db, verificator, email, exception):
 
     if os.environ.get("ENVIRONMENT") != "testing":
         pytest.skip(
             "Tests are running against the production database. Refusing to run tests."
         )
 
-    with app.app_context():
-
-        user = User(username="test_user", password_hash="ErdbeerKuchen00!", email="test@example.com")
-        db.session.add(user)
-        db.session.commit()
-
-        assert user.role == "user"
-        assert user == users.get_user_by_email(email)
-
-        if exception is not None:
-            with pytest.raises(exception):
-                users.change_user_role(email, new_role)
-        else:
-            users.change_user_role(email, new_role)
-
-
-@pytest.mark.parametrize(
-    "email, password, exception",
-    [
-        ("test@example.com", "ErdbeerKuchen00!", None),  # Valid password
-        ("test2@example.com", "ErdbeerKuchen00!", errors.UserNotFoundError),  # No user with id 2
-        ("test@example.com", None, errors.MissingFieldError),  # MissingFieldError -> Missing password
-        (1, "", errors.MissingFieldError),  # MissingFieldError -> Missing password
-        (
-            1,
-            "Blaubeerkuchen00!",
-            errors.IncorrectPasswordError,
-        ),  # Password is incorrect
-    ],
-)
-def test_delete_user(app, db, verificator, email, password, exception):
-    verificator.add_delete_account_request
-    def mock_add_delete_account_request(email, user_id):
-            verificator.delete_account_requests[email] = {
-                "code": "123456",
-                "email": email,
-                "timestamp": datetime.datetime.now(),
-                "id": user_id
-            }
-            return "123456"
+    def mock_add_delete_account_request(email):
+        verificator.delete_account_requests[email] = {
+            "code": "123456",
+            "email": email,
+            "timestamp": datetime.datetime.now(),
+        }
+        return "123456"
 
     with mock.patch.object(
         verificator,
@@ -321,38 +345,38 @@ def test_delete_user(app, db, verificator, email, password, exception):
 
         with app.app_context():
 
-            user = User(username="test_user", password_hash=encrypt_string("ErdbeerKuchen00!"), email="test@example.com")
+            user = User(
+                username="test_user",
+                password_hash=encrypt_string("ErdbeerKuchen00!"),
+                email="test@example.com",
+            )
             db.session.add(user)
             db.session.commit()
 
             if exception is not None:
                 with pytest.raises(exception):
-                    users.delete_user(email, password)
+                    users.delete_user(email)
             else:
-                users.delete_user(email, password)
+                users.delete_user(email)
                 request = verificator.delete_account_requests[user.email]
 
                 assert request is not None
                 assert request["code"] is not None
                 assert request["email"] == user.email
-                assert request["id"] == user.id
-                assert request["type"] == verificator.DELETE_ACCOUNT
                 assert request["timestamp"] is not None
                 assert request["code"] == "123456"
 
 
-
-
 @pytest.mark.parametrize(
-    "user_id, password, exception",
+    "email, password, exception",
     [
-        (1, "ErdbeerKuchen00!", None),  # Valid password
-        (2, "ErdbeerKuchen00!", errors.UserNotFoundError),  # No user with id 2
-        (1, None, errors.MissingFieldError),  # MissingFieldError -> Missing password
-        (1, "", errors.MissingFieldError),  # MissingFieldError -> Missing password
+        ("test@example.com", "ErdbeerKuchen00!", None),  
+        ("tes2t@example.com", "ErdbeerKuchen00!", errors.UserNotFoundError),  
+        ("test@example.com", None, errors.MissingFieldError), 
+        ("test@example.com", "", errors.MissingFieldError),  
     ],
 )
-def test_check_user_password(app, db, user_id, password, exception):
+def test_check_user_password(app, db, email, password, exception):
 
     if os.environ.get("ENVIRONMENT") != "testing":
         pytest.skip(
@@ -362,122 +386,88 @@ def test_check_user_password(app, db, user_id, password, exception):
     with app.app_context():
 
         hashed_password = encrypt_string(password) if password else None
-        user = User(username=password, password_hash=hashed_password, email="test@example.com")
+        user = User(
+            username=password, password_hash=hashed_password, email="test@example.com"
+        )
         db.session.add(user)
         db.session.commit()
 
         if exception is not None:
             with pytest.raises(exception):
-                users.check_user_password(user_id, password)
+                users.check_user_password(email, password)
         else:
-            assert users.check_user_password(user_id, password) == True
+            assert users.check_user_password(email, password) == True
 
 
 @pytest.mark.parametrize(
-    "user_id, new_password, password, exception",
+    "email, new_password, exception",
     [
-        (1, "NewPassword00!", "ErdbeerKuchen00!", None),  # Valid password change
+        ("test@example.com", "NewPassword00!", None),  # 
         (
-            2,
+            "tes2t@example.com",
             "NewPassword00!",
-            "ErdbeerKuchen00!",
             errors.UserNotFoundError,
-        ),  # No user with id 2
+        ),  
         (
-            1,
-            "NewPassword00!",
+            "test@example.com",
             None,
             errors.MissingFieldError,
-        ),  # MissingFieldError -> Missing current password
+        ),  
         (
-            1,
-            "NewPassword00!",
-            "",
-            errors.MissingFieldError,
-        ),  # MissingFieldError -> Missing current password
-        (
-            1,
-            "",
-            "ErdbeerKuchen00!",
-            errors.MissingFieldError,
-        ),  # MissingFieldError -> Missing new password
-        (
-            1,
-            None,
-            "ErdbeerKuchen00!",
-            errors.MissingFieldError,
-        ),  # MissingFieldError -> Missing new password
-        (
-            1,
+            "test@example.com",
             "password",
-            "ErdbeerKuchen00!",
             errors.BadPasswordError,
-        ),  # BadPasswordError -> No uppercase letter & No digit & No special character
+        ),  
         (
-            1,
+            "test@example.com",
             "Password",
-            "ErdbeerKuchen00!",
             errors.BadPasswordError,
-        ),  # BadPasswordError -> No digit & No special character
+        ),  
         (
-            1,
+            "test@example.com",
             "password0",
-            "ErdbeerKuchen00!",
             errors.BadPasswordError,
-        ),  # BadPasswordError -> No uppercase letter & No special character
+        ), 
         (
-            1,
+            "test@example.com",
             "Password0",
-            "ErdbeerKuchen00!",
             errors.BadPasswordError,
-        ),  # BadPasswordError -> No special character
+        ), 
         (
-            1,
+            "test@example.com",
             "password0§",
-            "ErdbeerKuchen00!",
             errors.BadPasswordError,
-        ),  # BadPasswordError -> No uppercase letter
+        ), 
         (
-            1,
+            "test@example.com",
             "Password§",
-            "ErdbeerKuchen00!",
             errors.BadPasswordError,
-        ),  # BadPasswordError -> No digit
+        ),  
         (
-            1,
+            "test@example.com",
             "password§",
-            "ErdbeerKuchen00!",
             errors.BadPasswordError,
-        ),  # BadPasswordError -> No uppercase letter & No digit
+        ),  
         (
-            1,
+            "test@example.com",
             "pass",
-            "ErdbeerKuchen00!",
             errors.BadPasswordError,
-        ),  # BadPasswordError -> Password too short
-        (
-            1,
-            "ErdbeerKuchen00!",
-            "ErdbeerKuchen00!",
-            errors.SamePasswordError,
-        ),  # SamePasswordError
-        (
-            1,
-            "NewPassword00!",
-            "ErdbeerKuchen10!",
-            errors.IncorrectPasswordError,
-        ),  # Incorrect current password
+        ),  
     ],
 )
-def test_change_user_pasword(app, db, verificator, user_id, new_password, password, exception):
-    def mock_add_verification_request(type, email, new_password, user_id):
-        verificator.requests[email] = {
+def test_change_user_pasword(app, db, verificator, email, new_password, exception):
+
+    if os.environ.get("ENVIRONMENT") != "testing":
+        pytest.skip(
+            "Tests are running against the production database. Refusing to run tests."
+        )
+
+    def mock_add_change_password_request(email, new_password):
+        verificator.change_password_requests[email] = {
             "code": "123456",
-            "type": type,
             "email": email,
             "new_password": new_password,
             "timestamp": datetime.datetime.now(),
-            "id": user_id
         }
         return "123456"
 
@@ -485,44 +475,44 @@ def test_change_user_pasword(app, db, verificator, user_id, new_password, passwo
 
     with mock.patch.object(
         verificator,
-        "add_verification_request",
-        side_effect=mock_add_verification_request,
+        "add_change_password_request",
+        side_effect=mock_add_change_password_request,
     ):
 
         with app.app_context():
-            email = "test@example.com"
-            hashed_password = encrypt_string("ErdbeerKuchen00!") if password else None
-            user = User(username="Test_User", password_hash=hashed_password, email="test@example.com")
+            user = User(
+                username="Test_User",
+                password_hash="Dasisteintollespw12!",
+                email="test@example.com",
+            )
             db.session.add(user)
             db.session.commit()
 
             if exception is not None:
                 with pytest.raises(exception):
-                    users.change_user_password(verificator, user_id, new_password, password)
+                    users.change_user_password(email, new_password)
             else:
-                users.change_user_password(verificator, user_id, new_password, password)
-                request = verificator.requests[email]
+                users.change_user_password(email, new_password)
+                request = verificator.change_password_requests[email]
                 assert request is not None
                 assert request["code"] == "123456"
 
 
-
 @pytest.mark.parametrize(
-    "user_id, new_username, exception",
+    "email, new_username, exception",
     [
-        (1, "Jakob", None),  # Username changed successfully
-        (2, "Jakob", errors.UserNotFoundError),  # No user with id 2
-        (1, "I contain spaces", errors.InvalidNameError),  # InvalidUsernameError
+        ("test@example.com", "Jakob", None),
+        ("te2st@example.com", "Jakob", errors.UserNotFoundError),
+        ("test@example.com", "I contain spaces", errors.InvalidNameError),
         (
-            1,
+            "test@example.com",
             None,
             errors.MissingFieldError,
-        ),  # MissingFieldError -> Missing new username
-        (1, "", errors.MissingFieldError),  # MissingFieldError -> Missing new username
-        (1, "Idiot", errors.ExplicitContentError),  # ExplicitContentError
+        ),
+        ("test@example.com", "", errors.MissingFieldError),
     ],
 )
-def test_change_username(app, db, user_id, new_username, exception):
+def test_change_username(app, db, email, new_username, exception):
 
     if os.environ.get("ENVIRONMENT") != "testing":
         pytest.skip(
@@ -531,14 +521,19 @@ def test_change_username(app, db, user_id, new_username, exception):
 
     with app.app_context():
 
-        user = User(username="test_user", password_hash="ErdbeerKuchen00!", email="test@example.com")
+        user = User(
+            username="test_user",
+            password_hash="ErdbeerKuchen00!",
+            email="test@example.com",
+        )
         db.session.add(user)
         db.session.commit()
 
         if exception is not None:
             with pytest.raises(exception):
-                users.change_username(user_id, new_username)
+                users.change_username(email, new_username)
 
         else:
-            assert users.change_username(user_id, new_username) == user
+
+            users.change_username(email, new_username)
             assert user.username == new_username

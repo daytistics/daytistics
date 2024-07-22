@@ -1,42 +1,117 @@
 import pytest
-import time
-import unittest.mock as mock
-from src.models import User
+from unittest import mock
+import src.services.verify as verify
 
-@pytest.mark.parametrize("email, type, expected, status, in_verificator", [
-    ("test@example.com", 1, {"exists": True}, 200, True),
-    ("test@example.com", 2, {"exists": True}, 200, True),
-    ("test@example.com", 3, {"exists": True}, 200, True),
-    ("test@example.com", 1, {"exists": False}, 200, False),
-    ("test@example.com", 2, {"exists": False}, 200, False),
-    ("test@example.com", 3, {"exists": False}, 200, False),
-    ("testxample.com", 1, {"error": "Missing or invalid email"}, 400, False),
-    ("test@com", 1, {"error": "Missing or invalid email"}, 400, False),
-    ("", 1, {"error": "Missing or invalid email"}, 400, False),
-    (None, 1, {"error": "Missing or invalid email"}, 400, False),
-    ("test@example.com", 0, {"error": "Invalid type"}, 400, False),
-    ("test@example.com", 5, {"error": "Invalid type"}, 400, False),
-    ("test@example.com", None, {"error": "Invalid type"}, 400, False),
+@pytest.mark.parametrize("email, value, status_code",  [
+    ("test@example.com", {"exists": True}, 200),
+    ("testy@example.com", {"exists": False}, 200),
+    ("", {"error": "Missing or invalid email"}, 400),
+    ("    ", {"error": "Missing or invalid email"}, 400),
+    ("test", {"error": "Invalid email"}, 400),
+    ("test@", {"error": "Invalid email"}, 400),
+    ("test@example", {"error": "Invalid email"}, 400),
+    ("test@example.", {"error": "Invalid email"}, 400),
+    ("test@example.c", {"error": "Invalid email"}, 400),
 ])
-def test_exists_verification_request_post(app, db, client, verificator, email, type, expected, status, in_verificator):
+def test_exists_registration_request(client, verificator, email, value, status_code):
 
-    if in_verificator:
-        match type:
-            case 1:
-                verificator.add_verification_request(type, email, username="test", password_hash="test", role="user")
-            case 2:
-                verificator.add_verification_request(type, email, new_password="test", id=1)
-            case 3:
-                verificator.add_verification_request(type, email, id=1)
-        time.sleep(1)  # Simulating delay for the verification request to be processed
+    def mock_generate_verification_code():
+        return "123456"
 
-    response = client.post("/user/verify/exists", json={"email": email, "type": type})
+    with mock.patch.object(
+        verify,
+        "generate_verification_code",
+        side_effect=mock_generate_verification_code,
+    ):
+    
+        verificator.generate_verification_code = mock_generate_verification_code
 
-    assert response.status_code == status, f"Expected status code {status} but got {response.status_code}"
-    assert response.headers["Content-Type"] == "application/json", f"Expected Content-Type 'application/json' but got {response.headers['Content-Type']}"
+        verificator.add_registration_request("test@example.com", "test", "password", "user")
 
-    if status == 200:
-        assert response.json["exists"] == expected["exists"], f"Expected {expected} but got {response.json}"
-    else:
-        assert response.json["error"] == expected["error"], f"Expected {expected} but got {response.json}"
+        response = client.post("/user/verify/registration/exists", json={"email": email})
 
+        assert response.status_code == status_code
+        assert response.json == value
+
+
+        if value.get("exists") == True:
+            assert verificator.registration_requests.get(email) is not None
+            assert verificator.registration_requests.get(email).get("email") == email
+            assert verificator.registration_requests.get(email).get("username") == "test"
+            assert verificator.registration_requests.get(email).get("password_hash") == "password"
+            assert verificator.registration_requests.get(email).get("role") == "user"
+            assert verificator.registration_requests.get(email).get("code") == "123456"
+
+@pytest.mark.parametrize("email, value, status_code",  [
+    ("test@example.com", {"exists": True}, 200),
+    ("testy@example.com", {"exists": False}, 200),
+    ("", {"error": "Missing or invalid email"}, 400),
+    ("    ", {"error": "Missing or invalid email"}, 400),
+    ("test", {"error": "Invalid email"}, 400),
+    ("test@", {"error": "Invalid email"}, 400),
+    ("test@example", {"error": "Invalid email"}, 400),
+    ("test@example.", {"error": "Invalid email"}, 400),
+    ("test@example.c", {"error": "Invalid email"}, 400),
+])
+def test_exists_change_password_request(client, verificator, email, value, status_code):
+
+    def mock_generate_verification_code():
+        return "123456"
+
+    with mock.patch.object(
+        verify,
+        "generate_verification_code",
+        side_effect=mock_generate_verification_code,
+    ):
+
+        verificator.generate_verification_code = mock_generate_verification_code    
+
+        verificator.add_change_password_request("test@example.com", "password")
+
+        response = client.post("/user/verify/change_password/exists", json={"email": email})
+
+        assert response.status_code == status_code
+        assert response.json == value
+
+
+        if value.get("exists") == True:
+            assert verificator.change_password_requests.get(email) is not None
+            assert verificator.change_password_requests.get(email).get("email") == email
+            assert verificator.change_password_requests.get(email).get("new_password") == "password"
+            assert verificator.change_password_requests.get(email).get("code") == "123456"
+        
+@pytest.mark.parametrize("email, value, status_code",  [
+    ("test@example.com", {"exists": True}, 200),
+    ("testy@example.com", {"exists": False}, 200),
+    ("", {"error": "Missing or invalid email"}, 400),
+    ("    ", {"error": "Missing or invalid email"}, 400),
+    ("test", {"error": "Invalid email"}, 400),
+    ("test@", {"error": "Invalid email"}, 400),
+    ("test@example", {"error": "Invalid email"}, 400),
+    ("test@example.", {"error": "Invalid email"}, 400),
+    ("test@example.c", {"error": "Invalid email"}, 400),
+])
+def test_exists_delete_account_request(client, verificator, email, value, status_code):
+
+    def mock_generate_verification_code():
+        return "123456"
+
+    with mock.patch.object(
+        verify,
+        "generate_verification_code",
+        side_effect=mock_generate_verification_code,
+    ):
+
+
+        verificator.add_delete_account_request("test@example.com")
+
+        response = client.post("/user/verify/delete_account/exists", json={"email": email})
+
+        assert response.status_code == status_code
+        assert response.json == value
+
+
+        if value.get("exists") == True:
+            assert verificator.delete_account_requests.get(email) is not None
+            assert verificator.delete_account_requests.get(email).get("email") == email
+            assert verificator.delete_account_requests.get(email).get("code") == "123456"
