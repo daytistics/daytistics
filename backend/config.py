@@ -27,8 +27,11 @@ class Config:
     MAIL_USERNAME = os.environ.get("MAIL_USERNAME")
     MAIL_PASSWORD = os.environ.get("MAIL_PASSWORD")
 
-    MAIL_USE_TLS = bool(ast.literal_eval(os.environ.get('MAIL_USE_TLS')))
-    MAIL_USE_SSL = bool(ast.literal_eval(os.environ.get('MAIL_USE_SSL')))
+    MAIL_USE_TLS = True  # bool(ast.literal_eval(os.environ.get('MAIL_USE_TLS')))
+    MAIL_USE_SSL = True  # bool(ast.literal_eval(os.environ.get('MAIL_USE_SSL')))
+
+    BACKEND_IP = os.environ.get("BACKEND_IP")
+    FRONTEND_IP = os.environ.get("FRONTEND_IP")
 
 
 class TestConfig(Config):
@@ -44,3 +47,6 @@ class TestConfig(Config):
         os.environ.get("TEST_DATABASE_URI")
         or f"postgresql://{DATABASE_USER}:{DATABASE_PASSWORD}@{DATABASE_HOST}:{DATABASE_PORT}/{DATABASE_NAME}"
     )
+
+    BACKEND_IP = os.environ.get("BACKEND_IP")
+    FRONTEND_IP = os.environ.get("FRONTEND_IP")

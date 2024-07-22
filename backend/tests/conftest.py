@@ -2,7 +2,7 @@ import pytest
 from src import create_app
 from dotenv import load_dotenv
 from src.extensions import db as _db
-from src.models.users import Verificator
+from src.services.verify import Verificator, generate_verification_code
 from config import TestConfig
 from src.models import User
 from flask import Flask
@@ -31,6 +31,10 @@ def db(app):
 @pytest.fixture(scope='function')
 def verificator():
     verificator = Verificator()
+    verificator.reset_password_requests.clear()
+    verificator.change_password_requests.clear()
+    verificator.registration_requests.clear()
+    verificator.delete_account_requests.clear()
     yield verificator
     verificator.stop_scheduler()
     del verificator
@@ -40,3 +44,22 @@ def setup_db(db):
     # Clear any existing users or setup your database appropriately
     db.session.query(User).delete()
     db.session.commit()
+
+@pytest.fixture(autouse=True)
+def reset_db(db):
+    db.session.remove()
+    db.drop_all()
+    db.create_all()
+    yield
+    db.session.remove()
+    db.drop_all()
+
+@pytest.fixture(scope='function')
+def test_user(db):
+    user = User(username='test_user', email='test@example.com', password_hash='TestPassword1!')
+    db.session.add(user)
+    db.session.commit()
+    yield user
+    db.session.delete(user)
+    db.session.commit()
+    db.drop_all()

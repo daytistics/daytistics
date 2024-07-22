@@ -116,11 +116,11 @@ def test_register_user(app, verificator, username, password, email, exception):
 
         mock_encrypt.return_value = "encrypted_password"
 
-        def mock_add_verification_request(type, email, username, password_hash, role):
-            verificator.requests[email] = {
+
+        def mock_add_registration_request(email, username, password_hash, role):
+            verificator.registration_requests[email] = {
                 "code": "123456",
                 "username": username,
-                "type": type,
                 "email": email,
                 "password_hash": password_hash,
                 "role": role,
@@ -130,35 +130,33 @@ def test_register_user(app, verificator, username, password, email, exception):
 
         with mock.patch.object(
             verificator,
-            "add_verification_request",
-            side_effect=mock_add_verification_request,
+            "add_registration_request",
+            side_effect=mock_add_registration_request,
         ):
 
             with app.app_context():
 
                 if exception is not None:
                     with pytest.raises(exception):
-                        users.register_user(verificator, username, password, email)
+                        users.register_user(username, password, email)
 
                 if exception is None:
                     users.register_user(
-                        verificator=verificator,
                         username=username,
                         password=password,
                         email=email
                     )
-                    request = verificator.requests[email]
+                    request = verificator.registration_requests[email]
 
                     assert request is not None
                     assert request["code"] == "123456"
                     assert request["username"] == username
-                    assert request["type"] == verificator.REGISTRATION
                     assert request["email"] == email
                     assert request["password_hash"] == mock_encrypt.return_value
                     assert request["role"] == "user"
 
 
-def test_is_user_existing(app, db):
+def test_is_user_existing_by_id(app, db):
     
     if os.environ.get("ENVIRONMENT") != "testing":
         pytest.skip(
@@ -170,11 +168,37 @@ def test_is_user_existing(app, db):
         db.session.add(user)
         db.session.commit()
 
-        assert users.is_user_existing(user.id) == True  # Tests if the user exists
+        assert users.is_user_existing_by_id(user.id) == True  # Tests if the user exists
         assert (
-            users.is_user_existing(user.id + 1) == False
+            users.is_user_existing_by_id(user.id + 1) == False
         )  # Tests if the user does not exist
 
+@pytest.mark.parametrize("email, exception", [
+    ("test@example.com", None),  # Valid email
+    ("test.com", errors.InvalidEmailError),  # InvalidEmailError
+    ("testcom", errors.InvalidEmailError),  # InvalidEmailError
+    ("test@com", errors.InvalidEmailError)  # InvalidEmailError
+])
+def test_is_user_existing_by_email(app, db, email, exception):
+    
+    if os.environ.get("ENVIRONMENT") != "testing":
+        pytest.skip(
+            "Tests are running against the production database. Refusing to run tests."
+        )
+
+    with app.app_context():
+        user = User(username="test_user", password_hash="ErdbeerKuchen00!", email="test@example.com")
+        db.session.add(user)
+        db.session.commit()
+
+        if exception is not None:
+            with pytest.raises(exception):
+                users.is_user_existing_by_email(email)
+        else:
+            assert users.is_user_existing_by_email(user.email) == True  # Tests if the user exists
+            assert (
+                users.is_user_existing_by_id(user.id + 1) == False
+            )  # Tests if the user does not exist
 
 @pytest.mark.parametrize(
     "user_id, exception",
@@ -203,20 +227,45 @@ def test_get_user_by_id(app, db, user_id, exception):
         else:
             assert user == users.get_user_by_id(user_id)
 
+@pytest.mark.parametrize(
+    "email, exception", [
+        ("test@example.com", None),  # Valid email
+        ("test.com", errors.InvalidEmailError),  # InvalidEmailError
+        ("testcom", errors.InvalidEmailError),  # InvalidEmailError
+        ("test@com", errors.InvalidEmailError),  # InvalidEmailError
+        ("notexists@example.com", errors.UserNotFoundError),  # No user with email
+])
+def test_get_user_by_email(app, db, email, exception):
+    
+    if os.environ.get("ENVIRONMENT") != "testing":
+        pytest.skip(
+            "Tests are running against the production database. Refusing to run tests."
+        )
+
+    with app.app_context():
+        user = User(username="test_user", password_hash="ErdbeerKuchen00!", email="test@example.com")
+        db.session.add(user)
+        db.session.commit()
+
+        if exception is not None:
+            with pytest.raises(exception):
+                users.get_user_by_email(email)
+        else:
+            assert user == users.get_user_by_email(user.email)
 
 @pytest.mark.parametrize(
-    "user_id, new_role, exception",
+    "email, new_role, exception",
     [
-        (1, "admin", None),  # Valid role
-        (1, "user", None),  # Valid role
-        (2, "user", errors.UserNotFoundError),  # No user with id 2
-        (2, "admin", errors.UserNotFoundError),  # No user with id 2
-        (1, "invalid_role", errors.InvalidRoleError),  # Invalid role
-        (1, None, errors.MissingFieldError),  # Missing role
-        (1, "", errors.MissingFieldError),  # Missing role
+        ("test@example.com", "admin", None),  # Valid role
+        ("test@example.com", "user", None),  # Valid role
+        ("test2@example.com", "user", errors.UserNotFoundError),  # No user with id 2
+        ("test2@example.com", "admin", errors.UserNotFoundError),  # No user with id 2
+        ("test@example.com", "invalid_role", errors.InvalidRoleError),  # Invalid role
+        ("test@example.com", None, errors.MissingFieldError),  # Missing role
+        ("test@example.com", "", errors.MissingFieldError),  # Missing role
     ],
 )
-def test_change_user_role(app, db, user_id, new_role, exception):
+def test_change_user_role(app, db, email, new_role, exception):
 
     if os.environ.get("ENVIRONMENT") != "testing":
         pytest.skip(
@@ -230,21 +279,21 @@ def test_change_user_role(app, db, user_id, new_role, exception):
         db.session.commit()
 
         assert user.role == "user"
-        assert user == users.get_user_by_id(user.id)
+        assert user == users.get_user_by_email(email)
 
         if exception is not None:
             with pytest.raises(exception):
-                users.change_user_role(user_id, new_role)
+                users.change_user_role(email, new_role)
         else:
-            users.change_user_role(user_id, new_role)
+            users.change_user_role(email, new_role)
 
 
 @pytest.mark.parametrize(
-    "user_id, password, exception",
+    "email, password, exception",
     [
-        (1, "ErdbeerKuchen00!", None),  # Valid password
-        (2, "ErdbeerKuchen00!", errors.UserNotFoundError),  # No user with id 2
-        (1, None, errors.MissingFieldError),  # MissingFieldError -> Missing password
+        ("test@example.com", "ErdbeerKuchen00!", None),  # Valid password
+        ("test2@example.com", "ErdbeerKuchen00!", errors.UserNotFoundError),  # No user with id 2
+        ("test@example.com", None, errors.MissingFieldError),  # MissingFieldError -> Missing password
         (1, "", errors.MissingFieldError),  # MissingFieldError -> Missing password
         (
             1,
@@ -253,22 +302,21 @@ def test_change_user_role(app, db, user_id, new_role, exception):
         ),  # Password is incorrect
     ],
 )
-def test_delete_user(app, db, verificator, user_id, password, exception):
-
-    def mock_add_verification_request(type, email, user_id):
-            verificator.requests[email] = {
+def test_delete_user(app, db, verificator, email, password, exception):
+    verificator.add_delete_account_request
+    def mock_add_delete_account_request(email, user_id):
+            verificator.delete_account_requests[email] = {
                 "code": "123456",
                 "email": email,
                 "timestamp": datetime.datetime.now(),
-                "id": user_id,
-                "type": type
+                "id": user_id
             }
             return "123456"
 
     with mock.patch.object(
         verificator,
-        "add_verification_request",
-        side_effect=mock_add_verification_request,
+        "add_delete_account_request",
+        side_effect=mock_add_delete_account_request,
     ):
 
         with app.app_context():
@@ -279,10 +327,10 @@ def test_delete_user(app, db, verificator, user_id, password, exception):
 
             if exception is not None:
                 with pytest.raises(exception):
-                    users.delete_user(verificator, user_id, password)
+                    users.delete_user(email, password)
             else:
-                users.delete_user(verificator, user_id, password)
-                request = verificator.requests[user.email]
+                users.delete_user(email, password)
+                request = verificator.delete_account_requests[user.email]
 
                 assert request is not None
                 assert request["code"] is not None
@@ -432,6 +480,8 @@ def test_change_user_pasword(app, db, verificator, user_id, new_password, passwo
             "id": user_id
         }
         return "123456"
+
+    verificator
 
     with mock.patch.object(
         verificator,

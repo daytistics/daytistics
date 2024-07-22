@@ -4,10 +4,7 @@ from src.utils.users import is_valid_username, is_good_password
 from src.utils.emails import send_verification_email, is_valid_email, is_email_in_use
 from src.extensions import db, verificator
 import src.errors as errors
-from datetime import datetime
-import re
-from src.services.verify import Verificator
-from src.utils.encryption import encrypt_string
+from src.utils.encryption import encrypt_string, check_hashed_value
 
 class User(db.Model):
     """
@@ -28,8 +25,7 @@ class User(db.Model):
     def __repr__(self):
         return "<User {}>".format(self.username)
     
-
-def is_user_existing(id: int) -> bool:
+def is_user_existing_by_id(id: int) -> bool:
     """
     Check if a user with the given ID exists in the database.
 
@@ -42,8 +38,13 @@ def is_user_existing(id: int) -> bool:
 
     return db.session.query(db.session.query(User).filter_by(id=id).exists()).scalar()
 
+def is_user_existing_by_email(email: str) -> bool:
+    if not is_valid_email(email):
+        raise errors.InvalidEmailError("Email is invalid")
 
-def get_user_by_id(user_id: int) -> User or None:  # type: ignore
+    return db.session.query(db.session.query(User).filter_by(email=email).exists()).scalar()
+
+def get_user_by_id(user_id: int) -> User: 
     """
     Retrieve a user by their ID.
 
@@ -57,13 +58,13 @@ def get_user_by_id(user_id: int) -> User or None:  # type: ignore
         UserNotFoundError: If no user is found with the given ID.
     """
 
-    if not is_user_existing(user_id):
+    if not is_user_existing_by_id(user_id):
         raise errors.UserNotFoundError("No user found with this ID")
 
     user = User.query.filter_by(id=user_id).first()
     return user
 
-def get_user_by_email(email: str) -> User or None: # type: ignore
+def get_user_by_email(email: str) -> User: 
     """
     Retrieve a user by their email.
 
@@ -86,7 +87,7 @@ def get_user_by_email(email: str) -> User or None: # type: ignore
     user = User.query.filter_by(email=email).first()
     return user
 
-def register_user(verificator: Verificator, username: str, password: str, email: str) -> None:
+def register_user(username: str, password: str, email: str) -> None:
     """
     Register a new user with the provided username, password, and email.
 
@@ -132,208 +133,67 @@ def register_user(verificator: Verificator, username: str, password: str, email:
             "Password is too weak or invalid (must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, one digit, and one special character)"
         )
 
-    code = verificator.add_verification_request(
-        type=verificator.REGISTRATION,
-        email=email,
-        username=username,
-        password_hash=encrypt_string(password),
-        role="user"
-    )
+    code = verificator.add_registration_request(email, username, encrypt_string(password), "user")
     send_verification_email(email, code)
 
-def verify_action(verificator: Verificator, type: int, email: str, code: str) -> bool:
-    """
-    Verifies the action based on the provided type, email, and code.
-
-    Args:
-        type (int): The type of verification action. Must be 1 (Register), 2 (Change password), or 3 (Delete account).
-        email (str): The email associated with the verification request.
-        code (str): The verification code.
-
-    Returns:
-        bool: True if the action is successfully verified, False otherwise.
-
-    Raises:
-        MissingFieldError: If email, action type, or code is not provided.
-        VerificationError: If the verification code is not a 6-digit number or the verification type is invalid.
-        InvalidEmailError: If the email is invalid.
-    """
-
-    if code is None or code == "" or email is None or email == "" or type is None:
-        raise errors.MissingFieldError("Email, action type, or code is not provided")
-
-    if not re.match(r"^\d{6}$", code):
-        raise errors.VerificationError("Verification code must be a 6-digit number")
-
-    if type not in [1, 2, 3]:
-        raise errors.VerificationError("Invalid verification type (must be 1: Register, 2: Change password, or 3: Delete account)")
+def change_user_role(email: str, new_role: str) -> bool:  
 
     if not is_valid_email(email):
-        raise errors.InvalidEmailError(
-            "Email is invalid (must be between 3 and 50 characters and contain an @ symbol)"
-        )
-
-    if not verificator.contains_request(email, type):
-        raise errors.VerificationError(
-            "No verification request found for this email and type"
-        )
-
-    request = verificator.requests[email]
-
-    if not request["code"] == code:
-        raise errors.VerificationError("Verification code is incorrect")
-
-    match type:
-        case 1:
-            # Register user
-            user = User(
-                username=request["username"],
-                password_hash=request["password_hash"],
-                email=request["email"],
-                role=request["role"]
-            )
-            db.session.add(user)
-            db.session.commit()
-            return True
-        case 2:
-            # Change password
-            user = User.query.filter_by(id=request["id"]).first()
-            user.password_hash = request["new_password"]
-            db.session.commit()
-            return True
-        case 3:
-            # Delete account
-            user = User.query.filter_by(id=request["id"]).first()
-            db.session.delete(user)
-            db.session.commit()
-            return True
-
-    return False
-
-
-def change_user_role(user_id: int, new_role: str) -> User or None:  # type: ignore
-    """
-    Change the role of a user identified by the given user ID.
-
-    Args:
-        user_id (int): The ID of the user to change the role for.
-        new_role (str): The new role to assign to the user. Must be either 'user' or 'admin'.
-
-    Returns:
-        User or None: The updated User object if the role was successfully changed, None otherwise.
-
-    Raises:
-        UserNotFoundError: If no user is found with the given user ID.
-        MissingFieldError: If the new_role parameter is empty or None.
-        InvalidRoleError: If the new_role parameter is not 'user' or 'admin'.
-    """
-
-    if not is_user_existing(user_id):
-        raise errors.UserNotFoundError("No user found with this ID")
+        raise errors.InvalidEmailError("Email is invalid")
+    
+    if not is_user_existing_by_email(email):
+        raise errors.UserNotFoundError("No user found with this email")
 
     if new_role not in ["user", "admin"]:
         if new_role == "" or new_role is None:
             raise errors.MissingFieldError("Role is not provided")
         raise errors.InvalidRoleError("Role is invalid (must be 'user' or 'admin')")
 
-    user = User.query.filter_by(id=user_id).first()
-    if user is None:
-        return None
+    user = get_user_by_email(email)
+
     user.role = new_role
     db.session.commit()
     return user
 
+def delete_user(email: str) -> None:
 
-def delete_user(_verificator: Verificator, user_id: int, password: str) -> None:
-    """
-    Deletes a user from the database.
-
-    Args:
-        user_id (int): The ID of the user to be deleted.
-        password (str): The password of the user for verification.
-
-    Returns:
-        bool: True if the user is successfully deleted, False otherwise.
-
-    Raises:
-        UserNotFoundError: If no user is found with the given ID.
-        MissingFieldError: If the password is not provided.
-        IncorrectPasswordError: If the provided password is incorrect.
-    """
-
-    if not is_user_existing(user_id):
-        raise errors.UserNotFoundError("No user found with this ID")
-
-    if password is None or password == "":
-        raise errors.MissingFieldError("Cannot verify action. Password is not provided")
-
-    if not check_user_password(user_id, password):
-        raise errors.IncorrectPasswordError(
-            "Cannot verify action. Password is incorrect"
-        )
-
-    user = User.query.filter_by(id=user_id).first()
-
-    if user is None:
-        raise errors.UserNotFoundError("No user found with this ID")
+    if not is_valid_email(email):
+        raise errors.InvalidEmailError("Email is invalid")
     
-    verificator.add_verification_request(verificator.DELETE_ACCOUNT, user_id=user_id, email=user.email)
+    if not is_user_existing_by_email(email):
+        raise errors.UserNotFoundError("No user found with this email")
 
+    user = get_user_by_email(email)
 
-def check_user_password(user_id: int, password: str) -> bool:
-    """
-    Check if the provided password matches the password of the user with the given ID.
+    code = verificator.add_delete_account_request(user.email)
+    # TODO: Send verification email
 
-    Args:
-        user_id (int): The ID of the user.
-        password (str): The password to check.
+def check_user_password(email: str, password: str) -> bool:
 
-    Returns:
-        bool: True if the password is correct, False otherwise.
-
-    Raises:
-        errors.UserNotFoundError: If no user is found with the given ID.
-        errors.MissingFieldError: If the password is not provided.
-    """
-
-    if not is_user_existing(user_id):
-        raise errors.UserNotFoundError("No user found with this ID")
+    if not is_valid_email(email):
+        raise errors.InvalidEmailError("Email is invalid")
+    
+    if not is_user_existing_by_email(email):
+        raise errors.UserNotFoundError("No user found with this email")
 
     if password is None or password == "":
         raise errors.MissingFieldError("Password is not provided")
 
-    user = User.query.filter_by(id=user_id).first()
-    if user is None:
-        return False
+    user = get_user_by_email(email)
 
-    from src.utils.encryption import check_hashed_value
+    
 
     is_correct = check_hashed_value(password, user.password_hash)
 
     return is_correct
 
+def change_user_password(email: str, new_password: str) -> None:
 
-def change_user_password(_verificator: Verificator, user_id: int, new_password: str, password: str) -> None:
-    """
-    Change the password of a user.
-
-    Args:
-        user_id (int): The ID of the user.
-        new_password (str): The new password to set for the user.
-        password (str): The current password of the user.
-
-    Returns:
-        bool: True if the password is successfully changed, False otherwise.
-
-    Raises:
-        UserNotFoundError: If no user is found with the given ID.
-        MissingFieldError: If the new password or current password is not provided.
-        IncorrectPasswordError: If the current password is incorrect.
-        BadPasswordError: If the new password is too weak or invalid (must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, one digit, and one special character).
-    """
-
-    if not is_user_existing(user_id):
-        raise errors.UserNotFoundError("No user found with this ID")
+    if not is_valid_email(email):
+        raise errors.InvalidEmailError("Email is invalid")
+    
+    if not is_user_existing_by_email(email):
+        raise errors.UserNotFoundError("No user found with this email")
 
     if new_password is None or new_password == "":
         raise errors.MissingFieldError("New password is not provided")
@@ -343,51 +203,19 @@ def change_user_password(_verificator: Verificator, user_id: int, new_password: 
             "Password is too weak or invalid (must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, one digit, and one special character"
         )
 
-    if new_password == password:
-        raise errors.SamePasswordError("New password is the same as the old password")
 
-    if password is None or password == "":
-        raise errors.MissingFieldError(
-            "Cannot verify action. Current password is not provided"
-        )
+    user = get_user_by_email(email)
 
-    if not check_user_password(user_id, password):
-        raise errors.IncorrectPasswordError(
-            "Cannot verify action. Password is incorrect"
-        )
+    verificator.add_change_password_request(user.email, encrypt_string(new_password))
+    # TODO: Send verification email
 
+def change_username(email: str, new_username: str) -> User or None:  # type: ignore
+
+    if not is_valid_email(email):
+        raise errors.InvalidEmailError("Email is invalid")
     
-
-
-    user = User.query.filter_by(id=user_id).first()
-
-    if user is None:
-        raise errors.UserNotFoundError("No user found with this ID")
-    
-    verificator.add_verification_request(verificator.CHANGE_PASSWORD, user_id=user_id, new_password=encrypt_string(new_password), email=user.email)
-
-
-def change_username(user_id: int, new_username: str) -> User or None:  # type: ignore
-    """
-    Change the username of a user.
-
-    Args:
-        user_id (int): The ID of the user.
-        new_username (str): The new username to be set.
-
-    Returns:
-        User or None: The updated User object if the username is changed successfully,
-        None if the user is not found.
-
-    Raises:
-        UserNotFoundError: If no user is found with the given ID.
-        MissingFieldError: If the new username is not provided.
-        InvalidNameError: If the new username is invalid (must be between 3 and 20 characters and alphanumeric).
-        ExplicitContentError: If the new username contains explicit content.
-    """
-
-    if not is_user_existing(user_id):
-        raise errors.UserNotFoundError("No user found with this ID")
+    if not is_user_existing_by_email(email):
+        raise errors.UserNotFoundError("No user found with this email")
 
     if new_username is None or new_username == "":
         raise errors.MissingFieldError("New username is not provided")
@@ -400,17 +228,13 @@ def change_username(user_id: int, new_username: str) -> User or None:  # type: i
     if not is_string_content_allowed(new_username):
         raise errors.ExplicitContentError("Username contains explicit content")
 
-    user = User.query.filter_by(id=user_id).first()
-    if user is None:
-        return None
+    user = get_user_by_email(email)
 
     user.username = new_username
     db.session.commit()
     return user
 
-
 # TODO: Implement password reset functionality (using verificator)
-
 
 def get_all_users() -> list:
     """
