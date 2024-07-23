@@ -104,9 +104,9 @@ class VerifyRegistrationRequest(BaseResource):
         try:
             email, code = args["email"], args["code"]
 
-            if not email.strip() or not code.strip():
+            if email == None or code == None or not email.strip() or not code.strip():
                 return {"error": "Invalid input data"}, 400
-            
+
             if not is_valid_email(email):
                 return {"error": "Invalid email"}, 400
             
@@ -138,7 +138,7 @@ class VerifyChangePasswordRequest(BaseResource):
         try:
             email, code = args["email"], args["code"]
 
-            if not email.strip() or not code.strip():
+            if email == None or code == None or not email.strip() or not code.strip():
                 return {"error": "Invalid input data"}, 400
             
             if not is_valid_email(email):
@@ -206,7 +206,7 @@ class VerifyDeleteAccountRequest(BaseResource):
         try:
             email, code = args["email"], args["code"]
 
-            if not email.strip() or not code.strip():
+            if email == None or code == None  or not email.strip() or not code.strip():
                 return {"error": "Invalid input data"}, 400
             
             if not is_valid_email(email):
@@ -241,7 +241,7 @@ class UserRegistration(BaseResource):
 
         try:
 
-            if not args["username"].strip() or not args["email"].strip() or not args["password"].strip():
+            if args["email"] == None or args["username"] == None or args["password"] == None or not args["username"].strip() or not args["email"].strip() or not args["password"].strip():
                 return {"error": "Missing or invalid input data"}, 400
             
             if not is_valid_email(args["email"]):
@@ -251,23 +251,22 @@ class UserRegistration(BaseResource):
                 return {"error": "Registration request already exists"}, 409
             
             if users.is_user_existing_by_email(args["email"]):
+                
                 return {"error": "Email already in use"}, 409
             
-            if not is_string_content_allowed(args["email"]):
-                return {"error": "Email contains explicit content"}
-
             if not is_valid_username(args["username"]):
                 return {"error": "Invalid username"}, 400
             
-            if not is_string_content_allowed(args["username"]):
-                return {"error": "Username contains explicit content"}
+            # if not is_string_content_allowed(args["username"]):
+            #    return {"error": "Username contains explicit content"}
             
 
             if not is_good_password(args["password"]):
                 return {"error": "Bad password"}, 400
 
-            users.register_user(args["username"], args["email"], args["password"])
+            users.register_user(args["username"], args["password"], args["email"])
             return {"message": "Registration request sent"}, 200
         except Exception as e:
             current_app.logger.exception(f"Unhandled exception in UserRegistration (POST: {args})")
+
             return {"error": str(e)}, 500

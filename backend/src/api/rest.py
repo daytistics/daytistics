@@ -1,6 +1,7 @@
 from flask_restful import Api
 from flask import current_app, request, abort
 import os
+import src.api.routes as routes
 
 current_app.logger.info("Loading API...")
 api = Api(current_app)
@@ -17,14 +18,16 @@ def limit_remote_addr():
 
 import src.api.auth as auth
 
-api.add_resource(auth.ExistsRegistrationRequest, "/user/verify/registration/exists")
-api.add_resource(auth.ExistsChangePasswordRequest, "/user/verify/change_password/exists")
-api.add_resource(auth.ExistsResetPasswordRequest, "/user/verify/reset_password/exists")
-api.add_resource(auth.ExistsDeleteAccountRequest, "/user/verify/delete_account/exists")
+api.add_resource(auth.ExistsRegistrationRequest, routes.EXISTS_REGISTRATION_REQUEST_ROUTE)
+api.add_resource(auth.ExistsChangePasswordRequest, routes.EXISTS_CHANGE_PASSWORD_REQUEST_ROUTE)
+api.add_resource(auth.ExistsResetPasswordRequest, routes.EXISTS_RESET_PASSWORD_REQUEST_ROUTE)
+api.add_resource(auth.ExistsDeleteAccountRequest, routes.EXISTS_DELETE_ACCOUNT_REQUEST_ROUTE)
 
-api.add_resource(auth.VerifyRegistrationRequest, "/user/verify/registration")
-api.add_resource(auth.VerifyChangePasswordRequest, "/user/verify/change_password")
-api.add_resource(auth.VerifyResetPasswordRequest, "/user/verify/reset_password")
-api.add_resource(auth.VerifyDeleteAccountRequest, "/user/verify/delete_account")
+api.add_resource(auth.VerifyRegistrationRequest, routes.VERIFY_REGISTRATION_REQUEST_ROUTE)
+api.add_resource(auth.VerifyChangePasswordRequest, routes.VERIFY_CHANGE_PASSWORD_REQUEST_ROUTE)
+api.add_resource(auth.VerifyResetPasswordRequest, routes.VERIFY_RESET_PASSWORD_REQUEST_ROUTE)
+api.add_resource(auth.VerifyDeleteAccountRequest, routes.VERIFY_DELETE_ACCOUNT_REQUEST_ROUTE)
+
+api.add_resource(auth.UserRegistration, routes.USER_REGISTRATION_ROUTE)
 
 current_app.logger.info("API loaded successfully")

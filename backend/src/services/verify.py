@@ -2,6 +2,7 @@ import random, threading
 from datetime import datetime, timedelta
 import src.errors as errors
 import time
+from src.extensions import db
 
 
 class Verificator:
@@ -126,7 +127,9 @@ class Verificator:
         
         if self.registration_requests[email]["code"] == code:
             from src.models.users import User
-            User(username=self.registration_requests[email]["username"], email=self.registration_requests[email]["email"], password_hash=self.registration_requests[email]["password_hash"], role=self.registration_requests[email]["role"])
+            user = User(username=self.registration_requests[email]["username"], email=self.registration_requests[email]["email"], password_hash=self.registration_requests[email]["password_hash"], role=self.registration_requests[email]["role"])
+            db.session.add(user)
+            db.session.commit()
             del self.registration_requests[email]
             return True
         else:
@@ -140,7 +143,7 @@ class Verificator:
             from src.models.users import User
 
             User.query.filter_by(email=email).update(dict(password_hash=self.change_password_requests[email]["new_password"]))
-
+            db.session.commit()
             del self.change_password_requests[email]
             return True
         else:
@@ -153,6 +156,7 @@ class Verificator:
         if self.delete_account_requests[email]["code"] == code:
             from src.models.users import User
             User.query.filter_by(email=email).delete()
+            db.session.commit()
             del self.delete_account_requests[email]
             return True
         else:
