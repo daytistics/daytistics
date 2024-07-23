@@ -4,13 +4,13 @@ from config import Config
 from flask_migrate import Migrate
 from dotenv import load_dotenv
 from flask_jwt_extended import JWTManager
-
-load_dotenv()
+import os
 
 def create_app(config_class=Config):
     app = Flask(__name__)
-    app.config.from_object(config_class)
 
+    app.config.from_object(config_class)
+    
     db.init_app(app)
     migrate = Migrate(app, db)
 
@@ -23,6 +23,6 @@ def create_app(config_class=Config):
         try:
             db.create_all()  
         except Exception as e:
-            app.logger.error(f"Error while creating the database:")# {str(e)}")
+            app.logger.error(f"Error while creating the database:")
 
     return app
