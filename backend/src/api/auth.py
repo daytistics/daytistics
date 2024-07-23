@@ -3,7 +3,6 @@ from src.services.verify import is_valid_verification_code
 from src.extensions import verificator
 import src.models.users as users
 from src.api.base import BaseResource
-import src.errors as errors
 from src.utils.emails import is_valid_email
 from src.utils.users import is_valid_username, is_good_password
 from flask_jwt_extended import create_access_token, decode_token, get_jwt_identity, create_refresh_token, jwt_required
@@ -306,8 +305,6 @@ class UserLogin(BaseResource):
             current_app.logger.exception(f"Unhandled exception in UserLogin (POST: {args})")
             return {"error": str(e)}, 500
 
-
-
 class TokenRefresh(BaseResource):
 
     def __init__(self):
@@ -333,4 +330,86 @@ class TokenRefresh(BaseResource):
 
 
             return {"error": str(e)}, 500
+
+class TokenEmail(BaseResource):
+    def __init__(self):
+        super().__init__()
+
+    @jwt_required() 
+    def get(self):
+        try:
+            email = get_jwt_identity()
+
+            return {"email": email}, 200
+        except Exception as e:
+            return {"error": str(e)}, 500
+
+class UserChangeUsername(BaseResource):
+    def __init__(self):
+        super().__init__()
+        self.parser.add_argument('email', type=str, required=True, help='Email is required')
+        self.parser.add_argument('new_username', type=str, required=True, help='New username is required')
+
+    def post(self):
+        try:
+            args = self.parser.parse_args()
+            email, new_username = args['email'], args['new_username']
+
+            current_app.logger.info(f"Changing username for {email} to {new_username}")
+            current_app.logger.info(f"Args: {args}")
+
+            if email == None or new_username == None or not email.strip() or not new_username.strip():
+                current_app.logger.error(f"Missing or invalid input data: {args}")
+                return {"error": "Missing or invalid input data"}, 400
+
+            if not is_valid_email(email):
+                current_app.logger.error(f"Invalid email: {email}")
+                return {"error": "Invalid email"}, 400
+            
+            if not users.is_user_existing_by_email(email):
+                current_app.logger.error(f"Email not in use: {email}")
+                return {"error": "Email not in use"}, 400
+            
+            if not is_valid_username(new_username):
+                current_app.logger.error(f"Invalid username: {new_username}")
+                return {"error": "Invalid username"}, 400
+            
+            users.change_username(email, new_username)
+            return {"message": "Username changed successfully"}, 200
+        except Exception as e:
+            return {"error": str(e)}, 500        
         
+class UserChangePassword(BaseResource):
+    def __init__(self):
+        super().__init__()
+        self.parser.add_argument("email", type=str, required=True, help="Email is required")
+        self.parser.add_argument("new_password", type=str, required=True, help="New password is required")
+
+    def post(self):
+        args = self.parser.parse_args()
+        email, new_password = args["email"], args["new_password"]
+
+        try:
+
+            if email == None or new_password == None or not email.strip() or not new_password.strip():
+                return {"error": "Missing or invalid input data"}, 400
+            
+            if not is_valid_email(email):
+                return {"error": "Invalid email"}, 400
+            
+            if not users.is_user_existing_by_email(email):
+                current_app.logger.error(f"User not found: {args}")
+                return {"error": "User not found"}, 404
+            
+            if verificator.exists_change_password_request(args["email"]):
+                return {"error": "Change password request already exists"}, 409
+            
+            if not is_good_password(new_password):
+                return {"error": "Bad password"}, 400
+
+            users.change_user_password(email, new_password)
+            return {"message": "Change password request sent"}, 200
+        except Exception as e:
+            current_app.logger.exception(f"Unhandled exception in UserChangePassword (POST: {args})")
+
+            return {"error": str(e)}, 500

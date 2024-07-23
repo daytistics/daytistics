@@ -1,7 +1,7 @@
 from datetime import datetime, timezone
 from src.utils.whitelist import is_string_content_allowed
 from src.utils.users import is_valid_username, is_good_password
-from src.utils.emails import send_verification_email, is_valid_email, is_email_in_use
+from src.utils.emails import is_valid_email, send_registration_request_email
 from src.extensions import db, verificator
 import src.errors as errors
 from src.utils.encryption import encrypt_string, check_hashed_value
@@ -81,7 +81,7 @@ def get_user_by_email(email: str) -> User:
     if not is_valid_email(email):
         raise errors.InvalidEmailError("Email is invalid")
 
-    if not is_email_in_use(email):
+    if not is_user_existing_by_email(email):
         raise errors.UserNotFoundError("No user found with this email")
 
     user = User.query.filter_by(email=email).first()
@@ -122,7 +122,7 @@ def register_user(username: str, password: str, email: str) -> None:
             "Email is invalid (must be between 3 and 50 characters and contain an @ symbol)"
         )
 
-    if is_email_in_use(email):
+    if is_user_existing_by_email(email):
         raise errors.EmailInUseError("Email is already in use")
 
     if not is_string_content_allowed(username):
@@ -134,7 +134,7 @@ def register_user(username: str, password: str, email: str) -> None:
         )
 
     code = verificator.add_registration_request(email, username, encrypt_string(password), "user")
-    send_verification_email(email, code)
+    send_registration_request_email(email, code)
 
 def change_user_role(email: str, new_role: str) -> bool:  
 

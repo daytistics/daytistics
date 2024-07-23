@@ -408,3 +408,95 @@ def test_token_refresh(client, refresh_token):
     assert response.json is not None
 
     assert response.json.get("access_token") is not None
+    assert response.json.get("access_token") != preset_refresh_token
+
+def test_token_email(client):
+    # Anfrage an den TokenEmail-Endpunkt senden
+    preset_refresh_token = create_access_token(identity="test@example.com")
+
+    response = client.get('/user/token/email', headers={'Authorization': f'Bearer {preset_refresh_token}'})
+
+    assert response.status_code == 200
+    assert response.json is not None
+    assert response.json.get("email") == "test@example.com"
+
+@pytest.mark.parametrize("email, new_username, value, status_code",  [
+    ("test@example.com", "newusername", {"message": "Username changed successfully"}, 200),
+    ("   ", "newusername", {"error": "Missing or invalid input data"}, 400),
+    ("", "newusername", {"error": "Missing or invalid input data"}, 400),
+    (None, "newusername", {"error": "Missing or invalid input data"}, 400),
+    ("test@example.com", "", {"error": "Missing or invalid input data"}, 400),
+    ("test@example.com", "  ", {"error": "Missing or invalid input data"}, 400),
+    ("test@example.com", None, {"error": "Missing or invalid input data"}, 400),
+    ("test", "newusername", {"error": "Invalid email"}, 400),
+    ("test@", "newusername", {"error": "Invalid email"}, 400),
+    ("test@example", "newusername", {"error": "Invalid email"}, 400),
+    ("test@example.", "newusername", {"error": "Invalid email"}, 400),
+    ("test@example.c", "newusername", {"error": "Invalid email"}, 400),
+    ("test.com", "newusername", {"error": "Invalid email"}, 400),
+    ("test@example.com", "Hallo[]", {"error": "Invalid username"}, 400),
+    ("test@example.com", "Hallo ", {"error": "Invalid username"}, 400),
+])
+def test_change_username(client, app, db, email, new_username, value, status_code):
+    user = users.User(username="test", email="test@example.com")
+    db.session.add(user)
+    db.session.commit()
+
+    with app.app_context():
+        import src.api.routes as routes
+
+        response = client.post(routes.CHANGE_USERNAME_ROUTE, json={"email": email, "new_username": new_username})
+
+        assert response.status_code == status_code
+        assert response.json == value
+
+        if status_code == 200:
+            assert users.get_user_by_email(email).username == new_username
+
+@pytest.mark.parametrize("email, new_password, value, status_code",  [
+    ("test@example.com", "TollesPasswort123!", {"message": "Change password request sent"}, 200),
+    ("   ", "TollesPasswort123!", {"error": "Missing or invalid input data"}, 400),
+    ("", "TollesPasswort123!", {"error": "Missing or invalid input data"}, 400),
+    (None, "TollesPasswort123!", {"error": "Missing or invalid input data"}, 400),
+    ("test@example.com", "", {"error": "Missing or invalid input data"}, 400),
+    ("test@example.com", "  ", {"error": "Missing or invalid input data"}, 400),
+    ("test@example.com", None, {"error": "Missing or invalid input data"}, 400),
+    ("test", "TollesPasswort123!", {"error": "Invalid email"}, 400),
+    ("test@", "TollesPasswort123!", {"error": "Invalid email"}, 400),
+    ("test@example", "TollesPasswort123!", {"error": "Invalid email"}, 400),
+    ("test@example.", "TollesPasswort123!", {"error": "Invalid email"}, 400),
+    ("test@example.c", "TollesPasswort123!", {"error": "Invalid email"}, 400),
+    ("test.com", "TollesPasswort123!", {"error": "Invalid email"}, 400),
+    ("testy@example.com", "TollesPasswort123!", {"error": "User not found"}, 404),
+    ("alreadyinverificator@example.com", "TollesPasswort123!", {"error": "Change password request already exists"}, 409),
+    ("test@example.com", "TollesPasswort123", {"error": "Bad password"}, 400),
+    ("test@example.com", "tollespasswort123!", {"error": "Bad password"}, 400),
+    ("test@example.com", "TOLLESPASSWORT123!", {"error": "Bad password"}, 400)
+])
+def test_user_change_password(client, app, db, verificator, email, new_password, value, status_code):
+    with app.app_context():
+        import src.api.routes as routes
+
+        user = users.User(username="test", email="test@example.com", password_hash="password", role="user")
+        db.session.add(user)
+        db.session.commit()
+
+        user = users.User(username="test", email="alreadyinverificator@example.com", password_hash="password", role="user")
+        db.session.add(user)
+        db.session.commit()
+
+        verificator.add_change_password_request("alreadyinverificator@example.com", "password")
+
+        response = client.post(routes.CHANGE_USER_PASSWORD_ROUTE, json={"email": email, "new_password": new_password})
+
+        assert response.status_code == status_code
+        assert response.json == value
+
+        if status_code == 200:
+            assert verificator.change_password_requests.get(email) is not None
+            assert verificator.change_password_requests.get(email).get("email") == email
+            assert verificator.change_password_requests.get(email).get("code") is not None
+            assert verificator.change_password_requests.get(email).get("new_password") is not None
+            assert verificator.exists_change_password_request(email) == True
+            assert encryption.check_hashed_value(new_password, verificator.change_password_requests[email]["new_password"]) == True
+            

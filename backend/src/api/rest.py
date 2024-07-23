@@ -28,9 +28,12 @@ api.add_resource(auth.VerifyChangePasswordRequest, routes.VERIFY_CHANGE_PASSWORD
 api.add_resource(auth.VerifyResetPasswordRequest, routes.VERIFY_RESET_PASSWORD_REQUEST_ROUTE)
 api.add_resource(auth.VerifyDeleteAccountRequest, routes.VERIFY_DELETE_ACCOUNT_REQUEST_ROUTE)
 
+api.add_resource(auth.UserChangeUsername, routes.CHANGE_USERNAME_ROUTE)
 api.add_resource(auth.UserRegistration, routes.USER_REGISTRATION_ROUTE)
 api.add_resource(auth.UserLogin, routes.USER_LOGIN_ROUTE)
+api.add_resource(auth.UserChangePassword, routes.CHANGE_USER_PASSWORD_ROUTE)
 
 api.add_resource(auth.TokenRefresh, routes.TOKEN_REFRESH_ROUTE)
+api.add_resource(auth.TokenEmail, routes.TOKEN_EMAIL_ROUTE)
 
 current_app.logger.info("API loaded successfully")

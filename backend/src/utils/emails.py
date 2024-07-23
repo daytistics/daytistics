@@ -17,35 +17,12 @@ def is_valid_email(email: str) -> bool:
 
     return True
 
-def is_email_in_use(email: str) -> bool:
-    """
-    Checks if an email is in use
-    :param email: The email to check
-    :return: True if the email is in use, False otherwise
-    """
-    from src.models import users
-
-    try:
-        user = users.User.query.filter_by(email=email).first()
-    except:
-        return False
-
-    if user is not None:
-        return True
-
-    return False
-
 def send_email(to: str, sender: str, subject: str, body: str) -> None:
-
-    with open("../../emails.txt", "a") as f:
-        current_app.logger.info(f"New Email:\nTo: {to}\nFrom: {sender}\nSubject: {subject}\nBody: {body}\n\n")
-        f.write(f"New Email:\nTo: {to}\nFrom: {sender}\nSubject: {subject}\nBody: {body}\n\n")
-
-    # with current_app.app_context():
-    #     mail = Mail(current_app)
-    #     msg = Message(subject, sender=sender, recipients=[to])
-    #     msg.body = body
-    #     mail.send(msg)
+    with current_app.app_context():
+        mail = Mail(current_app)
+        msg = Message(subject, sender=sender, recipients=[to])
+        msg.body = body
+        mail.send(msg)
 
 def send_password_reset_email(to: str, new_password: str) -> None:
     """
@@ -55,12 +32,17 @@ def send_password_reset_email(to: str, new_password: str) -> None:
 
     send_email(to=to, sender="noreply@daytistics.de", subject="Your new password", body=f"Your new password is: {new_password}")
 
-def send_verification_email(to: str, code: str) -> None:
+def send_registration_request_email(to: str, code: str) -> None:
     """
     Sends a verification email
     :param to: The recipient
     :param code: The code
     """
     
-    send_email(to=to, sender="noreply@daytistics.de", subject="Daytistics Verification", body=f"Your code is: {code}")
+    send_email(
+        to=to, 
+        sender="noreply@daytistics.de", 
+        subject="Account Erstellung", 
+        body=f"Hallo {to},\n\nVielen Dank für Deine Registrierung bei Daytistics. Bitte bestätige Deine E-Mail-Adresse, indem Du auf den folgenden Link klickst: http://localhost:5000/verify/{code}\n\nAlternativ kannst du auch den folgenden Code im Browser eingeben: {code} \n\nMit freundlichen Grüßen,\nIhr Daytistics-Team"
+        )
     
