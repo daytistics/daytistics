@@ -9,7 +9,11 @@ env_vars = dotenv_values(".env")
 
 
 class Config:
-    SECRET_KEY = os.environ.get("SECRET_KEY")
+    JWT_SECRET_KEY = os.environ.get("JWT_SECRET_KEY")
+    JWT_TOKEN_LOCATION = ['headers']
+    JWT_HEADER_NAME = 'Authorization'
+    JWT_HEADER_TYPE = 'Bearer'
+
     DATABASE_USER = os.environ.get("DATABASE_USER")
     DATABASE_PASSWORD = os.environ.get("DATABASE_PASSWORD")
     DATABASE_HOST = os.environ.get("DATABASE_HOST")

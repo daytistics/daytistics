@@ -103,7 +103,6 @@ class Verificator:
         }
 
         return self.change_password_requests[email]["code"]
-    
 
     def add_delete_account_request(self, email) -> str:
                                 
@@ -120,6 +119,23 @@ class Verificator:
         }
 
         return self.delete_account_requests[email]["code"]  
+
+    def add_reset_password_request(self, email, new_password) -> str:
+                                            
+            if email == None or new_password == None or email == "" or new_password == "":
+                raise errors.MissingFieldError("Email and new_password are required.")
+    
+            if self.exists_reset_password_request(email):
+                raise errors.VerificationError("A reset password request with this email already exists.")
+    
+            self.reset_password_requests[email] = {
+                "code": generate_verification_code(),
+                "timestamp": datetime.now(),
+                "email": email,
+                "new_password": new_password,  
+            }
+    
+            return self.reset_password_requests[email]["code"] 
 
     def verify_registration_request(self, email, code) -> bool:
         if not self.exists_registration_request(email):
@@ -161,7 +177,21 @@ class Verificator:
             return True
         else:
             return False
+        
+    def verify_reset_password_request(self, email, code) -> bool:
+        if not self.exists_reset_password_request(email):
+            raise errors.VerificationError("No reset password request with this email exists.")
+        
+        if self.reset_password_requests[email]["code"] == code:
+            from src.models.users import User
 
+            User.query.filter_by(email=email).update(dict(password_hash=self.reset_password_requests[email]["new_password"]))
+            db.session.commit()
+            del self.reset_password_requests[email]
+            return True
+        else:
+            return False
+        
 def generate_verification_code() -> str:
         
         """

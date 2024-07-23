@@ -3,6 +3,7 @@ from src.extensions import db
 from config import Config
 from flask_migrate import Migrate
 from dotenv import load_dotenv
+from flask_jwt_extended import JWTManager
 
 load_dotenv()
 
@@ -12,6 +13,8 @@ def create_app(config_class=Config):
 
     db.init_app(app)
     migrate = Migrate(app, db)
+
+    jwt = JWTManager(app)
 
     with app.app_context():
         import src.models  

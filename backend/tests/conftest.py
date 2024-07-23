@@ -7,6 +7,7 @@ from config import TestConfig
 from src.models import User
 from flask import Flask
 from flask_restful import Api
+from flask_jwt_extended import create_refresh_token
 
 
 @pytest.fixture(scope='session')
@@ -63,3 +64,10 @@ def test_user(db):
     db.session.delete(user)
     db.session.commit()
     db.drop_all()
+
+@pytest.fixture
+def refresh_token():
+    user = User(username='testuser', email='test@example.com', password_hash='TestPassword1!')
+    _db.session.add(user)
+    _db.session.commit()
+    return create_refresh_token(identity='testuser')

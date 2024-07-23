@@ -6,8 +6,7 @@ from src.api.base import BaseResource
 import src.errors as errors
 from src.utils.emails import is_valid_email
 from src.utils.users import is_valid_username, is_good_password
-from src.utils.whitelist import is_string_content_allowed
-
+from flask_jwt_extended import create_access_token, decode_token, get_jwt_identity, create_refresh_token, jwt_required
 
 class ExistsRegistrationRequest(BaseResource):
     def __init__(self):
@@ -103,6 +102,8 @@ class VerifyRegistrationRequest(BaseResource):
         args = self.parser.parse_args()
         try:
             email, code = args["email"], args["code"]
+
+            from flask_jwt_extended import get_jwt_identity
 
             if email == None or code == None or not email.strip() or not code.strip():
                 return {"error": "Invalid input data"}, 400
@@ -270,3 +271,66 @@ class UserRegistration(BaseResource):
             current_app.logger.exception(f"Unhandled exception in UserRegistration (POST: {args})")
 
             return {"error": str(e)}, 500
+
+class UserLogin(BaseResource):
+    def __init__(self):
+        super().__init__()
+        self.parser.add_argument("email", type=str, required=True, help="Email is required")
+        self.parser.add_argument("password", type=str, required=True, help="Password is required")
+
+    def post(self):
+        args = self.parser.parse_args()
+        email, password = args["email"], args["password"]
+
+        try:
+            if email == None or password == None or not email.strip() or not password.strip():
+                return {"error": "Missing or invalid input data"}, 400
+            
+            if not is_valid_email(email):
+                return {"error": "Invalid email"}, 400
+            
+            if not users.is_user_existing_by_email(email):
+                return {"error": "User not found"}, 404
+            
+            if not users.check_user_password(email, password):
+                return {"error": "Invalid password"}, 401
+
+            access_token = create_access_token(identity=email)
+            refresh_token = create_refresh_token(identity=email)
+            return {"access_token": access_token, "refresh_token": refresh_token}, 200
+        except Exception as e:
+
+            with open("error.log", "a") as f:
+                f.write(str(e))
+
+            current_app.logger.exception(f"Unhandled exception in UserLogin (POST: {args})")
+            return {"error": str(e)}, 500
+
+
+
+class TokenRefresh(BaseResource):
+
+    def __init__(self):
+        super().__init__()
+
+
+    @jwt_required(refresh=True)
+    def post(self):
+
+        from jwt import exceptions
+        try:
+            email = get_jwt_identity()
+            access_token = create_access_token(identity=email)
+            return {"access_token": access_token}, 200
+        
+        except exceptions.ExpiredSignatureError:
+            return {"error": "Token has expired"}, 401
+        except exceptions.InvalidTokenError:
+            return {"error": "Invalid token"}, 401
+        except Exception as e:
+            current_app.logger.exception(f"Unhandled exception in TokenRefresh")
+
+
+
+            return {"error": str(e)}, 500
+        

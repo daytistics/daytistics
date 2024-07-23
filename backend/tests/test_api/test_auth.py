@@ -4,6 +4,8 @@ import src.services.verify as verify
 import src.models.users as users
 import src.errors as errors
 import src.utils.encryption as encryption
+from flask_jwt_extended import create_access_token, create_refresh_token
+from datetime import timedelta
 
 
 @pytest.mark.parametrize("email, value, status_code",  [
@@ -338,3 +340,71 @@ def test_user_registration(client, app, db, verificator, email, password, userna
             with pytest.raises(errors.UserNotFoundError):
                 users.get_user_by_email(email)
 
+
+@pytest.mark.parametrize("email, password, value, status_code",  [
+    ("test@example.com", "TollesPasswort123!", {"access_token": "mocked_access_token", "refresh_token": "mocked_refresh_token"}, 200),
+    ("  ", "TollesPasswort123!", {"error": "Missing or invalid input data"}, 400),
+    ("", "TollesPasswort123!", {"error": "Missing or invalid input data"}, 400),
+    (None, "TollesPasswort123!", {"error": "Missing or invalid input data"}, 400),
+    ("test@example.com", "", {"error": "Missing or invalid input data"}, 400),
+    ("test@example.com", "  ", {"error": "Missing or invalid input data"}, 400),
+    ("test@example.com", None, {"error": "Missing or invalid input data"}, 400),
+    ("test", "TollesPasswort123!", {"error": "Invalid email"}, 400),
+    ("test@", "TollesPasswort123!", {"error": "Invalid email"}, 400),
+    ("test@example", "TollesPasswort123!", {"error": "Invalid email"}, 400),
+    ("test@example.", "TollesPasswort123!", {"error": "Invalid email"}, 400),
+    ("test@example.c", "TollesPasswort123!", {"error": "Invalid email"}, 400),
+    ("test.com", "TollesPasswort123!", {"error": "Invalid email"}, 400),
+    ("testy@example.com", "TollesPasswort123!", {"error": "User not found"}, 404),
+    ("test@example.com", "TollesPasswort123?", {"error": "Invalid password"}, 401),
+])
+def test_user_login(client, app, db, email, password, value, status_code):
+    def mock_create_access_token(identity):
+        return "mocked_access_token"
+    
+    def mock_create_refresh_token(identity):
+        return "mocked_refresh_token"
+
+    def mock_check_hashed_value(value, hashed_value):
+        return value == "TollesPasswort123!"
+
+    def mock_decode_token(token):
+        return {"sub": "test@example.com"}
+
+    with mock.patch("src.api.auth.create_access_token", side_effect=mock_create_access_token):
+        with mock.patch("src.models.users.check_hashed_value", side_effect=mock_check_hashed_value):
+            with mock.patch("src.api.auth.decode_token", side_effect=mock_decode_token):
+                with mock.patch("src.api.auth.create_refresh_token", side_effect=mock_create_refresh_token):
+                    with app.app_context():
+                        import src.api.routes as routes
+
+                        user = users.User(username="test", email="test@example.com", password_hash="TollesPassword123!", role="user")
+                        db.session.add(user)
+                        db.session.commit()
+
+                        response = client.post(routes.USER_LOGIN_ROUTE, json={"email": email, "password": password})
+
+                        assert response.status_code == status_code
+                        assert response is not None
+                        assert response.json == value
+
+                        if status_code == 200:
+                            assert response.json["access_token"] is not None
+                            assert mock_decode_token(response.json["access_token"])["sub"] == "test@example.com"
+                            assert response.json["refresh_token"] is not None
+                            assert mock_decode_token(response.json["refresh_token"])["sub"] == "test@example.com"
+
+
+
+
+def test_token_refresh(client, refresh_token):
+    # Anfrage an den TokenRefresh-Endpunkt senden
+    
+    preset_refresh_token = create_refresh_token(identity="test@example.com")
+
+    response = client.post('/user/token/refresh', headers={'Authorization': f'Bearer {preset_refresh_token}'})
+
+    assert response.status_code == 200
+    assert response.json is not None
+
+    assert response.json.get("access_token") is not None
