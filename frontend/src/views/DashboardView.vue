@@ -1,15 +1,14 @@
 <script lang="ts" setup>
-import { ref, onMounted } from 'vue'
-import axios from 'axios'
+import { ref, onMounted } from 'vue';
+import axios from 'axios';
 import { RouterLink, useRouter } from 'vue-router';
-import { checkAuth } from '@/utils/rest/Auth';
+import { checkAuth } from '@/utils/rest/Users';
 
-const router = useRouter()
+const router = useRouter();
 
 onMounted(() => {
-  checkAuth(router)
-})
-
+  checkAuth(router);
+});
 </script>
 
 <template>

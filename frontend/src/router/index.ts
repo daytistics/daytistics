@@ -1,15 +1,16 @@
-import { createRouter, createWebHistory } from 'vue-router'
-import AuthView from '../views/AuthView.vue'
-import DashboardView from '../views/DashboardView.vue'
-import SettingsView from '../views/SettingsView.vue'
+import { createRouter, createWebHistory } from 'vue-router';
+import AuthView from '../views/AuthView.vue';
+import DashboardView from '../views/DashboardView.vue';
+import SettingsView from '../views/SettingsView.vue';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
-      path: '/auth',
+      path: '/auth/:code?',
       name: 'auth',
-      component: AuthView
+      component: AuthView,
+      props: (route) => ({ code: route.params.code })
     },
     {
       path: '/dashboard',
@@ -22,6 +23,6 @@ const router = createRouter({
       component: SettingsView
     }
   ]
-})
+});
 
-export default router
+export default router;

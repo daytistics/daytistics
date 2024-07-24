@@ -20,6 +20,8 @@ class User(db.Model):
         db.DateTime(timezone=True), default=datetime.now(timezone.utc)
     )
     role = db.Column(db.String(64), default="user")
+    verification = db.Column(db.String(64), default="pending")
+    rejects = db.Column(db.Integer, default=0)
 
     def __repr__(self):
         return "<User {}>".format(self.username)

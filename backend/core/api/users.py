@@ -4,8 +4,9 @@ from core.models import users
 from core.utils.emails import is_valid_email
 from core.utils.users import is_valid_username, is_good_password
 from core.utils.verification import is_valid_verification_code
-from flask_jwt_extended import create_access_token, get_jwt_identity, create_refresh_token, jwt_required
+from flask_jwt_extended import create_access_token, get_jwt_identity, create_refresh_token, jwt_required, decode_token
 from core.api import BaseResource
+from core import errors
 
 class ExistsRegistrationRequest(BaseResource):
     def __init__(self):
@@ -22,8 +23,12 @@ class ExistsRegistrationRequest(BaseResource):
 
             if not is_valid_email(email):
                 return {"error": "Invalid email"}, 400
+        
+            if not users.is_user_existing_by_email(email):
+                return {"error": "User not found"}, 404
 
             return {"exists": verificator.exists_registration_request(email)}, 200
+
         except Exception as e:
             self.handle_exception(e, args)
 
@@ -42,6 +47,9 @@ class ExistsChangePasswordRequest(BaseResource):
             
             if not is_valid_email(email):
                 return {"error": "Invalid email"}, 400
+            
+            if not users.is_user_existing_by_email(email):
+                return {"error": "User not found"}, 404
 
             return {"exists": verificator.exists_change_password_request(email)}, 200
         except Exception as e:
@@ -83,6 +91,9 @@ class ExistsDeleteAccountRequest(BaseResource):
             if not is_valid_email(email):
                 return {"error": "Invalid email"}, 400
 
+            if not users.is_user_existing_by_email(email):
+                return {"error": "User not found"}, 404
+
             return {"exists": verificator.exists_delete_account_request(email)}, 200
         except Exception as e:
             self.handle_exception(e, args)
@@ -112,7 +123,8 @@ class VerifyRegistrationRequest(BaseResource):
             if not verificator.exists_registration_request(email):
                 return {"error": "No registration request found for this email"}, 404
             
-            if not verificator.registration_requests[email]["code"] == code:
+            user = users.get_user_by_email(email)
+            if not verificator.registration_requests[user.id]["code"] == code:
                 return {"error": "Invalid code"}, 400
 
             verificator.verify_registration_request(email, code)
@@ -145,7 +157,8 @@ class VerifyChangePasswordRequest(BaseResource):
             if not verificator.exists_change_password_request(email):
                 return {"error": "No change password request found for this email"}, 404
             
-            if not verificator.change_password_requests[email]["code"] == code:
+            user = users.get_user_by_email(email)
+            if not verificator.change_password_requests[user.id]["code"] == code:
                 return {"error": "Invalid code"}, 400
 
             verificator.verify_change_password_request(email, code)
@@ -211,7 +224,9 @@ class VerifyDeleteAccountRequest(BaseResource):
             if not verificator.exists_delete_account_request(email):
                 return {"error": "No delete account request found for this email"}, 404
             
-            if not verificator.delete_account_requests[email]["code"] == code:
+
+            user = users.get_user_by_email(email)
+            if not verificator.delete_account_requests[user.id]["code"] == code:
                 return {"error": "Invalid code"}, 400
 
             verificator.verify_delete_account_request(email, code)
@@ -231,32 +246,29 @@ class UserRegistration(BaseResource):
     def post(self):
         args = self.parser.parse_args()
 
+
         try:
+
 
             if args["email"] == None or args["username"] == None or args["password"] == None or not args["username"].strip() or not args["email"].strip() or not args["password"].strip():
                 return {"error": "Missing or invalid input data"}, 400
             
+
             if not is_valid_email(args["email"]):
                 return {"error": "Invalid email"}, 400
             
-            if verificator.exists_registration_request(args["email"]):
-                return {"error": "Registration request already exists"}, 409
-            
             if users.is_user_existing_by_email(args["email"]):
-                
                 return {"error": "Email already in use"}, 409
             
             if not is_valid_username(args["username"]):
                 return {"error": "Invalid username"}, 400
             
-            # if not is_string_content_allowed(args["username"]):
-            #    return {"error": "Username contains explicit content"}
-            
-
             if not is_good_password(args["password"]):
                 return {"error": "Bad password"}, 400
 
+
             users.register_user(args["username"], args["password"], args["email"])
+
             return {"message": "Registration request sent"}, 200
         except Exception as e:
             self.handle_exception(e, args)
@@ -432,6 +444,28 @@ class UserInformation(BaseResource):
             created_at = user.created_at.strftime("%Y-%m-%d %H:%M:%S")
             role = user.role
             id = user.id
-            return {"id": id, "username": user.username, "email": user.email, "created_at": created_at, "role": role}, 200
+            verification = user.verification
+            rejects = user.rejects
+            return {"id": id, "username": user.username, "email": user.email, "created_at": created_at, "role": role, "verification": verification, "rejects": rejects}, 200
         except Exception as e:
             self.handle_exception(e)
+
+class ExistsUser(BaseResource):
+    def __init__(self):
+        super().__init__()
+        self.parser.add_argument("email", type=str, required=True, help="Email is required")
+
+    def post(self):
+        args = self.parser.parse_args()
+        email = args["email"]
+
+        try:
+            if email == None or not email.strip():
+                return {"error": "Missing or invalid email"}, 400
+            
+            if not is_valid_email(email):
+                return {"error": "Invalid email"}, 400
+            
+            return {"exists": users.is_user_existing_by_email(email)}, 200
+        except Exception as e:
+            self.handle_exception(e, args)

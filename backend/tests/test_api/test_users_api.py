@@ -9,7 +9,7 @@ from core.utils.encryption import generate_password_hash
 
 @pytest.mark.parametrize("email, value, status_code",  [
     ("test@example.com", {"exists": True}, 200),
-    ("testy@example.com", {"exists": False}, 200),
+    ("notfound@example.com", {"error": "User not found"}, 404),
     ("", {"error": "Missing or invalid email"}, 400),
     ("    ", {"error": "Missing or invalid email"}, 400),
     ("test", {"error": "Invalid email"}, 400),
@@ -42,18 +42,20 @@ def test_exists_registration_request(app, client, verificator, email, value, sta
             assert response.status_code == status_code
             assert response.json == value
 
+            
 
             if value.get("exists") == True:
-                assert verificator.registration_requests.get(email) is not None
-                assert verificator.registration_requests.get(email).get("email") == email
-                assert verificator.registration_requests.get(email).get("username") == "test"
-                assert verificator.registration_requests.get(email).get("password_hash") == "password"
-                assert verificator.registration_requests.get(email).get("role") == "user"
-                assert verificator.registration_requests.get(email).get("code") == "123456"
+                user = users.get_user_by_email(email)
+
+                assert verificator.registration_requests.get(user.id) is not None
+                assert verificator.registration_requests.get(user.id).get("code") == "123456"
+                assert verificator.registration_requests.get(user.id).get("timestamp") is not None
+                assert verificator.registration_requests.get(user.id).get("failures") == 0
 
 @pytest.mark.parametrize("email, value, status_code",  [
     ("test@example.com", {"exists": True}, 200),
     ("testy@example.com", {"exists": False}, 200),
+    ("notfound@example.com", {"error": "User not found"}, 404),
     ("", {"error": "Missing or invalid email"}, 400),
     ("    ", {"error": "Missing or invalid email"}, 400),
     ("test", {"error": "Invalid email"}, 400),
@@ -62,7 +64,7 @@ def test_exists_registration_request(app, client, verificator, email, value, sta
     ("test@example.", {"error": "Invalid email"}, 400),
     ("test@example.c", {"error": "Invalid email"}, 400),
 ])
-def test_exists_change_password_request(app, client, verificator, email, value, status_code):
+def test_exists_change_password_request(db, app, client, verificator, email, value, status_code):
 
     def mock_generate_verification_code():
         return "123456"
@@ -78,7 +80,16 @@ def test_exists_change_password_request(app, client, verificator, email, value, 
 
             verificator.generate_verification_code = mock_generate_verification_code    
 
-            verificator.add_change_password_request("test@example.com", "password")
+            if status_code == 200:
+                user = users.User(username="test", email="test@example.com", password_hash="password", role="user")
+                db.session.add(user)
+                db.session.commit()
+
+                user = users.User(username="test", email="testy@example.com", password_hash="password", role="user")
+                db.session.add(user)
+                db.session.commit()
+
+                verificator.add_change_password_request("test@example.com", "password")
 
             response = client.post(routes.EXISTS_CHANGE_PASSWORD_REQUEST_ROUTE, json={"email": email})
 
@@ -87,14 +98,17 @@ def test_exists_change_password_request(app, client, verificator, email, value, 
 
 
             if value.get("exists") == True:
-                assert verificator.change_password_requests.get(email) is not None
-                assert verificator.change_password_requests.get(email).get("email") == email
-                assert verificator.change_password_requests.get(email).get("new_password") == "password"
-                assert verificator.change_password_requests.get(email).get("code") == "123456"
+                user = users.get_user_by_email(email)
+                assert verificator.change_password_requests.get(user.id) is not None
+                assert verificator.change_password_requests.get(user.id).get("code") == "123456"
+                assert verificator.change_password_requests.get(user.id).get("timestamp") is not None
+                assert verificator.change_password_requests.get(user.id).get("failures") == 0
+                assert verificator.change_password_requests.get(user.id).get("new_password") == "password"
         
 @pytest.mark.parametrize("email, value, status_code",  [
     ("test@example.com", {"exists": True}, 200),
     ("testy@example.com", {"exists": False}, 200),
+    ("notfound@example.com", {"error": "User not found"}, 404),
     ("", {"error": "Missing or invalid email"}, 400),
     ("    ", {"error": "Missing or invalid email"}, 400),
     ("test", {"error": "Invalid email"}, 400),
@@ -103,7 +117,7 @@ def test_exists_change_password_request(app, client, verificator, email, value, 
     ("test@example.", {"error": "Invalid email"}, 400),
     ("test@example.c", {"error": "Invalid email"}, 400),
 ])
-def test_exists_delete_account_request(app, client, verificator, email, value, status_code):
+def test_exists_delete_account_request(db, app, client, verificator, email, value, status_code):
 
     def mock_generate_verification_code():
         return "123456"
@@ -117,7 +131,16 @@ def test_exists_delete_account_request(app, client, verificator, email, value, s
         with app.app_context():
             import core.utils.routes as routes
 
-            verificator.add_delete_account_request("test@example.com")
+            if status_code == 200:
+                user = users.User(username="test", email="test@example.com", password_hash="password", role="user")
+                db.session.add(user)
+                db.session.commit()
+
+                user = users.User(username="test", email="testy@example.com", password_hash="password", role="user")
+                db.session.add(user)
+                db.session.commit()
+
+                verificator.add_delete_account_request("test@example.com")
 
             response = client.post(routes.EXISTS_DELETE_ACCOUNT_REQUEST_ROUTE, json={"email": email})
 
@@ -126,9 +149,11 @@ def test_exists_delete_account_request(app, client, verificator, email, value, s
 
 
             if value.get("exists") == True:
-                assert verificator.delete_account_requests.get(email) is not None
-                assert verificator.delete_account_requests.get(email).get("email") == email
-                assert verificator.delete_account_requests.get(email).get("code") == "123456"
+                user = users.get_user_by_email(email)
+                assert verificator.delete_account_requests.get(user.id) is not None
+                assert verificator.delete_account_requests.get(user.id).get("code") == "123456"
+                assert verificator.delete_account_requests.get(user.id).get("timestamp") is not None
+                assert verificator.delete_account_requests.get(user.id).get("failures") == 0
 
 
 @pytest.mark.parametrize("email, code, value, status_code",  [
@@ -316,11 +341,12 @@ def test_user_registration(client, app, db, verificator, email, password, userna
     with app.app_context():
         import core.utils.routes as routes
 
-        verificator.add_registration_request("alreadyinverificator@example.com", "test", "password", "user")
-
-        user = users.User(username="alreadyregistered", email="alreadyregistered@example.com", password_hash="password", role="user")
-        db.session.add(user)
-        db.session.commit()
+        if email == "alreadyinverificator@example.com":
+            verificator.add_registration_request("alreadyinverificator@example.com", "test", "password", "user")
+        if email == "alreadyregistered@example.com":
+            user = users.User(username="alreadyregistered", email="alreadyregistered@example.com", password_hash="password", role="user")
+            db.session.add(user)
+            db.session.commit()
 
         response = client.post(routes.USER_REGISTRATION_ROUTE, json={"username": username, "email": email, "password": password})
 
@@ -328,16 +354,13 @@ def test_user_registration(client, app, db, verificator, email, password, userna
         assert response.json == value
 
         if status_code == 200:
-            assert verificator.registration_requests.get(email) is not None
-            assert verificator.registration_requests.get(email).get("email") == email
-            assert verificator.registration_requests.get(email).get("username") == username
-            assert encryption.check_hashed_value(password, verificator.registration_requests.get(email).get("password_hash")) == True
-            assert verificator.registration_requests.get(email).get("role") == "user"
-            assert verificator.registration_requests.get(email).get("code") is not None
+            user = users.get_user_by_email(email)
+            assert verificator.registration_requests.get(user.id) is not None
             assert verificator.exists_registration_request(email) == True
-            
-            with pytest.raises(errors.UserNotFoundError):
-                users.get_user_by_email(email)
+            assert verificator.registration_requests.get(user.id).get("code") is not None
+            assert verificator.registration_requests.get(user.id).get("timestamp") is not None
+            assert verificator.registration_requests.get(user.id).get("failures") == 0
+
 
 
 @pytest.mark.parametrize("email, password, value, status_code",  [
@@ -370,10 +393,10 @@ def test_user_login(client, app, db, email, password, value, status_code):
     def mock_decode_token(token):
         return {"sub": "test@example.com"}
 
-    with mock.patch("core.api.auth.create_access_token", side_effect=mock_create_access_token):
-        with mock.patch("core.models.users.check_hashed_value", side_effect=mock_check_hashed_value):
-            with mock.patch("core.api.auth.decode_token", side_effect=mock_decode_token):
-                with mock.patch("core.api.auth.create_refresh_token", side_effect=mock_create_refresh_token):
+    with mock.patch("core.api.users.create_access_token", side_effect=mock_create_access_token):
+        with mock.patch("core.models.users.check_password_hash", side_effect=mock_check_hashed_value):
+            with mock.patch("core.api.users.decode_token", side_effect=mock_decode_token):
+                with mock.patch("core.api.users.create_refresh_token", side_effect=mock_create_refresh_token):
                     with app.app_context():
                         import core.utils.routes as routes
 
@@ -492,12 +515,14 @@ def test_user_change_password(client, app, db, verificator, email, new_password,
         assert response.json == value
 
         if status_code == 200:
-            assert verificator.change_password_requests.get(email) is not None
-            assert verificator.change_password_requests.get(email).get("email") == email
-            assert verificator.change_password_requests.get(email).get("code") is not None
-            assert verificator.change_password_requests.get(email).get("new_password") is not None
+            user = users.get_user_by_email(email)
+            assert verificator.change_password_requests.get(user.id) is not None
+            assert verificator.change_password_requests.get(user.id).get("code") is not None
+            assert verificator.change_password_requests.get(user.id).get("new_password") is not None
             assert verificator.exists_change_password_request(email) == True
-            assert encryption.check_hashed_value(new_password, verificator.change_password_requests[email]["new_password"]) == True
+            assert encryption.check_password_hash(new_password, verificator.change_password_requests[user.id]["new_password"]) == True
+            assert verificator.change_password_requests.get(user.id).get("failures") == 0
+            assert verificator.change_password_requests.get(user.id).get("timestamp") is not None
             
 
 @pytest.mark.parametrize("email, password, value, status_code",  [

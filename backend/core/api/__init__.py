@@ -35,19 +35,16 @@ api.add_resource(users.ExistsRegistrationRequest, routes.EXISTS_REGISTRATION_REQ
 api.add_resource(users.ExistsChangePasswordRequest, routes.EXISTS_CHANGE_PASSWORD_REQUEST_ROUTE)
 api.add_resource(users.ExistsResetPasswordRequest, routes.EXISTS_RESET_PASSWORD_REQUEST_ROUTE)
 api.add_resource(users.ExistsDeleteAccountRequest, routes.EXISTS_DELETE_ACCOUNT_REQUEST_ROUTE)
-
 api.add_resource(users.VerifyRegistrationRequest, routes.VERIFY_REGISTRATION_REQUEST_ROUTE)
 api.add_resource(users.VerifyChangePasswordRequest, routes.VERIFY_CHANGE_PASSWORD_REQUEST_ROUTE)
 api.add_resource(users.VerifyResetPasswordRequest, routes.VERIFY_RESET_PASSWORD_REQUEST_ROUTE)
 api.add_resource(users.VerifyDeleteAccountRequest, routes.VERIFY_DELETE_ACCOUNT_REQUEST_ROUTE)
-
 api.add_resource(users.UserChangeUsername, routes.CHANGE_USERNAME_ROUTE)
 api.add_resource(users.UserRegistration, routes.USER_REGISTRATION_ROUTE)
 api.add_resource(users.UserLogin, routes.USER_LOGIN_ROUTE)
 api.add_resource(users.UserChangePassword, routes.CHANGE_USER_PASSWORD_ROUTE)
-
 api.add_resource(users.UserCheckPassword, routes.CHECK_PASSWORD_ROUTE)
 api.add_resource(users.UserInformation, routes.USER_INFORMATION_ROUTE)
-
 api.add_resource(users.TokenRefresh, routes.TOKEN_REFRESH_ROUTE)
 api.add_resource(users.TokenEmail, routes.TOKEN_EMAIL_ROUTE)
+api.add_resource(users.ExistsUser, routes.EXISTS_USER_ROUTE)
