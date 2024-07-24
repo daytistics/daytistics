@@ -1,5 +1,5 @@
 from flask import Flask
-from src.extensions import db
+from core.extensions import db
 from config import Config
 from flask_migrate import Migrate
 from dotenv import load_dotenv
@@ -17,8 +17,8 @@ def create_app(config_class=Config):
     jwt = JWTManager(app)
 
     with app.app_context():
-        import src.models  
-        import src.api
+        import core.models  
+        import core.api
 
         try:
             db.create_all()  

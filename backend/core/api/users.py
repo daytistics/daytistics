@@ -1,11 +1,11 @@
 from flask import current_app
-from src.services.verify import is_valid_verification_code
-from src.extensions import verificator
-import src.models.users as users
-from src.api.base import BaseResource
-from src.utils.emails import is_valid_email
-from src.utils.users import is_valid_username, is_good_password
-from flask_jwt_extended import create_access_token, decode_token, get_jwt_identity, create_refresh_token, jwt_required
+from core.extensions import verificator
+from core.models import users
+from core.utils.emails import is_valid_email
+from core.utils.users import is_valid_username, is_good_password
+from core.utils.verification import is_valid_verification_code
+from flask_jwt_extended import create_access_token, get_jwt_identity, create_refresh_token, jwt_required
+from core.api import BaseResource
 
 class ExistsRegistrationRequest(BaseResource):
     def __init__(self):
@@ -25,8 +25,7 @@ class ExistsRegistrationRequest(BaseResource):
 
             return {"exists": verificator.exists_registration_request(email)}, 200
         except Exception as e:
-            current_app.logger.exception(f"Unhandled exception in ExistsRegistrationRequest (POST: {args})")
-            return {"error": str(e)}, 500
+            self.handle_exception(e, args)
 
 class ExistsChangePasswordRequest(BaseResource):
     def __init__(self):
@@ -46,8 +45,7 @@ class ExistsChangePasswordRequest(BaseResource):
 
             return {"exists": verificator.exists_change_password_request(email)}, 200
         except Exception as e:
-            current_app.logger.exception(f"Unhandled exception in ExistsChangePasswordRequest (POST: {args})")
-            return {"error": str(e)}, 500
+            self.handle_exception(e, args)
 
 class ExistsResetPasswordRequest(BaseResource):
     def __init__(self):
@@ -67,8 +65,7 @@ class ExistsResetPasswordRequest(BaseResource):
 
             return {"exists": verificator.exists_reset_password_request(email)}, 200
         except Exception as e:
-            current_app.logger.exception(f"Unhandled exception in ExistsResetPasswordRequest (POST: {args})")
-            return {"error": str(e)}, 500
+            self.handle_exception(e, args)
         
 class ExistsDeleteAccountRequest(BaseResource):
     def __init__(self):
@@ -88,8 +85,7 @@ class ExistsDeleteAccountRequest(BaseResource):
 
             return {"exists": verificator.exists_delete_account_request(email)}, 200
         except Exception as e:
-            current_app.logger.exception(f"Unhandled exception in ExistsDeleteAccountRequest (POST: {args})")
-            return {"error": str(e)}, 500
+            self.handle_exception(e, args)
 
 class VerifyRegistrationRequest(BaseResource):
     def __init__(self):
@@ -124,8 +120,7 @@ class VerifyRegistrationRequest(BaseResource):
             return {"message": "Verified registration request"}, 200
 
         except Exception as e:
-            current_app.logger.exception(f"Unhandled exception in VerifyRegistrationRequest (POST: {args})")
-            return {"error": str(e)}, 500
+            self.handle_exception(e, args)
 
 class VerifyChangePasswordRequest(BaseResource):
     def __init__(self):
@@ -158,8 +153,7 @@ class VerifyChangePasswordRequest(BaseResource):
             return {"message": "Verified change password request"}, 200
 
         except Exception as e:
-            current_app.logger.exception(f"Unhandled exception in VerifyChangePasswordRequest (POST: {args})")
-            return {"error": str(e)}, 500
+            self.handle_exception(e, args)
 
 class VerifyResetPasswordRequest(BaseResource):
     def __init__(self):
@@ -192,8 +186,7 @@ class VerifyResetPasswordRequest(BaseResource):
             return {"message": "Verified reset password request"}, 200
 
         except Exception as e:
-            current_app.logger.exception(f"Unhandled exception in VerifyResetPasswordRequest (POST: {args})")
-            return {"error": str(e)}, 500
+            self.handle_exception(e, args)
         
 class VerifyDeleteAccountRequest(BaseResource):
     def __init__(self):
@@ -226,8 +219,7 @@ class VerifyDeleteAccountRequest(BaseResource):
             return {"message": "Verified delete account request"}, 200
 
         except Exception as e:
-            current_app.logger.exception(f"Unhandled exception in VerifyDeleteAccountRequest (POST: {args})")
-            return {"error": str(e)}, 500
+            self.handle_exception(e, args)
 
 class UserRegistration(BaseResource):
     def __init__(self):
@@ -267,9 +259,7 @@ class UserRegistration(BaseResource):
             users.register_user(args["username"], args["password"], args["email"])
             return {"message": "Registration request sent"}, 200
         except Exception as e:
-            current_app.logger.exception(f"Unhandled exception in UserRegistration (POST: {args})")
-
-            return {"error": str(e)}, 500
+            self.handle_exception(e, args)
 
 class UserLogin(BaseResource):
     def __init__(self):
@@ -298,12 +288,7 @@ class UserLogin(BaseResource):
             refresh_token = create_refresh_token(identity=email)
             return {"access_token": access_token, "refresh_token": refresh_token}, 200
         except Exception as e:
-
-            with open("error.log", "a") as f:
-                f.write(str(e))
-
-            current_app.logger.exception(f"Unhandled exception in UserLogin (POST: {args})")
-            return {"error": str(e)}, 500
+            self.handle_exception(e, args)
 
 class TokenRefresh(BaseResource):
 
@@ -325,11 +310,7 @@ class TokenRefresh(BaseResource):
         except exceptions.InvalidTokenError:
             return {"error": "Invalid token"}, 401
         except Exception as e:
-            current_app.logger.exception(f"Unhandled exception in TokenRefresh")
-
-
-
-            return {"error": str(e)}, 500
+            self.handle_exception(e)
 
 class TokenEmail(BaseResource):
     def __init__(self):
@@ -377,7 +358,7 @@ class UserChangeUsername(BaseResource):
             users.change_username(email, new_username)
             return {"message": "Username changed successfully"}, 200
         except Exception as e:
-            return {"error": str(e)}, 500        
+            self.handle_exception(e, args)    
         
 class UserChangePassword(BaseResource):
     def __init__(self):
@@ -410,6 +391,47 @@ class UserChangePassword(BaseResource):
             users.change_user_password(email, new_password)
             return {"message": "Change password request sent"}, 200
         except Exception as e:
-            current_app.logger.exception(f"Unhandled exception in UserChangePassword (POST: {args})")
+            self.handle_exception(e, args)
 
-            return {"error": str(e)}, 500
+class UserCheckPassword(BaseResource):
+    def __init__(self):
+        super().__init__()
+        self.parser.add_argument("email", type=str, required=True, help="Email is required")
+        self.parser.add_argument("password", type=str, required=True, help="Password is required")
+
+    def post(self):
+        args = self.parser.parse_args()
+        email, password = args["email"], args["password"]
+
+        try:
+            if email == None or password == None or not email.strip() or not password.strip():
+                return {"error": "Missing or invalid input data"}, 400
+            
+            if not is_valid_email(email):
+                return {"error": "Invalid email"}, 400
+            
+            if not users.is_user_existing_by_email(email):
+                return {"error": "User not found"}, 404
+            
+            if not users.check_user_password(email, password):
+                return {"error": "Invalid password"}, 401
+
+            return {"message": "Password is correct"}, 200
+        except Exception as e:
+            self.handle_exception(e, args)
+
+class UserInformation(BaseResource):
+    def __init__(self):
+        super().__init__()
+
+    @jwt_required()
+    def get(self):
+        try:
+            email = get_jwt_identity()
+            user = users.get_user_by_email(email)
+            created_at = user.created_at.strftime("%Y-%m-%d %H:%M:%S")
+            role = user.role
+            id = user.id
+            return {"id": id, "username": user.username, "email": user.email, "created_at": created_at, "role": role}, 200
+        except Exception as e:
+            self.handle_exception(e)

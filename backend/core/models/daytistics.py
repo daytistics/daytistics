@@ -1,4 +1,4 @@
-from src import db
+from core import db
 
 
 class Daytistic(db.Model):

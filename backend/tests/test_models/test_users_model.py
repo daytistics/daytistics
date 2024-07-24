@@ -1,12 +1,10 @@
-from flask import Flask
-from src.models import User, users
+from core.models import User, users
 import datetime
 import os
 import pytest
-import sys
-import src.errors as errors
+import core.errors as errors
 import unittest.mock as mock
-from src.utils.encryption import encrypt_string
+from core.utils.encryption import check_password_hash, generate_password_hash
 
 
 @pytest.mark.parametrize(
@@ -101,10 +99,6 @@ from src.utils.encryption import encrypt_string
 )
 def test_register_user(app, verificator, username, password, email, exception):
 
-    if os.environ.get("ENVIRONMENT") != "testing":
-        pytest.skip(
-            "Tests are running against the production database. Refusing to run tests."
-        )
 
     with mock.patch("src.models.users.encrypt_string") as mock_encrypt:
 
@@ -149,10 +143,6 @@ def test_register_user(app, verificator, username, password, email, exception):
 
 def test_is_user_existing_by_id(app, db):
 
-    if os.environ.get("ENVIRONMENT") != "testing":
-        pytest.skip(
-            "Tests are running against the production database. Refusing to run tests."
-        )
 
     with app.app_context():
         user = User(
@@ -180,10 +170,6 @@ def test_is_user_existing_by_id(app, db):
 )
 def test_is_user_existing_by_email(app, db, email, exception):
 
-    if os.environ.get("ENVIRONMENT") != "testing":
-        pytest.skip(
-            "Tests are running against the production database. Refusing to run tests."
-        )
 
     with app.app_context():
         user = User(
@@ -216,10 +202,6 @@ def test_is_user_existing_by_email(app, db, email, exception):
 )
 def test_get_user_by_id(app, db, user_id, exception):
 
-    if os.environ.get("ENVIRONMENT") != "testing":
-        pytest.skip(
-            "Tests are running against the production database. Refusing to run tests."
-        )
 
     with app.app_context():
 
@@ -250,10 +232,6 @@ def test_get_user_by_id(app, db, user_id, exception):
 )
 def test_get_user_by_email(app, db, email, exception):
 
-    if os.environ.get("ENVIRONMENT") != "testing":
-        pytest.skip(
-            "Tests are running against the production database. Refusing to run tests."
-        )
 
     with app.app_context():
         user = User(
@@ -284,9 +262,6 @@ def test_get_user_by_email(app, db, email, exception):
     ],
 )
 def test_change_user_role(app, db, email, new_role, exception):
-
-    if os.environ.get("ENVIRONMENT") != "testing":
-        pytest.skip("Tests are running against the production database. Refusing to run tests.")
 
     with app.app_context():
         user = User(username="test_user", password_hash="ErdbeerKuchen00!", email="test@example.com")
@@ -323,12 +298,6 @@ def test_change_user_role(app, db, email, new_role, exception):
     ],
 )
 def test_delete_user(app, db, verificator, email, exception):
-
-    if os.environ.get("ENVIRONMENT") != "testing":
-        pytest.skip(
-            "Tests are running against the production database. Refusing to run tests."
-        )
-
     def mock_add_delete_account_request(email):
         verificator.delete_account_requests[email] = {
             "code": "123456",
@@ -347,7 +316,7 @@ def test_delete_user(app, db, verificator, email, exception):
 
             user = User(
                 username="test_user",
-                password_hash=encrypt_string("ErdbeerKuchen00!"),
+                password_hash=generate_password_hash("ErdbeerKuchen00!"),
                 email="test@example.com",
             )
             db.session.add(user)
@@ -378,14 +347,9 @@ def test_delete_user(app, db, verificator, email, exception):
 )
 def test_check_user_password(app, db, email, password, exception):
 
-    if os.environ.get("ENVIRONMENT") != "testing":
-        pytest.skip(
-            "Tests are running against the production database. Refusing to run tests."
-        )
-
     with app.app_context():
 
-        hashed_password = encrypt_string(password) if password else None
+        hashed_password = generate_password_hash(password) if password else None
         user = User(
             username=password, password_hash=hashed_password, email="test@example.com"
         )
@@ -457,10 +421,6 @@ def test_check_user_password(app, db, email, password, exception):
 )
 def test_change_user_pasword(app, db, verificator, email, new_password, exception):
 
-    if os.environ.get("ENVIRONMENT") != "testing":
-        pytest.skip(
-            "Tests are running against the production database. Refusing to run tests."
-        )
 
     def mock_add_change_password_request(email, new_password):
         verificator.change_password_requests[email] = {
@@ -513,11 +473,6 @@ def test_change_user_pasword(app, db, verificator, email, new_password, exceptio
     ],
 )
 def test_change_username(app, db, email, new_username, exception):
-
-    if os.environ.get("ENVIRONMENT") != "testing":
-        pytest.skip(
-            "Tests are running against the production database. Refusing to run tests."
-        )
 
     with app.app_context():
 

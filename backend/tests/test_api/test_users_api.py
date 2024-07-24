@@ -1,12 +1,11 @@
 import pytest
 from unittest import mock
-import src.services.verify as verify
-import src.models.users as users
-import src.errors as errors
-import src.utils.encryption as encryption
+import core.services.verification as verification
+import core.models.users as users
+import core.errors as errors
+import core.utils.encryption as encryption
 from flask_jwt_extended import create_access_token, create_refresh_token
-from datetime import timedelta
-
+from core.utils.encryption import generate_password_hash
 
 @pytest.mark.parametrize("email, value, status_code",  [
     ("test@example.com", {"exists": True}, 200),
@@ -25,14 +24,14 @@ def test_exists_registration_request(app, client, verificator, email, value, sta
         return "123456"
 
     with mock.patch.object(
-        verify,
+        verification,
         "generate_verification_code",
         side_effect=mock_generate_verification_code,
     ):
         
         
         with app.app_context():
-            import src.api.routes as routes
+            import core.utils.routes as routes
     
             verificator.generate_verification_code = mock_generate_verification_code
 
@@ -69,13 +68,13 @@ def test_exists_change_password_request(app, client, verificator, email, value, 
         return "123456"
 
     with mock.patch.object(
-        verify,
+        verification,
         "generate_verification_code",
         side_effect=mock_generate_verification_code,
     ):
 
         with app.app_context():
-            import src.api.routes as routes
+            import core.utils.routes as routes
 
             verificator.generate_verification_code = mock_generate_verification_code    
 
@@ -110,13 +109,13 @@ def test_exists_delete_account_request(app, client, verificator, email, value, s
         return "123456"
 
     with mock.patch.object(
-        verify,
+        verification,
         "generate_verification_code",
         side_effect=mock_generate_verification_code,
     ):
 
         with app.app_context():
-            import src.api.routes as routes
+            import core.utils.routes as routes
 
             verificator.add_delete_account_request("test@example.com")
 
@@ -156,13 +155,13 @@ def test_verify_registration_request(app, client, verificator, email, code, valu
         return "123456"
 
     with mock.patch.object(
-        verify,
+        verification,
         "generate_verification_code",
         side_effect=mock_generate_verification_code,
     ):
         
         with app.app_context():
-            import src.api.routes as routes
+            import core.utils.routes as routes
     
             verificator.add_registration_request("test@example.com", "test", "password", "user")
 
@@ -204,13 +203,13 @@ def test_verify_change_password_request(app, db, client, verificator, email, cod
         return "123456"
 
     with mock.patch.object(
-        verify,
+        verification,
         "generate_verification_code",
         side_effect=mock_generate_verification_code,
     ):
         
         with app.app_context():
-            import src.api.routes as routes
+            import core.utils.routes as routes
 
 
         
@@ -258,13 +257,13 @@ def test_verify_delete_account_request(app, db, client, verificator, email, code
         return "123456"
 
     with mock.patch.object(
-        verify,
+        verification,
         "generate_verification_code",
         side_effect=mock_generate_verification_code,
     ):
         
         with app.app_context():
-            import src.api.routes as routes
+            import core.utils.routes as routes
 
 
         
@@ -315,7 +314,7 @@ def test_verify_delete_account_request(app, db, client, verificator, email, code
 ])
 def test_user_registration(client, app, db, verificator, email, password, username, value, status_code):
     with app.app_context():
-        import src.api.routes as routes
+        import core.utils.routes as routes
 
         verificator.add_registration_request("alreadyinverificator@example.com", "test", "password", "user")
 
@@ -371,12 +370,12 @@ def test_user_login(client, app, db, email, password, value, status_code):
     def mock_decode_token(token):
         return {"sub": "test@example.com"}
 
-    with mock.patch("src.api.auth.create_access_token", side_effect=mock_create_access_token):
-        with mock.patch("src.models.users.check_hashed_value", side_effect=mock_check_hashed_value):
-            with mock.patch("src.api.auth.decode_token", side_effect=mock_decode_token):
-                with mock.patch("src.api.auth.create_refresh_token", side_effect=mock_create_refresh_token):
+    with mock.patch("core.api.auth.create_access_token", side_effect=mock_create_access_token):
+        with mock.patch("core.models.users.check_hashed_value", side_effect=mock_check_hashed_value):
+            with mock.patch("core.api.auth.decode_token", side_effect=mock_decode_token):
+                with mock.patch("core.api.auth.create_refresh_token", side_effect=mock_create_refresh_token):
                     with app.app_context():
-                        import src.api.routes as routes
+                        import core.utils.routes as routes
 
                         user = users.User(username="test", email="test@example.com", password_hash="TollesPassword123!", role="user")
                         db.session.add(user)
@@ -443,7 +442,7 @@ def test_change_username(client, app, db, email, new_username, value, status_cod
     db.session.commit()
 
     with app.app_context():
-        import src.api.routes as routes
+        import core.utils.routes as routes
 
         response = client.post(routes.CHANGE_USERNAME_ROUTE, json={"email": email, "new_username": new_username})
 
@@ -475,7 +474,7 @@ def test_change_username(client, app, db, email, new_username, value, status_cod
 ])
 def test_user_change_password(client, app, db, verificator, email, new_password, value, status_code):
     with app.app_context():
-        import src.api.routes as routes
+        import core.utils.routes as routes
 
         user = users.User(username="test", email="test@example.com", password_hash="password", role="user")
         db.session.add(user)
@@ -500,3 +499,56 @@ def test_user_change_password(client, app, db, verificator, email, new_password,
             assert verificator.exists_change_password_request(email) == True
             assert encryption.check_hashed_value(new_password, verificator.change_password_requests[email]["new_password"]) == True
             
+
+@pytest.mark.parametrize("email, password, value, status_code",  [
+    ("test@example.com", "Password123!", {"message": "Password is correct"}, 200),
+    ("   ", "Password123!", {"error": "Missing or invalid input data"}, 400),
+    ("", "Password123!", {"error": "Missing or invalid input data"}, 400),
+    (None, "Password123!", {"error": "Missing or invalid input data"}, 400),
+    ("test@example.com", "", {"error": "Missing or invalid input data"}, 400),
+    ("test@example.com", "  ", {"error": "Missing or invalid input data"}, 400),
+    ("test@example.com", None, {"error": "Missing or invalid input data"}, 400),
+    ("notfound@example.com", "Password123!", {"error": "User not found"}, 404),
+    ("test", "Password123!", {"error": "Invalid email"}, 400),
+    ("test@", "Password123!", {"error": "Invalid email"}, 400),
+    ("test@example", "Password123!", {"error": "Invalid email"}, 400),
+    ("test@example.", "Password123!", {"error": "Invalid email"}, 400),
+    ("test@example.c", "Password123!", {"error": "Invalid email"}, 400),
+    ("test.com", "Password123!", {"error": "Invalid email"}, 400),
+    ("test@example.com", "Passwort321!", {"error": "Invalid password"}, 401),
+])
+def test_check_password(client, app, db, email, password, value, status_code):
+    with app.app_context():
+        import core.utils.routes as routes
+
+        user = users.User(username="test", email="test@example.com", password_hash=generate_password_hash("Password123!"), role="user")
+        db.session.add(user)
+        db.session.commit()
+
+        response = client.post(routes.CHECK_PASSWORD_ROUTE, json={"email": email, "password": password})
+
+        assert response.status_code == status_code
+        assert response.json == value
+
+        if status_code == 200:
+            assert response.json["message"] == "Password is correct"
+
+
+def test_user_information(client, db):
+    # Anfrage an den TokenEmail-Endpunkt senden
+    preset_refresh_token = create_access_token(identity="test@example.com")
+
+    user = users.User(username="test", email="test@example.com", role="user")
+    db.session.add(user)
+    db.session.commit()
+
+    from core.utils.routes import USER_INFORMATION_ROUTE
+    response = client.get(USER_INFORMATION_ROUTE, headers={'Authorization': f'Bearer {preset_refresh_token}'})
+
+    assert response.status_code == 200
+    assert response.json is not None
+    assert response.json.get("email") == "test@example.com"
+    assert response.json.get("username") == "test"
+    assert response.json.get("role") == "user"
+    assert response.json.get("created_at") is not None
+    assert response.json.get("id") is not None

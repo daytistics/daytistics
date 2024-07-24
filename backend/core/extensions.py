@@ -1,6 +1,6 @@
 from flask_sqlalchemy import SQLAlchemy
 db = SQLAlchemy()
 
-from src.services.verify import Verificator
+from core.services.verification import Verificator
 verificator = Verificator()
 

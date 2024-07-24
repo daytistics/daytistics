@@ -1,12 +1,9 @@
 import pytest
 import datetime
-from src.services.verify import (
-    Verificator,
-    generate_verification_code,
-    is_valid_verification_code,
-)
-import src.errors as errors
-from unittest.mock import patch, MagicMock
+from core.services.verification import Verificator
+from core.utils.verification import generate_verification_code, is_valid_verification_code
+import core.errors as errors
+from unittest.mock import patch
 
 
 @pytest.mark.parametrize(

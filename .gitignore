@@ -6,7 +6,6 @@ __pycache__/
 # C extensions
 *.so
 
-tests.env
 .gpt-runner/
 
 # Distribution / packaging
@@ -126,7 +125,6 @@ celerybeat.pid
 *.sage.py
 
 # Environments
-.env
 .venv
 env/
 venv/

@@ -1,19 +1,21 @@
 import pytest
-from src import create_app
+from core import create_app
 from dotenv import load_dotenv
-from src.extensions import db as _db
-from src.services.verify import Verificator, generate_verification_code
+from core.extensions import db as _db
+from core.services.verification import Verificator, generate_verification_code
 from config import TestConfig
-from src.models import User
+from core.models import User
 from flask import Flask
 from flask_restful import Api
 from flask_jwt_extended import create_refresh_token
-
 
 @pytest.fixture(scope='session')
 def app():
     app = create_app(TestConfig())
     with app.app_context():
+
+        if not bool(app.config['TESTING']):
+            raise ValueError("Testing is not set to True. Aborting tests.")
         yield app
 
 @pytest.fixture(scope='session')
@@ -53,16 +55,6 @@ def reset_db(db):
     db.create_all()
     yield
     db.session.remove()
-    db.drop_all()
-
-@pytest.fixture(scope='function')
-def test_user(db):
-    user = User(username='test_user', email='test@example.com', password_hash='TestPassword1!')
-    db.session.add(user)
-    db.session.commit()
-    yield user
-    db.session.delete(user)
-    db.session.commit()
     db.drop_all()
 
 @pytest.fixture

@@ -1,8 +1,9 @@
-import random, threading
+import threading
 from datetime import datetime, timedelta
-import src.errors as errors
+import core.errors as errors
 import time
-from src.extensions import db
+from core.extensions import db
+from core.utils.verification import generate_verification_code
 
 
 class Verificator:
@@ -142,7 +143,7 @@ class Verificator:
             raise errors.VerificationError("No registration request with this email exists.")
         
         if self.registration_requests[email]["code"] == code:
-            from src.models.users import User
+            from core.models.users import User
             user = User(username=self.registration_requests[email]["username"], email=self.registration_requests[email]["email"], password_hash=self.registration_requests[email]["password_hash"], role=self.registration_requests[email]["role"])
             db.session.add(user)
             db.session.commit()
@@ -156,7 +157,7 @@ class Verificator:
             raise errors.VerificationError("No change password request with this email exists.")
         
         if self.change_password_requests[email]["code"] == code:
-            from src.models.users import User
+            from core.models.users import User
 
             User.query.filter_by(email=email).update(dict(password_hash=self.change_password_requests[email]["new_password"]))
             db.session.commit()
@@ -170,7 +171,7 @@ class Verificator:
             raise errors.VerificationError("No delete account request with this email exists.")
         
         if self.delete_account_requests[email]["code"] == code:
-            from src.models.users import User
+            from core.models.users import User
             User.query.filter_by(email=email).delete()
             db.session.commit()
             del self.delete_account_requests[email]
@@ -183,7 +184,7 @@ class Verificator:
             raise errors.VerificationError("No reset password request with this email exists.")
         
         if self.reset_password_requests[email]["code"] == code:
-            from src.models.users import User
+            from core.models.users import User
 
             User.query.filter_by(email=email).update(dict(password_hash=self.reset_password_requests[email]["new_password"]))
             db.session.commit()
@@ -192,16 +193,3 @@ class Verificator:
         else:
             return False
         
-def generate_verification_code() -> str:
-        
-        """
-        Generates a verification code.
-
-        Returns:
-            str: The generated verification code.
-        """
-
-        return str(random.randint(100000, 999999))
-
-def is_valid_verification_code(code: str) -> bool:
-    return code.isnumeric() and len(code) == 6

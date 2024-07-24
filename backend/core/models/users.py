@@ -1,10 +1,9 @@
 from datetime import datetime, timezone
-from src.utils.whitelist import is_string_content_allowed
-from src.utils.users import is_valid_username, is_good_password
-from src.utils.emails import is_valid_email, send_registration_request_email
-from src.extensions import db, verificator
-import src.errors as errors
-from src.utils.encryption import encrypt_string, check_hashed_value
+from core.utils.users import is_valid_username, is_good_password
+from core.utils.emails import is_valid_email, send_registration_request_email
+from core.extensions import db, verificator
+import core.errors as errors
+from core.utils.encryption import check_password_hash, generate_password_hash
 
 class User(db.Model):
     """
@@ -125,15 +124,12 @@ def register_user(username: str, password: str, email: str) -> None:
     if is_user_existing_by_email(email):
         raise errors.EmailInUseError("Email is already in use")
 
-    if not is_string_content_allowed(username):
-        raise errors.ExplicitContentError("Username contains explicit content")
-
     if not is_good_password(password):
         raise errors.BadPasswordError(
             "Password is too weak or invalid (must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, one digit, and one special character)"
         )
 
-    code = verificator.add_registration_request(email, username, encrypt_string(password), "user")
+    code = verificator.add_registration_request(email, username, generate_password_hash(password), "user")
     send_registration_request_email(email, code)
 
 def change_user_role(email: str, new_role: str) -> bool:  
@@ -183,7 +179,7 @@ def check_user_password(email: str, password: str) -> bool:
 
     
 
-    is_correct = check_hashed_value(password, user.password_hash)
+    is_correct = check_password_hash(password, user.password_hash)
 
     return is_correct
 
@@ -206,7 +202,7 @@ def change_user_password(email: str, new_password: str) -> None:
 
     user = get_user_by_email(email)
 
-    verificator.add_change_password_request(user.email, encrypt_string(new_password))
+    verificator.add_change_password_request(user.email, generate_password_hash(new_password))
     # TODO: Send verification email
 
 def change_username(email: str, new_username: str) -> User or None:  # type: ignore
@@ -224,9 +220,6 @@ def change_username(email: str, new_username: str) -> User or None:  # type: ign
         raise errors.InvalidNameError(
             "Username is invalid (must be between 3 and 20 characters and alphanumeric)"
         )
-
-    if not is_string_content_allowed(new_username):
-        raise errors.ExplicitContentError("Username contains explicit content")
 
     user = get_user_by_email(email)
 

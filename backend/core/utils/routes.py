@@ -14,6 +14,9 @@ DELETE_USER_ACCOUNT_ROUTE = "/user/delete-account"
 CHANGE_USER_EMAIL_ROUTE = "/user/change-email"
 CHANGE_USERNAME_ROUTE = "/user/change-username"
 
+CHECK_PASSWORD_ROUTE = "/user/check-password"
+USER_INFORMATION_ROUTE = "/user"
+
 USER_REGISTRATION_ROUTE = "/user/register"
 USER_LOGIN_ROUTE = "/user/login"
 

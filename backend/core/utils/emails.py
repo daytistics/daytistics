@@ -46,3 +46,4 @@ def send_registration_request_email(to: str, code: str) -> None:
         body=f"Hallo {to},\n\nVielen Dank für Deine Registrierung bei Daytistics. Bitte bestätige Deine E-Mail-Adresse, indem Du auf den folgenden Link klickst: http://localhost:5000/verify/{code}\n\nAlternativ kannst du auch den folgenden Code im Browser eingeben: {code} \n\nMit freundlichen Grüßen,\nIhr Daytistics-Team"
         )
     
+    
