@@ -6,7 +6,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}My Website{% endblock %}</title>
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="description" content="Daytistics - Erfolgreiche Tage durch Daten">
+    <meta name="author" content="Adfectatio">
+    <link rel="icon" type="image/x-icon" href="{% static 'images/logo.png' %}">
+    <title>{% block title %}Daytistics - Erfolgreiche Tage durch Daten"{% endblock %}</title>
     {% tailwind_css %}
 
     <script src="https://unpkg.com/htmx.org@2.0.1"></script>
@@ -17,23 +21,19 @@
 </head>
 
 <body hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}' class="font-mono">
-    <nav>
+    {% comment %} <nav>
         {% include "header.html" %}
     </nav>
 
-    {% if request.path == '/' %}
-        <header>
-            {% include "home/hero.html" %}
-        </header>
-    {% endif %}
-
-    <main>
+    <main class="text-lg">
         {% block content %}
         {% endblock %}
     </main>
 
     <footer>
         {% include "footer.html" %}
-    </footer>
+    </footer> {% endcomment %}
+
+    {% block content %}{% endblock %}
 </body>
 </html>

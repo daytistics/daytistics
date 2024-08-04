@@ -4,6 +4,16 @@ from django.contrib.auth.models import AbstractUser
 class CustomUser(AbstractUser):
     activities = models.ManyToManyField('main.Activity', related_name='users', blank=True)
 
+    def get_todays_activities(self):
+        from main.models import Daytistic
+        import datetime
+        daytistic = Daytistic.objects.filter(user=self, date__date=datetime.date.today())
+
+        if daytistic.exists():
+            return daytistic[0].activities
+        else:
+            return None
+
     def save(self, *args, **kwargs):
         is_new = self.pk is None
         super().save(*args, **kwargs)

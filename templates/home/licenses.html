@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<nav>
+    {% include "navbar.html" %}
+</nav>
+
+<main class="flex flex-col justify-center align-middle m-8 text-center md:text-left" x-data>
+    <h1 class="text-4xl font-bold mb-1">Lizenzen</h1>
+    <h2 class="text-xl font-bold mt-3">Programmier- & Markupsprachen</h2>
+
+    <ul class="mb-3">
+        <li><a href="https://www.python.org/about/legal/" class="text-blue-400">Python</a> - Python Software Foundation License</li>
+        <li><a href="" class="text-blue-400">HTML</a> - WHATWG License</li>
+        <li><a href="https://www.w3.org/Style/CSS/" class="text-blue-400">CSS</a> - W3C License</li>
+        <li><a href="" class="text-blue-400">JavaScript</a> - MIT License</li>
+        <li><a href="https://www.typescriptlang.org/" class="text-blue-400">TypeScript</a> - Apache 2.0 License</li>
+    </ul>
+
+    <h2 class="text-xl font-bold">Python Bibliotheken</h2>
+    <ul class="mb-3">
+        <li><a href="https://www.djangoproject.com/" class="text-blue-400">Django</a> - BSD License</li>
+        <li><a href="https://github.com/pennersr/django-allauth" class="text-blue-400">Django-Allauth</a> - MIT License</li>
+        <li><a href="https://github.com/timonweb/django-tailwind" class="text-blue-400">Django-Tailwind</a> - MIT License</li>
+        <li><a href="https://github.com/EmilStenstrom/django-components/" class="text-blue-400">Django-Components</a> - MIT License</li>
+        <li><a href="https://github.com/adamchainz/django-htmx" class="text-blue-400">Django-HTMX</a> - BSD License</li>
+        <li><a href="https://github.com/jazzband/django-widget-tweaks" class="text-blue-400">Django-Widget-Tweaks</a> - BSD License</li>
+    </ul>
+
+    <h2 class="text-xl font-bold">JavaScript Bibliotheken</h2>
+    <ul class="mb-3">
+        <li><a href="https://tailwindcss.com/" class="text-blue-400">Tailwind CSS</a> - MIT License</li>
+        <li><a href="https://alpinejs.dev/" class="text-blue-400">Alpine.js</a> - MIT License</li>
+        <li><a href="https://htmx.org/" class="text-blue-400">HTMX</a> - BSD License</li>
+    </ul>
+
+    <h2 class="text-xl font-bold">UI Bibliotheken</h2>
+    <ul class="mb-3">
+        <li><a href="https://uiverse.io/" class="text-blue-400">UIVerse</a> - MIT License</li>
+        <li><a href="https://componentland.com/" class="text-blue-400">ComponentLand</a> - MIT License</li>
+    </ul>
+
+    <h2 class="text-xl font-bold">Grafiken</h2>
+    <ul class="mb-3">
+        <li><a href="https://www.svgrepo.com/" class="text-blue-400">SVGRepo</a> - Various Licenses</li>
+        <li><a href="https://deepai.org/" class="text-blue-400">DeepAI</a> - Custom License</li>
+    </ul>
+
+    <h2 class="text-2xl font-bold my-3">Fehlende Komponenten</h2>
+    <p>
+        Sollten Sie auf Komponenten stoßen, die nicht in dieser Liste aufgeführt sind oder fehlerhaft lizensiert sind, kontaktieren Sie uns bitte unter <a href="mailto:dev@daytistics.de" class="text-blue-400">dev@daytistics.de</a>. Wir werden uns umgehend um die Aufnahme der fehlenden Komponenten kümmern.
+    </p>
+</main>
+
+<footer>
+    {% include "footer.html" %}
+</footer>
+{% endblock %}
+
+

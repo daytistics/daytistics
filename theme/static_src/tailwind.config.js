@@ -41,6 +41,7 @@ module.exports = {
          */
         // '../../**/*.py'
     ],
+    safelist: ['text-5xl', 'text-6xl', 'text-7xl', 'text-8xl', 'text-9xl'],
     theme: {
         extend: {
             fontFamily: {
