@@ -1,0 +1,11 @@
+1. Aktuelle User Funktionen auf neues Return-System umziehen (key value paare umsetzen // error fields -> im frontend gleichbleibende funktionalität?)
+
+2. Seiten sperren bei Rejection 
+
+3. Resenden des Verification Tokens wirft einen 400 { error: "Missing or invalid email" } -> Da Token invalid :: Grund ist Token Ablauf -> Wieso? Ist das gut?
+
+4. Bei Registrierung, Error 400 auf http://localhost:3000/api/user/exists 
+
+[...] Verifikation fertigstellen (v.a im Bezug auf Rejections & Failures)
+
+-->> TESTS SCHREIBEN (wenn mit Funktionsweise im Frontend zufrieden)

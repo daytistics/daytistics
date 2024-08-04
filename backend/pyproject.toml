@@ -28,7 +28,11 @@ requests = "^2.32.3"
 pytest-mock = "^3.14.0"
 pyjwt = "^2.8.0"
 flask-jwt-extended = "^4.6.0"
+apscheduler = "^3.10.4"
 
+
+[tool.poetry.group.dev.dependencies]
+ruff = "^0.5.4"
 
 [build-system]
 requires = ["poetry-core"]

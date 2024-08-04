@@ -1,6 +1,6 @@
 <script lang="ts" setup>
-import { ref, onMounted } from 'vue';
-import { getEmailByToken, checkAuth } from '@/utils/rest/Users';
+import { ref, onMounted, onBeforeMount } from 'vue';
+import { getEmailByToken, checkAuth, isUserVerified } from '@/utils/rest/users';
 import { useToast } from 'vue-toastification';
 import axios from 'axios';
 import { useRouter } from 'vue-router';
@@ -8,8 +8,15 @@ import { useRouter } from 'vue-router';
 const toast = useToast();
 const router = useRouter();
 
-onMounted(() => {
+const isVerified = ref(false);
+
+onMounted(async () => {
   checkAuth(router);
+  try {
+    isVerified.value = await isUserVerified();
+  } catch (error) {
+    console.error('Verification failed:', error);
+  }
 });
 
 const waiting = {
@@ -27,7 +34,7 @@ async function changeEmail() {
 
 async function changeUsername() {
   try {
-    const email = await getEmailByToken(localStorage.getItem('access_token'));
+    const email = await getEmailByToken();
     const response = await axios.post('/api/user/change-username', {
       new_username: newUsername.value,
       email: email
@@ -45,7 +52,7 @@ async function changeUsername() {
 
 async function changePassword() {
   try {
-    const email = await getEmailByToken(localStorage.getItem('access_token'));
+    const email = await getEmailByToken();
     const response = await axios.post('/api/user/change-password', {
       email: email,
       new_password: newPassword.value
@@ -80,53 +87,32 @@ const confirmDelete = ref(false);
 
   <div>
     <h2>Change Email</h2>
-    <form>
+    <form @submit.prevent="() => console.log('Hallo')">
       <label for="email">New Email:</label>
-      <input type="email" id="email" name="email" v-model="newEmail" />
-      <button @click="changeEmail">Submit</button>
+      <input :disabled="!isVerified" type="email" id="email" name="email" v-model="newEmail" />
+      <button :disabled="!isVerified" type="submit">Submit</button>
     </form>
 
     <h2>Change Username</h2>
     <form @submit.prevent="changeUsername">
       <label for="username">New Username:</label>
-      <input
-        type="text"
-        id="username"
-        name="username"
-        placeholder="New Username"
-        v-model="newUsername"
-      />
+      <input type="text" id="username" name="username" placeholder="New Username" v-model="newUsername" />
       <button type="submit">Submit</button>
     </form>
 
     <h2>Change Password</h2>
     <form v-if="!waiting.changePassword.value" @submit.prevent="changePassword">
       <label for="currentPassword">Current Password:</label>
-      <input
-        type="password"
-        id="currentPassword"
-        name="currentPassword"
-        v-model="currentPassword"
-      />
+      <input type="password" id="currentPassword" name="currentPassword" v-model="currentPassword" />
       <label for="newPassword">New Password:</label>
       <input type="password" id="newPassword" name="newPassword" v-model="newPassword" />
       <label for="repeatNewPassword">Repeat New Password:</label>
-      <input
-        type="password"
-        id="repeatNewPassword"
-        name="repeatNewPassword"
-        v-model="repeatNewPassword"
-      />
+      <input type="password" id="repeatNewPassword" name="repeatNewPassword" v-model="repeatNewPassword" />
       <button type="submit">Submit</button>
     </form>
     <form v-else>
       <label for="changePasswordCode">Enter Code:</label>
-      <input
-        type="text"
-        id="changePasswordCode"
-        name="changePasswordCode"
-        v-model="changePasswordCode"
-      />
+      <input type="text" id="changePasswordCode" name="changePasswordCode" v-model="changePasswordCode" />
       <button @click="changePassword">Submit</button>
     </form>
 

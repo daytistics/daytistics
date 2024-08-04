@@ -1,0 +1,27 @@
+const routesContainer = {
+    EXISTS_USER: '/api/user/exists',
+    GET_USER_EMAIL: '/api/user/email',
+    GET_USER_INFORMATION: '/api/user',
+    HAS_EXCEEDED_FAILURE_LIMIT: '/api/user/verification/failures/exceeded',
+    HAS_AUTH_REJECTION: '/api/user/rejections/auth/exists',
+    REFRESH_USER_TOKEN: '/api/user/token/refresh',
+    LOGIN_USER: '/api/user/login',
+    REGISTER_USER: '/api/user/register',
+    CHECK_PASSWORD: '/api/user/password/check',
+    CHANGE_USERNAME: '/api/user/username/change',
+    CHANGE_EMAIL: '/api/user/email/change',
+    DELETE_ACCOUNT: '/api/user/delete',
+    RESET_PASSWORD: '/api/user/password/reset',
+    CHANGE_PASSWORD: '/api/user/password/change',
+    VERIFY_ACCOUNT_DELETE: '/api/user/delete/verify',
+    VERIFY_RESET_PASSWORD: '/api/user/password/reset/verify',
+    VERIFY_CHANGE_PASSWORD: '/api/user/password/change/verify',
+    RESEND_VERIFICATION_EMAIL: '/api/user/verification/email/resend',
+    VERIFY_REGISTRATION: '/api/user/register/verify',
+    EXISTS_DELETE_ACCOUNT_REQUEST: '/api/user/delete/exists',
+    EXISTS_REGISTRATION_REQUEST: '/api/user/register/exists',
+    EXISTS_CHANGE_PASSWORD_REQUEST: '/api/user/password/change/exists',
+    EXISTS_RESET_PASSWORD_REQUEST: '/api/user/password/reset/exists',
+}
+
+export { routesContainer };

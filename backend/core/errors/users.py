@@ -52,4 +52,3 @@ class SamePasswordError(Exception):
     """
 
     pass
-

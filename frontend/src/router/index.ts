@@ -1,26 +1,33 @@
 import { createRouter, createWebHistory } from 'vue-router';
-import AuthView from '../views/AuthView.vue';
-import DashboardView from '../views/DashboardView.vue';
-import SettingsView from '../views/SettingsView.vue';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
+      path: '/',
+      name: 'home',
+      component: () => import('../views/HomeView.vue')
+    },
+    {
       path: '/auth/:code?',
       name: 'auth',
-      component: AuthView,
+      component: () => import('../views/AuthView.vue'),
       props: (route) => ({ code: route.params.code })
     },
     {
       path: '/dashboard',
       name: 'dashboard',
-      component: DashboardView
+      component: () => import('../views/DashboardView.vue')
     },
     {
       path: '/settings',
       name: 'settings',
-      component: SettingsView
+      component: () => import('../views/SettingsView.vue')
+    },
+    {
+      path: '/auth/rejected',
+      name: 'authRejected',
+      component: () => import('../views/AuthRejectedView.vue')
     }
   ]
 });

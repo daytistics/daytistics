@@ -1,9 +1,10 @@
 from datetime import datetime, timezone
 from core.utils.users import is_valid_username, is_good_password
 from core.utils.emails import is_valid_email, send_registration_request_email
-from core.extensions import db, verificator
+from core.extensions import db
 import core.errors as errors
 from core.utils.encryption import check_password_hash, generate_password_hash
+
 
 class User(db.Model):
     """
@@ -21,11 +22,12 @@ class User(db.Model):
     )
     role = db.Column(db.String(64), default="user")
     verification = db.Column(db.String(64), default="pending")
-    rejects = db.Column(db.Integer, default=0)
+    verification_rejections = db.Column(db.Integer, default=0)
 
     def __repr__(self):
         return "<User {}>".format(self.username)
-    
+
+
 def is_user_existing_by_id(id: int) -> bool:
     """
     Check if a user with the given ID exists in the database.
@@ -35,17 +37,44 @@ def is_user_existing_by_id(id: int) -> bool:
 
     Returns:
         bool: True if the user exists, False otherwise.
+
+    Raises:
+        MissingFieldError: If the ID is not provided.
     """
+
+    if id is None or id == "":
+        raise errors.MissingFieldError("ID is not provided")
 
     return db.session.query(db.session.query(User).filter_by(id=id).exists()).scalar()
 
+
 def is_user_existing_by_email(email: str) -> bool:
+    """
+    Check if a user with the given email exists in the database.
+
+    Args:
+        email (str): The email address to check.
+
+    Returns:
+        bool: True if a user with the given email exists, False otherwise.
+
+    Raises:
+        MissingFieldError: If the email is not provided.<br>
+        InvalidEmailError: If the email is invalid.
+    """
+
+    if email is None or email == "":
+        raise errors.MissingFieldError("Email is not provided")
+
     if not is_valid_email(email):
         raise errors.InvalidEmailError("Email is invalid")
 
-    return db.session.query(db.session.query(User).filter_by(email=email).exists()).scalar()
+    return db.session.query(
+        db.session.query(User).filter_by(email=email).exists()
+    ).scalar()
 
-def get_user_by_id(user_id: int) -> User: 
+
+def get_user_by_id(user_id: int) -> User:
     """
     Retrieve a user by their ID.
 
@@ -56,8 +85,12 @@ def get_user_by_id(user_id: int) -> User:
         User or None: The user object if found, None otherwise.
 
     Raises:
+        MissingFieldError: If the ID is not provided.<br>
         UserNotFoundError: If no user is found with the given ID.
     """
+
+    if user_id is None or user_id == "":
+        raise errors.MissingFieldError("ID is not provided")
 
     if not is_user_existing_by_id(user_id):
         raise errors.UserNotFoundError("No user found with this ID")
@@ -65,7 +98,8 @@ def get_user_by_id(user_id: int) -> User:
     user = User.query.filter_by(id=user_id).first()
     return user
 
-def get_user_by_email(email: str) -> User: 
+
+def get_user_by_email(email: str) -> User:
     """
     Retrieve a user by their email.
 
@@ -76,8 +110,13 @@ def get_user_by_email(email: str) -> User:
         User or None: The user object if found, None otherwise.
 
     Raises:
+        MissingFieldError: If the email is not provided.<br>
+        InvalidEmailError: If the email is invalid.<br>
         UserNotFoundError: If no user is found with the given email.
     """
+
+    if email is None or email == "":
+        raise errors.MissingFieldError("Email is not provided")
 
     if not is_valid_email(email):
         raise errors.InvalidEmailError("Email is invalid")
@@ -88,12 +127,12 @@ def get_user_by_email(email: str) -> User:
     user = User.query.filter_by(email=email).first()
     return user
 
-def register_user(username: str, password: str, email: str) -> None:
+
+def register_user(username: str, password: str, email: str) -> bool:
     """
-    Register a new user with the provided username, password, and email.
+    Creates a new user in the database. The user is not verified until they verify their email address.
 
     Args:
-        verificator (Verificator): The verificator object used for verification.
         username (str): The username of the user.
         password (str): The password of the user.
         email (str): The email of the user.
@@ -103,12 +142,13 @@ def register_user(username: str, password: str, email: str) -> None:
         InvalidNameError: If the username is invalid.<br>
         InvalidEmailError: If the email is invalid.<br>
         EmailInUseError: If the email is already in use.<br>
-        ExplicitContentError: If the username contains explicit content.<br>
         BadPasswordError: If the password is too weak or invalid.<br>
 
     Returns:
-        None
+        bool: True if the user is successfully registered, False otherwise.
     """
+
+    from core.extensions import verificator
 
     if username is None or password is None or username == "" or password == "":
         raise errors.MissingFieldError("Username or password is not provided")
@@ -131,14 +171,40 @@ def register_user(username: str, password: str, email: str) -> None:
             "Password is too weak or invalid (must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, one digit, and one special character)"
         )
 
-    code = verificator.add_registration_request(email, username, generate_password_hash(password), "user")
-    send_registration_request_email(email, code)
+    try:
+        code = verificator.add_registration_request(
+            email, username, generate_password_hash(password), "user"
+        )
+        send_registration_request_email(email, code)
+        return True
+    except:
+        return False
 
-def change_user_role(email: str, new_role: str) -> bool:  
+
+def change_user_role(email: str, new_role: str) -> User:
+    """
+    Change the role of a user identified by their email.
+
+    Args:
+        email (str): The email of the user.
+        new_role (str): The new role to assign to the user. Must be either 'user' or 'admin'.
+
+    Returns:
+        User: The updated User object with the new role.
+
+    Raises:
+        MissingFieldError: If email or role is not provided.
+        InvalidEmailError: If the email is invalid.
+        UserNotFoundError: If no user is found with the provided email.
+        InvalidRoleError: If the new role is invalid (must be 'user' or 'admin').
+    """
+
+    if email is None or email == "" or new_role is None or new_role == "":
+        raise errors.MissingFieldError("Email or role is not provided")
 
     if not is_valid_email(email):
         raise errors.InvalidEmailError("Email is invalid")
-    
+
     if not is_user_existing_by_email(email):
         raise errors.UserNotFoundError("No user found with this email")
 
@@ -148,29 +214,40 @@ def change_user_role(email: str, new_role: str) -> bool:
         raise errors.InvalidRoleError("Role is invalid (must be 'user' or 'admin')")
 
     user = get_user_by_email(email)
-
     user.role = new_role
     db.session.commit()
+
     return user
 
+
+# TODO: Implement user deletion functionality (including verification)
 def delete_user(email: str) -> None:
+    pass
 
-    if not is_valid_email(email):
-        raise errors.InvalidEmailError("Email is invalid")
-    
-    if not is_user_existing_by_email(email):
-        raise errors.UserNotFoundError("No user found with this email")
-
-    user = get_user_by_email(email)
-
-    code = verificator.add_delete_account_request(user.email)
-    # TODO: Send verification email
 
 def check_user_password(email: str, password: str) -> bool:
+    """
+    Check if the provided email and password match the user's credentials.
+
+    Args:
+        email (str): The email of the user.
+        password (str): The password of the user.
+
+    Returns:
+        bool: True if the email and password match, False otherwise.
+
+    Raises:
+        MissingFieldError: If the email or password is not provided.
+        InvalidEmailError: If the email is invalid.
+        UserNotFoundError: If no user is found with the provided email.
+    """
+
+    if email is None or email == "" or password is None or password == "":
+        raise errors.MissingFieldError("Email or password is not provided")
 
     if not is_valid_email(email):
         raise errors.InvalidEmailError("Email is invalid")
-    
+
     if not is_user_existing_by_email(email):
         raise errors.UserNotFoundError("No user found with this email")
 
@@ -179,44 +256,42 @@ def check_user_password(email: str, password: str) -> bool:
 
     user = get_user_by_email(email)
 
-    
-
     is_correct = check_password_hash(password, user.password_hash)
 
     return is_correct
 
+
+# TODO: Implement password change functionality (including verification)
 def change_user_password(email: str, new_password: str) -> None:
+    pass
+
+
+def change_username(email: str, new_username: str) -> User:
+    """
+    Change the username of a user identified by their email.
+
+    Args:
+        email (str): The email of the user.
+        new_username (str): The new username to be set.
+
+    Returns:
+        User: The updated User object.
+
+    Raises:
+        MissingFieldError: If email or new_username is not provided.
+        InvalidEmailError: If the email is invalid.
+        UserNotFoundError: If no user is found with the given email.
+        InvalidNameError: If the new username is invalid.
+    """
+
+    if email is None or email == "" or new_username is None or new_username == "":
+        raise errors.MissingFieldError("Email or new username is not provided")
 
     if not is_valid_email(email):
         raise errors.InvalidEmailError("Email is invalid")
-    
+
     if not is_user_existing_by_email(email):
         raise errors.UserNotFoundError("No user found with this email")
-
-    if new_password is None or new_password == "":
-        raise errors.MissingFieldError("New password is not provided")
-
-    if not is_good_password(new_password):
-        raise errors.BadPasswordError(
-            "Password is too weak or invalid (must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, one digit, and one special character"
-        )
-
-
-    user = get_user_by_email(email)
-
-    verificator.add_change_password_request(user.email, generate_password_hash(new_password))
-    # TODO: Send verification email
-
-def change_username(email: str, new_username: str) -> User or None:  # type: ignore
-
-    if not is_valid_email(email):
-        raise errors.InvalidEmailError("Email is invalid")
-    
-    if not is_user_existing_by_email(email):
-        raise errors.UserNotFoundError("No user found with this email")
-
-    if new_username is None or new_username == "":
-        raise errors.MissingFieldError("New username is not provided")
 
     if not is_valid_username(new_username):
         raise errors.InvalidNameError(
@@ -229,16 +304,21 @@ def change_username(email: str, new_username: str) -> User or None:  # type: ign
     db.session.commit()
     return user
 
-# TODO: Implement password reset functionality (using verificator)
 
+# TODO: Implement password reset functionality (using verificator)
+def reset_password(email: str) -> None:
+    pass
+
+
+# TODO: Tests for get_all_users
 def get_all_users() -> list:
     """
-    Retrieve all users from the database.
+    Retrieve all users from the database. This function might consume a lot of resources if there are many users.
 
     Returns:
         list: A list of tuples containing the user ID, the username, the email, the role, and the creation date of each user.
     """
-    
+
     users = User.query.all()
     user_list = []
     for user in users:
@@ -248,7 +328,118 @@ def get_all_users() -> list:
                 user.username,
                 user.email,
                 user.role,
-                user.created_at,
+                user.created_at.strftime("%Y-%m-%d %H:%M:%S"),
+                user.verification,
+                user.verification_rejections,
             )
         )
     return user_list
+
+def is_verified(email: str) -> bool:
+    """
+    Checks if a user with the given email is verified.
+
+    Args:
+        email (str): The email of the user.
+
+    Returns:
+        bool: True if the user is verified, False otherwise.
+
+    Raises:
+        errors.MissingFieldError: If the email is not provided.
+        errors.InvalidEmailError: If the email is invalid.
+        errors.UserNotFoundError: If no user is found with the given email.
+    """
+
+    if email is None or email == "":
+        raise errors.MissingFieldError("Email is not provided")
+    
+    if not is_valid_email(email):
+        raise errors.InvalidEmailError("Email is invalid")
+    
+    if not is_user_existing_by_email(email):
+        raise errors.UserNotFoundError("No user found with this email")
+    
+    user = get_user_by_email(email)
+    return user.verification == "done"
+
+def verify_user(email: str) -> bool:
+    """
+    Verifies a user by setting their verification status to "done" in the database.
+
+    Args:
+        email (str): The email of the user to be verified.
+
+    Returns:
+        bool: True if the user is successfully verified, False otherwise.
+    """
+    if email is None or email == "":
+        raise errors.MissingFieldError("Email is not provided")
+    
+    if not is_valid_email(email):
+        raise errors.InvalidEmailError("Email is invalid")
+    
+    if not is_user_existing_by_email(email):
+        raise errors.UserNotFoundError("No user found with this email")
+    
+    try:
+        user = get_user_by_email(email)
+        user.verification = "done"
+        db.session.commit()
+        return True
+    except:
+        return False
+    
+def get_user_verification_status(email: str) -> str:
+    """
+    Get the verification status of a user based on their email.
+
+    Args:
+        email (str): The email of the user.
+
+    Returns:
+        str: The verification status of the user.
+
+    Raises:
+        errors.MissingFieldError: If the email is not provided.
+        errors.InvalidEmailError: If the email is invalid.
+        errors.UserNotFoundError: If no user is found with the given email.
+    """
+
+    if email is None or email == "":
+        raise errors.MissingFieldError("Email is not provided")
+    
+    if not is_valid_email(email):
+        raise errors.InvalidEmailError("Email is invalid")
+    
+    if not is_user_existing_by_email(email):
+        raise errors.UserNotFoundError("No user found with this email")
+    
+    user = get_user_by_email(email)
+    return user.verification
+
+def increase_verification_rejections(email: str) -> None:
+    """
+    Increase the number of verification rejections for a user.
+
+    Args:
+        email (str): The email of the user.
+
+    Raises:
+        errors.MissingFieldError: If the email is not provided.
+        errors.InvalidEmailError: If the email is invalid.
+        errors.UserNotFoundError: If no user is found with the given email.
+    """
+
+    if email is None or email == "":
+        raise errors.MissingFieldError("Email is not provided")
+    
+    if not is_valid_email(email):
+        raise errors.InvalidEmailError("Email is invalid")
+    
+    if not is_user_existing_by_email(email):
+        raise errors.UserNotFoundError("No user found with this email")
+    
+    user = get_user_by_email(email)
+    user.verification_rejections += 1
+    db.session.commit()

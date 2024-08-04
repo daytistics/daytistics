@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { reactive, ref, onMounted } from 'vue';
 import axios from 'axios';
-import { useRoute, useRouter } from 'vue-router';
-import { getEmailByToken, isUserExisting, isUserVerified } from '@/utils/rest/Users';
+import { useRouter } from 'vue-router';
+import { getEmailByToken, checkAuthRejection, isUserVerified } from '@/utils/rest/users';
+import { routesContainer } from '@/router/routes';
 
 const router = useRouter();
-const route = useRoute();
 
 const form = reactive({
   username: '',
@@ -20,28 +20,17 @@ let isErrorThrown = ref(false);
 let errorText = ref('');
 
 onMounted(async () => {
-  const token = localStorage.getItem('access_token');
-  if (token) {
-    const email = await getEmailByToken(token);
-    if (email) {
-      form.email = email;
-      const isVerified = await isUserVerified(localStorage.getItem('access_token') as string);
-      if (isVerified) {
-        router.push('/dashboard');
-      } else {
-        console.log('User is not verified');
-        const exists = await existsVerificationRequest();
-        if (exists) {
-          waitingForCode.value = true;
-          loginToggled.value = false;
-        }
-      }
-    }
+  if (localStorage.getItem('access_token') && localStorage.getItem('refresh_token') && await isUserVerified()) {
+    router.push('/dashboard');
+  } else if (localStorage.getItem('access_token') && localStorage.getItem('refresh_token') && !await isUserVerified()) {
+    waitingForCode.value = true;
+    loginToggled.value = false;
+  } else {
+    checkAuthRejection(router);
   }
 });
 
 function showError(message: string) {
-  const error = document.querySelector('.error');
   errorText.value = message;
   isErrorThrown.value = true;
 }
@@ -86,44 +75,45 @@ async function handleRegistration() {
     return;
   }
 
-  if (await isUserExisting(form.email)) {
-    showError('User with this email already exists');
-    return;
-  }
+  // // TODO: Fix this 
+  // if (await isUserExisting(form.email)) {
+  //   showError('User with this email already exists');
+  //   return;
+  // }
 
   console.log(form);
   axios
-    .post('/api/user/register', form)
+    .post(routesContainer.REGISTER_USER, form)
     .then((response) => {
       console.log(response.status);
       console.log(response.data);
 
-      if (response.status === 200) {
+      if (response.status === 201) {
         waitingForCode.value = true;
 
-        const login = async () => {
+        (async () => {
           try {
-            const response = await axios.post('/api/user/login', {
+            const response = await axios.post(routesContainer.LOGIN_USER, {
               email: form.email,
               password: form.password
             });
             console.log(response.status);
+            console.log(response.data);
 
             if (response.status === 200) {
-              let access_token = response.data.access_token;
-              let refresh_token = response.data.refresh_token;
+              let access_token = response.data.content[0].access_token;
+              let refresh_token = response.data.content[0].refresh_token;
 
               localStorage.setItem('access_token', access_token);
               localStorage.setItem('refresh_token', refresh_token);
             }
           } catch (error: any) {
-            console.log(error.response.data); // This will show the error message from the backend
-            console.log(error.response.status); // This will show the status code
-            console.log(error.response.headers); // This will show the response headers
+            console.log(error.response.data); 
+            console.log(error.response.status); 
+            console.log(error.response.headers); 
           }
-        };
+        })();
 
-        login();
       }
     })
     .catch((error) => {
@@ -133,82 +123,96 @@ async function handleRegistration() {
     });
 }
 
-async function handleCodeInput() {
-  if (code.value === '') {
-    showError('Please fill in the code');
-    return;
-  }
+async function handleCodeSubmit() {
 
-  if (code.value.length !== 6) {
-    showError('Code must be 6 characters long');
+  code.value = code.value.trim();
+
+  if (code.value === '') {
+    showError('Bitte gib einen Code ein');
     return;
   }
 
   if (!/^\d+$/.test(code.value)) {
-    showError('Code must contain only numbers');
+    showError('Der Code darf nur aus Zahlen bestehen');
+    return;
+  }
+
+  if (code.value.length !== 6) {
+    showError('Der Code muss 6 Zahlen lang sein');
     return;
   }
 
   axios
-    .post('/api/user/verify/registration', { code: code.value, email: form.email })
+    .post(routesContainer.VERIFY_REGISTRATION, { code: code.value, email: form.email })
     .then((response) => {
       console.log(response.status);
 
       if (response.status === 200) {
         waitingForCode.value = false;
-
-        handleLogin();
-      } else if (response.status === 404) {
-        showError('Dieser Nutzer ist bereits verifiziert oder existiert nicht');
+        router.push('/dashboard');
       }
     })
 
     .catch((error) => {
-      console.log(error.response.data); // This will show the error message from the backend
-      console.log(error.response.status); // This will show the status code
-      console.log(error.response.headers); // This will show the response headers
-    });
+      // I know this is a bad practice, but I'm not sure how to handle this properly
+      
+      if (error.response.status === 404) {
+        showError('Es wurde keine Registrierungsanfrage gefunden');
+        return;
+      } else if (error.response.status === 601) {
+        router.push('/auth/rejected');
+        return;
+      } else if (error.response.status === 602) {
+        showError('Der Code wurde aus Sicherheitsgründen entwertet, bitte fordere einen neuen an');
+        return;
+      } else if (error.response.status === 603) {
+        showError('Der Code ist abgelaufen');
+        return;
+      }
+    })
 }
 
 async function handleLogin() {
+  console.log(form);
   try {
-    const response = await axios.post('/api/user/login', {
+    const response = await axios.post(routesContainer.LOGIN_USER, {
       email: form.email,
       password: form.password
     });
     console.log(response.status);
-    console.log(response.data);
 
     if (response.status === 200) {
-      let access_token = response.data.access_token;
-      let refresh_token = response.data.refresh_token;
+      let access_token = response.data[0].access_token;
+      let refresh_token = response.data.conte.contentnt[0].refresh_token;
 
       localStorage.setItem('access_token', access_token);
       localStorage.setItem('refresh_token', refresh_token);
       router.push('/dashboard');
     }
   } catch (error: any) {
-    console.log(error.response.data); // This will show the error message from the backend
-    console.log(error.response.status); // This will show the status code
-    console.log(error.response.headers); // This will show the response headers
+    showError('Invalid credentials');
+    console.log(error.response.data); 
+    console.log(error.response.status); 
+    console.log(error.response.headers);
   }
 }
 
-async function existsVerificationRequest() {
+async function resendRegistrationCode() {
   try {
-    const response = await axios.post('/api/user/verify/registration/exists', {
-      email: form.email
+    const email = await getEmailByToken();
+    const response = await axios.post(routesContainer.RESEND_VERIFICATION_EMAIL, {
+      email: email
     });
     console.log(response.status);
-    if (response.status === 200) {
-      return response.data.exists;
-    }
+
   } catch (error: any) {
-    console.log(error.response.data); // This will show the error message from the backend
-    console.log(error.response.status); // This will show the status code
-    console.log(error.response.headers); // This will show the response headers
+    console.log(error.response.data); 
+    console.log(error.response.status); 
+    console.log(error.response.headers); 
   }
+
 }
+
 </script>
 
 <template>
@@ -229,9 +233,10 @@ async function existsVerificationRequest() {
     <p>Already have an account? <a href="#" @click="loginToggled = true">Login</a></p>
   </form>
 
-  <form v-else @submit.prevent="handleCodeInput">
+  <form v-else @submit.prevent="handleCodeSubmit">
     <input type="text" placeholder="Code Input" v-model="code" />
     <button type="submit">Submit</button>
+    <a href="#" @click="resendRegistrationCode">Click here to receive a new code</a>
     <p v-if="isErrorThrown" class="error">{{ errorText }}</p>
   </form>
 </template>
