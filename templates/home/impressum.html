@@ -1,11 +1,7 @@
-{% extends "base.html" %}
+{% extends "home/base.html" %}
 
 
 {% block content %}
-
-    <nav>
-        {% include "navbar.html" %}
-    </nav>
 
     <main class="flex flex-col justify-center align-middle m-8 text-center md:text-left" x-data>
         <h1 class="text-4xl font-bold mb-1">Impressum</h1>
@@ -48,7 +44,4 @@
         <p>Wir verwenden Open Source Komponenten in unserem Projekt. Eine Liste der Komponenten und deren Lizenzen finden Sie <a href="{% url 'licenses' %}" class="text-blue-400">hier</a>.</p>
     </main>
 
-    <footer>
-        {% include "footer.html" %}
-    </footer>
 {% endblock %}

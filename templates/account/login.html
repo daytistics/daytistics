@@ -1,7 +1,6 @@
-{% extends "base.html" %}
+{% extends "home/base.html" %}
 {% load widget_tweaks %}
 
-{% block title %}Login{% endblock %}
 
 {% block content %}
 <div class="flex flex-col items-center justify-center h-screen dark">
@@ -16,7 +15,7 @@
             {{ form.login|add_class:"bg-white-light text-gray-200 border-0 rounded-md p-2 mb-4 focus:bg-white-light focus:outline-none focus:ring-1 focus:ring-blue-500 transition ease-in-out duration-150" }}
             
             {{ form.password.errors|add_class:"text-red-500" }}
-            {{ form.password|add_class:"bg-white-light text-gray-200 border-0 rounded-md p-2 mb-4 focus:bg-white-light focus:outline-none focus:ring-1 focus:ring-blue-500 transition ease-in-out duration-150" }}
+            {{ form.password|add_class:"bg-white-light text-gray-200 border-0 rounded-md p-2 mb-4 focus:bg-white-light focus:outline-none focus:ring-1 focus:ring-blue-500 transition ease-in-out duration-150" }} 
 
 
             <div class="flex items-center justify-between flex-wrap">

@@ -17,23 +17,11 @@
     {% load django_htmx %}
     {% django_htmx_script %}
 
+    <script defer src="https://cdn.jsdelivr.net/npm/@alpinejs/mask@3.x.x/dist/cdn.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.10.3/dist/cdn.min.js" defer></script>
 </head>
 
 <body hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}' class="font-mono">
-    {% comment %} <nav>
-        {% include "header.html" %}
-    </nav>
-
-    <main class="text-lg">
-        {% block content %}
-        {% endblock %}
-    </main>
-
-    <footer>
-        {% include "footer.html" %}
-    </footer> {% endcomment %}
-
-    {% block content %}{% endblock %}
+    {% block base %}{% endblock %}
 </body>
 </html>

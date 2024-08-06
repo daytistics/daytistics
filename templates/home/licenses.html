@@ -1,10 +1,6 @@
-{% extends "base.html" %}
+{% extends "home/base.html" %}
 
 {% block content %}
-
-<nav>
-    {% include "navbar.html" %}
-</nav>
 
 <main class="flex flex-col justify-center align-middle m-8 text-center md:text-left" x-data>
     <h1 class="text-4xl font-bold mb-1">Lizenzen</h1>
@@ -52,10 +48,6 @@
         Sollten Sie auf Komponenten stoßen, die nicht in dieser Liste aufgeführt sind oder fehlerhaft lizensiert sind, kontaktieren Sie uns bitte unter <a href="mailto:dev@daytistics.de" class="text-blue-400">dev@daytistics.de</a>. Wir werden uns umgehend um die Aufnahme der fehlenden Komponenten kümmern.
     </p>
 </main>
-
-<footer>
-    {% include "footer.html" %}
-</footer>
 {% endblock %}
 
 
