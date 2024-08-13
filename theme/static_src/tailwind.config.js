@@ -41,17 +41,8 @@ module.exports = {
          */
         // '../../**/*.py'
     ],
-    safelist: ['text-5xl', 'text-6xl', 'text-7xl', 'text-8xl', 'text-9xl'],
     theme: {
-        extend: {
-            fontFamily: {
-                comfortaa: ['Comfortaa', 'sans-serif'],
-              },
-            colors: {
-                'white-light': '#f8f8f8', 
-                'white-dark': '#f0f0f0',
-            }
-        },
+        extend: {},
     },
     plugins: [
         /**

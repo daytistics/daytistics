@@ -33,7 +33,6 @@ ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
     'main',
-    'tools',
     'home',
     'accounts',
     'django.contrib.admin',
@@ -42,8 +41,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.sites',
-    'django_components',
-    'django_components.safer_staticfiles',
+    'django.contrib.staticfiles',
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
@@ -52,6 +50,7 @@ INSTALLED_APPS = [
     'django_browser_reload',
     'django_htmx',
     'widget_tweaks',
+    'mathfilters', 
 ]
 
 SITE_ID = 1
@@ -88,8 +87,8 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'allauth.account.middleware.AccountMiddleware',
-    "django_browser_reload.middleware.BrowserReloadMiddleware",
     "django_htmx.middleware.HtmxMiddleware",
+    "django_browser_reload.middleware.BrowserReloadMiddleware"
 ]
 
 ROOT_URLCONF = 'config.urls'
@@ -108,10 +107,8 @@ TEMPLATES = [
             'loaders': [
                 'django.template.loaders.filesystem.Loader',
                 'django.template.loaders.app_directories.Loader',
-                'django_components.template_loader.Loader',
             ],
             'builtins': [
-                'django_components.templatetags.component_tags',
             ],
             'libraries': {
                 'daytistics_tags': 'templatetags.daytistics_tags',
@@ -172,7 +169,6 @@ STATIC_URL = 'static/'
 
 STATICFILES_DIRS = [
     BASE_DIR / "static",
-    os.path.join(BASE_DIR, "components"),
 ]
 
 # Default primary key field type
@@ -181,3 +177,5 @@ STATICFILES_DIRS = [
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = 'accounts.CustomUser'
+
+

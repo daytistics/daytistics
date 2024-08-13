@@ -1,63 +1,85 @@
-{% extends 'main/base.html' %}
-
-{% load component_tags %}
+{% extends 'main/base.html' %} 
 {% block content %}
 
 <div class="bg-gray-100">
+  <div class="min-h-screen flex">
+    {% component "sidebar" %}{% endcomponent %}
 
-    <div class="min-h-screen flex">
-      <!-- Aside -->
-      <aside class="w-64 bg-green-600 text-white flex flex-col">
-        <div class="p-4 text-lg font-semibold">
-          Dashboard
-        </div>
-        <nav class="flex-1 p-4">
-          <ul>
-            <li class="mb-4">
-              <a href="#" class="block p-2 rounded hover:bg-gray-700">Home</a>
-            </li>
-            <li class="mb-4">
-              <a href="#" class="block p-2 rounded hover:bg-gray-700">Profile</a>
-            </li>
-            <li class="mb-4">
-              <a href="#" class="block p-2 rounded hover:bg-gray-700">Settings</a>
-            </li>
-            <li class="mb-4">
-              <a href="#" class="block p-2 rounded hover:bg-gray-700">Logout</a>
-            </li>
-          </ul>
+    
 
-        </nav>
-      </aside>
-  
-      <!-- Main content -->
-      <main class="flex-1 p-8" x-data>
-        <div class="bg-white p-6 rounded-lg shadow-lg">
-          <h1 class="text-2xl font-bold mb-4">Dashboard Content</h1>
-          <p>This is where the main content goes.</p>
-          
-          <form>
+    <!-- Main content -->
+    <main class="flex-1 p-8" x-data>
+      <div class="flex flex-row">
+        <div class="bg-white p-6 rounded-lg shadow-lg w-1/2" x-data="{loading: false}">
+          <h1 class="text-2xl font-bold mb-4">Daytistic erstellen</h1>
+          <p><b>Hinweis</b>: Die Daytistic darf maximal 4 Wochen alt sein.</p>
+      
+          <form
+            hx-post="{% url 'create_daytistic' %}"
+            hx-trigger="submit"
+            hx-target="#form-result"
+            hx-swap="innerHTML"
+            hx-indicator="#spinner"
+            @submit.prevent="loading = true"
+            @htmx:afterRequest="loading = false"
+          >
             <label for="date" class="mt-4">Datum: </label>
-              <input x-mask="99/99/9999" placeholder="MM/DD/YYYY" name="date">
-              <button hx-trigger="click"  class="w-48 bg-gradient-to-r from-lime-500 to-green-500 text-white font-bold py-2 px-4 rounded-md mt-4 hover:bg-lime-800 hover:to-green-800 hover:scale-105 transition ease-in-out duration-200">Neue Daytistic</button>
-              <span>
-                <div class="inline-flex flex-row gap-2 align-middle">
-                    <div class="w-4 h-4 rounded-full bg-green-600 animate-bounce"></div>
-                    <div class="w-4 h-4 rounded-full bg-green-600 animate-bounce [animation-delay:-.3s]"></div>
-                    <div class="w-4 h-4 rounded-full bg-green-600 animate-bounce [animation-delay:-.5s]"></div>
+            <input x-mask="99.99.9999" placeholder="DD.MM.YYYY" name="date" class=" mt-4 bg-white-light text-gray-500 border-1 rounded-md p-2 mb-4 focus:bg-white-light focus:outline-none focus:ring-1 focus:ring-blue-500 transition ease-in-out duration-150 h-11"/>
+            
+            <div id="submit-button-container" class="inline">
+              <button
+                x-show="!loading"
+                type="submit"
+                id="submit-button"
+                class="h-11 w-48 bg-gradient-to-r from-lime-500 to-green-500 text-white font-bold py-2 px-4 rounded-md hover:bg-lime-800 hover:to-green-800 hover:scale-105 transition ease-in-out duration-200"
+              >
+                Neue Daytistic
+              </button>
+    
+              <span id="spinner" class="hidden ml-4" x-show="loading">
+                <span>
+                  <div class="inline-flex flex-row gap-2 align-middle">
+                    <div
+                      class="w-4 h-4 rounded-full bg-green-600 animate-bounce"
+                    ></div>
+                    <div
+                      class="w-4 h-4 rounded-full bg-green-600 animate-bounce [animation-delay:-.3s]"
+                    ></div>
+                    <div
+                      class="w-4 h-4 rounded-full bg-green-600 animate-bounce [animation-delay:-.5s]"
+                    ></div>
                   </div>
-
+                </span>
               </span>
-              <p id="error-new-daytistic" class="text-red-500">Das hier ist ein Fehler!</p>
+            </div>
+      
           </form>
+        <div id="form-result"></div>
         </div>
-      </main>
-    </div>
-
-    <div>
-
-    </div>
-  
+        <div class="bg-white p-6 rounded-lg shadow-lg w-1/2 ml-4">
+          <h1 class="text-2xl font-bold mb-4">Tagebucheintrag erstellen</h1>
+          <p><b>Hinweis</b>: Tagebucheinträge sind nur optional.</p>
+        </div>
+      </div>
+    </main>
   </div>
+</div>
+
+<script>
+  document.addEventListener('htmx:configRequest', function (evt) {
+    document.getElementById('submit-button').classList.add('hidden');
+    document.getElementById('spinner').classList.remove('hidden');
+  });
+  document.addEventListener('htmx:afterOnLoad', function (evt) {
+    document.getElementById('submit-button').classList.remove('hidden');
+    document.getElementById('spinner').classList.add('hidden');
+  });
+  document.addEventListener('htmx:afterRequest', function (evt) {
+    if (!evt.detail.successful) {
+      document.getElementById('submit-button').classList.remove('hidden');
+      document.getElementById('spinner').classList.add('hidden');
+    }
+  });
+</script>
 
 {% endblock content %}

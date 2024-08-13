@@ -9,10 +9,14 @@ readme = "README.md"
 python = "^3.12"
 django-allauth = "^64.0.0"
 Django = "^5.0.7"
-django-tailwind = {extras = ["reload"], version = "^3.8.0"}
-django-components = "^0.87"
-django-htmx = "^1.18.0"
 django-widget-tweaks = "^1.5.0"
+pytest-django = "^4.8.0"
+faker = "^26.1.0"
+pytest-factoryboy = "^2.7.0"
+django-mathfilters = "^1.0.0"
+django-tailwind = "^3.8.0"
+django-htmx = "^1.19.0"
+django-browser-reload = "^1.13.0"
 
 
 [build-system]
