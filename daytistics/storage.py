@@ -1,4 +1,4 @@
-from main.models import Daytistic, ActivityEntry
+from daytistics.models import Daytistic, ActivityEntry
 from queue import Queue
 from typing import Any, Callable, Dict
 from django.db.models import QuerySet

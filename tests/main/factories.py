@@ -1,6 +1,6 @@
 import factory
 from django.contrib.auth import get_user_model
-from main.models import Activity
+from daytistics.models import Activity
 
 class ActivityFactory(factory.django.DjangoModelFactory):
     class Meta:

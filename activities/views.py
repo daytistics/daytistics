@@ -1,7 +1,7 @@
 # DJANGO IMPORTS
-from django.http import HttpResponse, HttpRequest
+from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
-from main.models import Activity
+from daytistics.models import Activity
 
 @login_required
 def available_activities_view(request):

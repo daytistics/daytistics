@@ -1,8 +1,8 @@
 from django.apps import AppConfig
 
-class MainConfig(AppConfig):
+class DaytisticsConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
-    name = 'main'
+    name = 'daytistics'
 
     def ready(self):
-        import main.signals
+        import daytistics.signals
