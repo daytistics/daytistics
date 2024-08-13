@@ -4,7 +4,7 @@ from . import views
 from django.shortcuts import render
 
 urlpatterns = [
-    path('', views.home, name='home'),
-    path('impressum/', lambda request: render(request, 'home/impressum.html'), name='impressum'),
-    path('licenses/', lambda request: render(request, 'home/licenses.html'), name='licenses'),
+    path('', lambda request: render(request, 'pages/home/home.html'), name='home'),
+    path('impressum/', lambda request: render(request, 'pages/home/impressum.html'), name='impressum'),
+    path('licenses/', lambda request: render(request, 'pages/home/licenses.html'), name='licenses'),
 ]

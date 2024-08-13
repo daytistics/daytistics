@@ -32,7 +32,8 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
-    'main',
+    'daytistics',
+    'activities',
     'home',
     'accounts',
     'django.contrib.admin',
@@ -75,8 +76,8 @@ ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
 ACCOUNT_USERNAME_REQUIRED = True
 ACCOUNT_SIGNUP_PASSWORD_ENTER_TWICE = False
 ACCOUNT_LOGIN_ON_EMAIL_CONFIRMATION = True
-LOGIN_REDIRECT_URL = '/dashboard/'
-LOGOUT_REDIRECT_URL = '/dashboard/'
+LOGIN_REDIRECT_URL = '/daytistics/dashboard/'
+LOGOUT_REDIRECT_URL = '/daytistics/dashboard/'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -111,7 +112,6 @@ TEMPLATES = [
             'builtins': [
             ],
             'libraries': {
-                'daytistics_tags': 'templatetags.daytistics_tags',
             }
         },
     },

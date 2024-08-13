@@ -6,8 +6,9 @@ from django.urls import reverse
 from django.template.loader import render_to_string
 from django.shortcuts import get_object_or_404
 # PROJECT IMPORTS
-from ..models import Daytistic, ActivityEntry, Activity
-from ..storage import EditDaytisticStorage, CurrentEditingsStorage
+from .models import Daytistic, ActivityEntry
+from .storage import EditDaytisticStorage, CurrentEditingsStorage
+from activities.models import Activity
 
 
 # OTHER IMPORTS
@@ -18,6 +19,9 @@ logger = logging.getLogger(__name__)
 
 from django.http import JsonResponse
 
+@login_required
+def dashboard_view(request):
+    return render(request, 'pages/daytistics/dashboard.html')
 
 @login_required
 def create_daytistic(request: HttpRequest) -> HttpResponse:
@@ -45,7 +49,7 @@ def create_daytistic(request: HttpRequest) -> HttpResponse:
         print(f"Daytistic erfolgreich erstellt für Datum: {date} und Benutzer: {request.user}")
         
         # Render the edit_daytistic template as a string
-        edit_daytistic_html = render_to_string('main/edit_daytistic.html', {'daytistic': daytistic}, request=request)
+        edit_daytistic_html = render_to_string('pages/daytistics/edit_daytistic.html', {'daytistic': daytistic}, request=request)
         
         print(f"HTML-Template für edit_daytistic gerendert")
         # Return the rendered HTML along with a redirect instruction for HTMX
@@ -83,7 +87,7 @@ def edit_daytistic_view(request, daytistic_id):
         'daytistic': Daytistic.objects.get(user=request.user, id=daytistic_id)
     }
 
-    return render(request, 'main/edit_daytistic.html', context)
+    return render(request, 'pages/daytistics/edit_daytistic.html', context)
 
 @login_required
 def add_activity_to_daytistic_view(request, daytistic_id):
