@@ -19,10 +19,10 @@ Daytistics is a web application whose goal is to increase your productivity and 
 
 ## Installation
 
-### Pre-Requirements
-- **Python**: <a href="https://www.debugpoint.com/install-python-3-12-ubuntu/">Installation Guide</a>
-- **Poetry**: Installation Guide
-- 
+### Pre-Requirementshttps://nodejs.org/en/download/package-manager
+- **Python (^v3.12)**: <a href="https://www.debugpoint.com/install-python-3-12-ubuntu/">Installation Guide</a>
+- **Poetry (^v1.8.2)**: <a href="https://python-poetry.org/docs/">Installation Guide</a>
+- **Node.js (^v20.16.0)**: <a href="https://python-poetry.org/docs/">Installation Guide</a>
 
 1. Clone the repository:
     ```
@@ -52,7 +52,7 @@ Daytistics is a web application whose goal is to increase your productivity and 
 
 ## Contributing
 
-Contributions are welcome! Please follow the guidelines in [CONTRIBUTING.md](./CONTRIBUTING.md).
+Contributions are welcome! If you want to contribute to the project you can take a look into [CONTRIBUTING.md](./CONTRIBUTING.md). There you can find guidelines and useful tips to get started.
 
 ## License
 
