@@ -1,0 +1,16 @@
+name: License Check
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v3
+
+      - name: Install license-header-checker
+        run: curl -s https://raw.githubusercontent.com/lluissm/license-header-checker/master/install.sh | bash
+
+      - name: Run license check
+        run: ./bin/license-header-checker -a -r -i node_modules,.venv,.pytest_cache . ./LICENSE . py js html css
