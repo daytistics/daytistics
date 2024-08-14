@@ -54,4 +54,7 @@ module.exports = {
         require('@tailwindcss/typography'),
         require('@tailwindcss/aspect-ratio'),
     ],
+    safelist: [
+        'text-green-500',  
+    ],
 }
