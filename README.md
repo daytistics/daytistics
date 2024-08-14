@@ -1,5 +1,7 @@
 # Daytistics
 
+![Logo](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/th5xamgrr6se0x5ro4g6.png)
+
 Daytistics is a web application whose goal is to increase your productivity and incorporate good habits into your life. 
 
 ## Technologies
@@ -16,6 +18,13 @@ Daytistics is a web application whose goal is to increase your productivity and 
   <img src="https://raw.githubusercontent.com/devicons/devicon/6910f0503efdd315c8f9b858234310c06e04d9c0/icons/postgresql/postgresql-original.svg" width="50px" alt="PostgreSQL" title="PostgreSQL">
   <img width="15px">
 </p>
+
+## Contributing
+
+Contributions are welcome! If you want to contribute to the project you can take a look into [CONTRIBUTING.md](./CONTRIBUTING.md). There you can find guidelines and useful tips to get started.
+
+### Thanks to
+😭 No contributers yet...
 
 ## Installation
 
@@ -50,9 +59,13 @@ Daytistics is a web application whose goal is to increase your productivity and 
     poetry run python manage.py runserver
     ```
 
-## Contributing
+## Running Tests
 
-Contributions are welcome! If you want to contribute to the project you can take a look into [CONTRIBUTING.md](./CONTRIBUTING.md). There you can find guidelines and useful tips to get started.
+To run tests, run the following command
+
+```bash
+  poetry run pytest
+```
 
 ## License
 
