@@ -1,4 +1,4 @@
-# README
+# Daytistics
 
 Daytistics is a web application whose goal is to increase your productivity and incorporate good habits into your life. 
 
