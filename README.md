@@ -1,18 +1,16 @@
 # README
 
-Welcome to the `user-auth-dt-django` project!
-
-## Description
-
-This project aims to demonstrate user authentication using Django.
+Daytistics is a web application whose goal is to increase your productivity and incorporate good habits into your life. 
 
 ## Technologies
 
-<img src="https://raw.githubusercontent.com/devicons/devicon/6910f0503efdd315c8f9b858234310c06e04d9c0/icons/django/django-plain.svg" width="50px" alt="Django" title="Django" style="display: inline;">
-<img src="https://raw.githubusercontent.com/devicons/devicon/6910f0503efdd315c8f9b858234310c06e04d9c0/icons/alpinejs/alpinejs-original.svg" width="50px" alt="AlpineJS" title="AlpineJS" style="display: inline;">
-<img src="https://i.imgur.com/uHQ2pvy.png" width="50px" alt="HTMX" title="HTMX" style="display: inline;">
-<img src="https://raw.githubusercontent.com/devicons/devicon/6910f0503efdd315c8f9b858234310c06e04d9c0/icons/tailwindcss/tailwindcss-original.svg" width="50px" alt="TailwindCSS" title="TailwindCSS" style="display: inline;">
-<img src="https://raw.githubusercontent.com/devicons/devicon/6910f0503efdd315c8f9b858234310c06e04d9c0/icons/postgresql/postgresql-original.svg" width="50px" alt="PostgreSQL" title="PostgreSQL" style="display: inline;">
+<p align="center">
+  <img src="https://raw.githubusercontent.com/devicons/devicon/6910f0503efdd315c8f9b858234310c06e04d9c0/icons/django/django-plain.svg" width="50px" alt="Django" title="Django">
+  <img src="https://raw.githubusercontent.com/devicons/devicon/6910f0503efdd315c8f9b858234310c06e04d9c0/icons/alpinejs/alpinejs-original.svg" width="50px" alt="AlpineJS" title="AlpineJS">
+  <img src="https://i.imgur.com/uHQ2pvy.png" width="50px" alt="HTMX" title="HTMX">
+  <img src="https://raw.githubusercontent.com/devicons/devicon/6910f0503efdd315c8f9b858234310c06e04d9c0/icons/tailwindcss/tailwindcss-original.svg" width="50px" alt="TailwindCSS" title="TailwindCSS">
+  <img src="https://raw.githubusercontent.com/devicons/devicon/6910f0503efdd315c8f9b858234310c06e04d9c0/icons/postgresql/postgresql-original.svg" width="50px" alt="PostgreSQL" title="PostgreSQL">
+</p>
 
 ## Installation
 
