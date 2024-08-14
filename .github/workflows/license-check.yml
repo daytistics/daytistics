@@ -12,5 +12,8 @@ jobs:
       - name: Install license-header-checker
         run: curl -s https://raw.githubusercontent.com/lluissm/license-header-checker/master/install.sh | bash
 
-      - name: Run license check
-        run: ./bin/license-header-checker -a -r -i node_modules,.venv,.pytest_cache . ./LICENSE . py js html css
+      - name: Find and process files
+        run: |
+          find . -type f \( -name "*.py" -o -name "*.js" -o -name "*.html" -o -name "*.css" \) \
+          ! -path "./node_modules/*" ! -path "./.venv/*" ! -path "./.pytest_cache/*" \
+          -exec ./bin/license-header-checker -a -r ./LICENSE {} +
