@@ -19,9 +19,14 @@ Daytistics is a web application whose goal is to increase your productivity and 
 
 ## Installation
 
+### Pre-Requirements
+- **Python**: <a src="https://www.debugpoint.com/install-python-3-12-ubuntu/">Installation Guide</a>
+- **Poetry**: Installation Guide
+- 
+
 1. Clone the repository:
     ```
-    git clone https://github.com/leo/user-auth-dt-django.git
+    git clone git@github.com:adf-tech/daytistics.git
     ```
 
 2. Install the required dependencies:
