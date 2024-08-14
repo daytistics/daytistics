@@ -25,10 +25,7 @@ def dashboard_view(request):
 
 @login_required
 def create_daytistic(request: HttpRequest) -> HttpResponse:
-
-    import time
-    time.sleep(4)
-    return JsonResponse({'message': 'Daytistic created'})
+    return HttpResponse('<span class="text-green-500">Daytistic erfolgreich erstellt</span>')
 
     if request.method == 'POST':
         date_str = request.POST.get('date')
