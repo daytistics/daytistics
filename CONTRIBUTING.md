@@ -29,7 +29,7 @@ All types of contributions are encouraged and valued. See the [Table of Contents
 This project and everyone participating in it is governed by the
 [Daytistics Code of Conduct](./CODE_OF_CONDUCT.md).
 By participating, you are expected to uphold this code. Please report unacceptable behavior
-to <gall.dev@proton.me>.
+to <daytistics@gmail.com>.
 
 ## I Have a Question
 
@@ -89,7 +89,7 @@ Once it's filed:
 
 - The core team will label the issue accordingly.
 - A core team member will try to reproduce the issue with your provided steps. If there are no reproduction steps or no obvious way to reproduce the issue, the team will ask you for those steps and mark the issue as `needs repro`.
-- If the team is able to reproduce the issue, it will be marked `needs fix`, as well as possibly other tags (such as `critical`), and the issue will be left to be [implemented by someone](#your-first-code-contribution).
+- If the team is able to reproduce the issue, it will be marked `needs fix`, as well as possibly other tags (such as `critical`), and the issue will be left to be implemented by someone.
 
 ### Suggesting Enhancements
 
@@ -104,16 +104,13 @@ This section guides you through submitting an enhancement suggestion for Daytist
 
 #### How Do I Submit a Good Enhancement Suggestion?
 
-Enhancement suggestions are tracked as [GitHub discussions](https://github.com/adf-web/daytistics-core/discussions/categories/ideas).
+Enhancement suggestions are tracked as [GitHub issues](https://github.com/daytistics/daytistics-core/issues).
 
 - Use a **clear and descriptive title** for the issue to identify the suggestion.
 - Provide a **step-by-step description of the suggested enhancement** in as many details as possible.
 - **Describe the current behavior** and **explain which behavior you expected to see instead** and why. At this point you can also tell which alternatives do not work for you.
 - You may want to **include screenshots and animated GIFs** which help you demonstrate the steps or point out the part which the suggestion is related to. You can use [this tool](https://www.cockos.com/licecap/) to record GIFs on macOS and Windows, and [this tool](https://github.com/colinkeenan/silentcast) or [this tool](https://github.com/GNOME/byzanz) on Linux.
 - **Explain why this enhancement would be useful** to most Daytistics users. You may also want to point out the other projects that solved it better and which could serve as inspiration.
-  <br><br>
-
-  After you have contributed your enhancement, the enhancement will be evaluated by our team. If it is accepted by the team, an issue will be created for it. For major changes, community votes will also be held.
 
 ### Project Structure
 
@@ -122,6 +119,7 @@ Enhancement suggestions are tracked as [GitHub discussions](https://github.com/a
 - _**`feelings`**: Creating and editing feelings_
 - **`config`**: Django project base
 - _**`analyses`**: Statistical analyses and visualizations by Daytistics_
+- _**`model`**: Interface to the trained AI models_
 - **`daytistics`**: Creating and editing daytistics
 - **`home`**: Pages that do not require login
 - **`templates/pages`**: Template pages (consisting of components)
@@ -129,10 +127,6 @@ Enhancement suggestions are tracked as [GitHub discussions](https://github.com/a
 - **`tests`**: Tests written in PyTest
 
 If a folder is _italicized_, it is not yet integrated.
-
-### Other Ways to Contribute
-
-You're not a great developer or you just don't feel like contributing code? No problem! You can also get involved in other ways by helping us with the design. Just take a look at [this repository](https://github.com/adf-web/daytistics-assets/issues).
 
 ## Styleguides
 
@@ -155,109 +149,14 @@ New contributions should be created according to the following guidelines:
 - **[PEP 8](https://peps.python.org/pep-0008/)**: Style Guide for Python Code
 - **[SOLID Principles](https://medium.com/@umaparvat/solid-principles-in-python-c9c3c337e0e1)**: The five golden rules of OOP
 - **[DRY](https://docs.getdbt.com/terms/dry#why-write-dry-code)**: "Don't repeat yourself!"
+- **Testing**: Write unit tests for every new/changed function or class
+- **Documentation**: Write doc-strings for every new/changed function or class
 
 ## Join The Project Team
 
-We are constantly looking for new core team members in the areas of software engineering, marketing & design.
-
-### Requirements
-
-_Italicized points_ are welcome but not required. In general, we require motivation, willingness to learn, a basic knowledge of software development, knowledge of German or English and a minimum age of 16 years.
-
-#### Django Developer
-
-As a Django developer, you'll be responsible for developing and maintaining the backend components of the web application, ensuring code quality and security. You'll implement new features and fix bugs according to project requirements, while closely collaborating with frontend developers to integrate user interfaces. Additionally, you'll participate in code reviews to help maintain overall code quality.
-
-**Skills**:
-
-- Good knowledge of Django (6 months of experience or equivalent through project work)
-- Experience with Python and common web technologies (HTML, CSS, JavaScript)
-- Familiarity with databases (PostgreSQL or SQLite) and ORM systems
-- Knowledge of Git and Github
-- _Knowledge of Docker and DDEV_
-- _Knowledge of Alpine.js, Tailwind CSS and HTMX_
-- _Ability to write unit tests with PyTest, Factory Boy and Faker for Django_
-
-**Expectations**:
-
-- Willingness to dive into the existing codebase.
-- Proactive communication and regular progress updates.
-- Ability to work in a collaborative, distributed team.
-
-<!-- #### Machine Learning Engineer
-
-As a machine learning engineer specializing in automated model training, you'll be responsible for developing and implementing robust processes for training ML models using diverse user-provided datasets. Your role involves designing automated pipelines, monitoring model performance, and ensuring accuracy and adaptability across various data inputs. You'll also collaborate with team members to integrate these automated systems into the broader project, while documenting processes and providing insights on model performance and potential improvements.
-
-**Skills**:
-
-- Basic to intermediate knowledge of machine learning algorithms and techniques.
-- Familiarity with ML frameworks like TensorFlow, PyTorch, or Scikit-learn.
-- Experience with data processing and analysis using tools like Pandas, NumPy, or similar.
-- Knowledge of Git and Github
-- _Knowledge of Docker and DDEV_
-- _Knowledge of Django & Django REST_
-- _Ability to write unit tests with PyTest_
-- _Knowledge of cloud-based ML services (e.g., Google AI, AWS SageMaker) for scalable model training._
-- _Experience with deploying models and managing model versioning and updates._
-
-**Expectations**:
-
-- Develop systems to automate the training of models based on user-provided datasets, including handling data validation and preprocessing.
-- Regular communication and updates on model performance and improvements.
-- Collaborate with the development team to integrate automated ML solutions into the existing infrastructure. -->
-
-#### Web Designer (UI/UX)
-
-As a web designer, you'll be tasked with creating visually appealing and user-friendly interfaces across various devices and platforms. Your responsibilities include developing and maintaining design guidelines, crafting layouts, icons, and other visual elements to ensure a consistent user experience. Collaborating closely with developers will be crucial to ensure the correct implementation of your designs.
-
-**Skills**:
-
-- Strong knowledge of web design and user experience design.
-- Experience with design tools like Adobe XD, Penpot, Figma, Sketch, or similar.
-- _Knowledge of HTML and CSS to support frontend development._
-- _Experience with creating SVG and 2D graphics_
-
-**Expectations**:
-
-- Ability to analyze user feedback and integrate improvements.
-- Regular communication and presentation of design ideas and progress.
-- Flexibility to adjust designs based on technological or project requirements.
-
-#### Social Media Manager
-
-As a social media and content manager, you'll be responsible for increasing project visibility and engagement through creative strategies across multiple platforms. Your role involves creating and managing content for TikTok, Instagram, and a blog, including video production, post scheduling, and community engagement. You'll also need to stay on top of social media trends, analyze performance metrics, and continuously refine marketing efforts to maximize reach and impact.
-
-**Skills**:
-
-- Experience in social media marketing with a focus on TikTok and Instagram.
-- Experience in writing and managing blog content.
-- _Knowledge of Google Ads_
-- _Knowledge of SEO Optimization_
-- _Knowledge of graphic design tools (e.g., Canva, Adobe Spark, DaVinci) for creating visual content._
-
-**Expectations**:
-
-- Creativity in developing new and engaging content ideas tailored to TikTok and Instagram audiences.
-- Regularly update and manage blog content, including SEO optimization and audience engagement.
-- Analyze social media metrics and blog performance to optimize content strategies.
-
-### Benefits
-
-Unfortunately, we cannot offer you any payment at the moment. However, after the product is released, the plan is to split the excess revenue (i.e. the part of the sales that is not already planned) among the core team.
-<br>
-However, we do offer you other cool benefits:
-
-- You work on a cool project with a cool team
-- A letter of recommendation upon request
-- Participation in internal team voting and thus direct influence on the development of the project
-
-### Join Us
-
-If you are interested in joining us, please send your application to gall.dev@proton.me. Thank you for your interest in participating in this project!
+Although we are always looking for new members for the core team, we need to ensure competence and activity. Therefore, it is not possible to apply for the core team.
+Instead, the existing core team will approach you if you do good work over a longer period of time.
 
 ## Attribution
 
-This Contributing file is adapted from the [Contributor Covenant](https://contributor-covenant.org/), version
-[1.4](https://www.contributor-covenant.org/version/1/4/code-of-conduct/code_of_conduct.md) and
-[2.0](https://www.contributor-covenant.org/version/2/0/code_of_conduct/code_of_conduct.md),
-and was generated by [contributing-gen](https://github.com/bttger/contributing-gen).
+This Contributing file is adapted from the [Contributing.md](https://generator.contributing.md/#) generator.
