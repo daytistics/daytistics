@@ -43,7 +43,7 @@ If you have any questions you can post them in the [discussions](https://github.
 
 ### Your first code contribution
 
-Before you can contribute to the project, find an issue that you want to work on and write under it that you are working on it.<br><br>
+Before you can contribute to the project, find an issue that you want to work on and write under it that you are working on it. Please note that the issue should have the label `team approved`.<br><br>
 After you have found your issue, please follow the following workflow and integrate the code change:
 
 1. Fork the project repository on GitHub.
