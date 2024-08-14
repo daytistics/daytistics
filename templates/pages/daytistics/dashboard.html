@@ -18,12 +18,13 @@
           <form
             hx-post="{% url 'daytistics_create' %}"
             hx-trigger="submit"
-            hx-target="#form-result"
+            hx-target="#result"
             hx-swap="innerHTML"
             hx-indicator="#spinner"
             @submit.prevent="loading = true"
             @htmx:afterRequest="loading = false"
           >
+            {% csrf_token %}
             <label for="date" class="mt-4">Datum: </label>
             <input
               x-mask="99.99.9999"
@@ -58,7 +59,7 @@
               </span>
             </div>
           </form>
-          <div id="form-result"></div>
+          <div id="result"></div>
         </div>
         <div class="bg-white p-6 rounded-lg shadow-lg w-1/2 ml-4">
           <h1 class="text-2xl font-bold mb-4">Tagebucheintrag erstellen</h1>
