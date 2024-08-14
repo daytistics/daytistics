@@ -39,10 +39,7 @@ Daytistics is a web application whose goal is to increase your productivity and 
    ```
 4. Run database migrations:
     ```
-    poetry run python manage.py makemigrations
-    ```
-    ```
-    poetry run python manage.py migrate
+    poetry run python manage.py makemigrations && poetry run python manage.py migrate
     ```
 6. Start the tailwind watcher:
     ```
@@ -52,13 +49,6 @@ Daytistics is a web application whose goal is to increase your productivity and 
     ```
     poetry run python manage.py runserver
     ```
-
-## Structure
-- **config**: Default Django project file with configuration files
-- **main**: All about daytistic entries
-- **analytics**: Analysis of entries from "main"
-- **journal**: Journal functionalities
-- **others**: Everything else
 
 ## Contributing
 
