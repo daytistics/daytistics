@@ -1,8 +1,6 @@
 # Daytistics
 
-![Logo](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/th5xamgrr6se0x5ro4g6.png)
-
-Daytistics is a web application whose goal is to increase your productivity and incorporate good habits into your life. 
+<p>Daytistics is a web application whose goal is to increase your productivity and incorporate good habits into your life.</p>
 
 ## Technologies
 
@@ -24,48 +22,47 @@ Daytistics is a web application whose goal is to increase your productivity and 
 Contributions are welcome! If you want to contribute to the project you can take a look into [CONTRIBUTING.md](./CONTRIBUTING.md). There you can find guidelines and useful tips to get started.
 
 ### Thanks to
+
 😭 No contributers yet...
 
 ## Installation
 
 ### Pre-Requirements
+
 - **Python (v3.12)**: <a href="https://www.debugpoint.com/install-python-3-12-ubuntu/">Installation Guide</a>
 - **Poetry (v1.8.2)**: <a href="https://python-poetry.org/docs/">Installation Guide</a>
 - **Node.js (v20.16.0)**: <a href="https://nodejs.org/en/download/package-manager">Installation Guide</a>
 
 1. **Clone the repository:**
-    ```
-    git clone git@github.com:adf-tech/daytistics-web.git && cd daytistics-web
-    ```
+
+   ```
+   git clone git@github.com:adf-web/daytistics-core.git && cd daytistics-core
+   ```
 
 2. **Install the required dependencies:**
-    ```
-    poetry install
-    ```
+   ```
+   poetry install
+   ```
 3. **Install Tailwind CSS:**
    ```
    poetry run python manage.py tailwind install
    ```
 4. **Run database migrations:**
-    ```
-    poetry run python manage.py makemigrations && poetry run python manage.py migrate
-    ```
-6. **Start the tailwind watcher:**
-    ```
-    poetry run python manage.py tailwind start
-    ```
+   ```
+   poetry run python manage.py makemigrations && poetry run python manage.py migrate
+   ```
+5. **Start the tailwind watcher:**
+   ```
+   poetry run python manage.py tailwind start
+   ```
 6. **Start the development server:**
-    ```
-    poetry run python manage.py runserver
-    ```
-
-## Running Tests
-
-To run tests, run the following command
-
-```bash
-  poetry run pytest
-```
+   ```
+   poetry run python manage.py runserver
+   ```
+7. **Run the tests:**
+   ```
+   poetry run pytest
+   ```
 
 ## License
 
