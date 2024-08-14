@@ -20,28 +20,37 @@ Daytistics is a web application whose goal is to increase your productivity and 
 ## Installation
 
 ### Pre-Requirements
-- **Python**: <a src="https://www.debugpoint.com/install-python-3-12-ubuntu/">Installation Guide</a>
+- **Python**: <a href="https://www.debugpoint.com/install-python-3-12-ubuntu/">Installation Guide</a>
 - **Poetry**: Installation Guide
 - 
 
 1. Clone the repository:
     ```
-    git clone git@github.com:adf-tech/daytistics.git
+    git clone git@github.com:adf-tech/daytistics-web.git && cd daytistics-web
     ```
 
 2. Install the required dependencies:
     ```
-    pip install -r requirements.txt
+    poetry install
     ```
-
-3. Run database migrations:
+3. Install Tailwind CSS:
+   ```
+   poetry run python manage.py tailwind install
+   ```
+4. Run database migrations:
     ```
-    python manage.py migrate
+    poetry run python manage.py makemigrations
     ```
-
-4. Start the development server:
     ```
-    python manage.py runserver
+    poetry run python manage.py migrate
+    ```
+6. Start the tailwind watcher:
+    ```
+    poetry run python manage.py tailwind start
+    ```
+6. Start the development server:
+    ```
+    poetry run python manage.py runserver
     ```
 
 ## Structure
