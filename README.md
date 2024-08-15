@@ -2,20 +2,10 @@
 
 <p>Daytistics is a web application whose goal is to increase your productivity and incorporate good habits into your life.</p>
 
-## Technologies
+## Disclaimer
+Daytistics-Core and all other products of the Daytistics project are in an early stage of development. We strongly recommend not to use them in production yet. Official releases will be announced [here](https://github.com/daytistics/daytistics-core/releases) in the future.
 
-<p align="left">
-  <img src="https://raw.githubusercontent.com/devicons/devicon/6910f0503efdd315c8f9b858234310c06e04d9c0/icons/django/django-plain.svg" width="50px" alt="Django" title="Django">
-  <img width="15px">
-  <img src="https://raw.githubusercontent.com/devicons/devicon/6910f0503efdd315c8f9b858234310c06e04d9c0/icons/alpinejs/alpinejs-original.svg" width="50px" alt="AlpineJS" title="AlpineJS">
-  <img width="15px">
-  <img src="https://i.imgur.com/uHQ2pvy.png" width="50px" alt="HTMX" title="HTMX">
-  <img width="15px">
-  <img src="https://raw.githubusercontent.com/devicons/devicon/6910f0503efdd315c8f9b858234310c06e04d9c0/icons/tailwindcss/tailwindcss-original.svg" width="50px" alt="TailwindCSS" title="TailwindCSS">
-  <img width="15px">
-  <img src="https://raw.githubusercontent.com/devicons/devicon/6910f0503efdd315c8f9b858234310c06e04d9c0/icons/postgresql/postgresql-original.svg" width="50px" alt="PostgreSQL" title="PostgreSQL">
-  <img width="15px">
-</p>
+
 
 ## Contributing
 
