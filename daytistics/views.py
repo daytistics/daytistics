@@ -25,46 +25,34 @@ def dashboard_view(request):
 
 @login_required
 def create_daytistic(request: HttpRequest) -> HttpResponse:
-    return HttpResponse('<span class="text-green-500">Daytistic erfolgreich erstellt</span>')
 
     if request.method == 'POST':
         date_str = request.POST.get('date')
-        logger.info(f"Empfangene POST-Anfrage mit Datum: {date_str}")
         if not date_str:
-            return HttpResponse("<p class='text-red-500'>Fehler: Datum fehlt</p>")
+            return HttpResponse("<p class='text-red-500'>Error: Date is missing</p>", status=400)
         try:
             date = datetime.strptime(date_str, '%d.%m.%Y')
         except ValueError:
-            return HttpResponse("<p class='text-red-500'>Fehler: Ungültiges Datum</p>")
+            return HttpResponse("<p class='text-red-500'>Error: Invalid date</p>", status=400)
         if Daytistic.objects.filter(user=request.user, date=date).exists():
-            return HttpResponse("<p class='text-red-500'>Fehler: Daytistic existiert bereits</p>")
+            return HttpResponse("<p class='text-red-500'>Error: Daytistics already exists</p>", status=400)
        
         if date < datetime.now() - timedelta(weeks=4):
-            return HttpResponse("<p class='text-red-500'>Fehler: Daytistic kann nicht älter als 4 Wochen sein</p>")
+            return HttpResponse("<p class='text-red-500'>Error: The daytistic can't be older than 4 weeks</p>", status=400)
        
+        if date > datetime.now():
+            return HttpResponse("<p class='text-red-500'>Error: The daytistic can't be in the future</p>", status=400)
+
         daytistic = Daytistic.objects.create(user=request.user, date=date)
-        print(f"Daytistic erfolgreich erstellt für Datum: {date} und Benutzer: {request.user}")
         
-        # Render the edit_daytistic template as a string
-        edit_daytistic_html = render_to_string('pages/daytistics/edit_daytistic.html', {'daytistic': daytistic}, request=request)
-        
-        print(f"HTML-Template für edit_daytistic gerendert")
-        # Return the rendered HTML along with a redirect instruction for HTMX
-        response = HttpResponse()
-        response['HX-Redirect'] = reverse('edit_daytistic', args=[daytistic.id])
+        response = HttpResponse(status=302)
+        response['HX-Redirect'] = reverse('daytistics_edit', args=[daytistic.id])
         return response
    
-    return HttpResponse("<p class='text-red-500'>Fehler: Ungültige Anfrage</p>")
+    return HttpResponse("<p class='text-red-500'>Error: Invalid request</p>", status=400)
 
-        
-@login_required
-def add_activity_to_daytistic_view(request, daytistic_id):
-    if request.method == 'POST':
-        daytistic = Daytistic.objects.get(user=request.user, id=daytistic_id)
-        
-        if not daytistic.date.date() == datetime.date.today():
-            return HttpResponse('Daytistic is not from today', status=403)
-        
+
+# TODO: Tests required as soon as the feature is fully implemented    
 @login_required
 def edit_daytistic_view(request, daytistic_id):
 
@@ -86,6 +74,7 @@ def edit_daytistic_view(request, daytistic_id):
 
     return render(request, 'pages/daytistics/edit_daytistic.html', context)
 
+# TODO: Tests required as soon as the feature is fully implemented   
 @login_required
 def add_activity_to_daytistic_view(request, daytistic_id):
     if request.method == 'POST':

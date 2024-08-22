@@ -1,3 +1,4 @@
+# TODO: Move to .env file
 DEFAULT_ACTIVITIES = [
     "Schlaf",
     "Essen",

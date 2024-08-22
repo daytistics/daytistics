@@ -1,9 +1,11 @@
-{% extends 'base.html' %} {% load static %} {% load mathfilters %} {% block
-content %}
+{% extends 'base.html' %} {% load static %} {% load mathfilters %} 
+{% block content %}
 <div class="bg-gray-100">
   <div class="min-h-screen flex">
-    <!-- Sidebar -->
-    <div class="flex justify-center align-middle">
+
+    {% include 'components/common/sidebar.html' %}
+
+    <main class="flex justify-start align-middle bg-gray-100">
       <div>
         <div
           class="m-8 flex align-middle justify-center"
@@ -131,7 +133,7 @@ content %}
           </div>
         </div>
       </div>
-    </div>
+    </main>
   </div>
 </div>
 

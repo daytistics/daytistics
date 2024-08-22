@@ -56,5 +56,6 @@ module.exports = {
     ],
     safelist: [
         'text-green-500',  
+        'text-red-500',
     ],
 }
