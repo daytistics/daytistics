@@ -1,58 +1,24 @@
-# Daytistics
+# About The Project
 
-<p>Daytistics is a web application whose goal is to increase your productivity and incorporate good habits into your life.</p>
+Daytistics is a web application written primarily in Python where you can enter how you spent your day. Daytistics visualizes this data and based on it gives you useful tips to increase your productivity. Additionally, we offer a self-hosted AI to predict your well-being on a hypothetical day.
 
-## Disclaimer
-Daytistics-Core and all other products of the Daytistics project are in an early stage of development. We strongly recommend not to use them in production yet. Official releases will be announced [here](https://github.com/daytistics/daytistics-core/releases) in the future.
+- [Don't forget to join our discord](https://discord.gg/GTV7XnPb)
+- [Take a look in our documentation]()
 
+## Key Features
 
+- **Activity Tracker**: Track your activities by time
+- **Well-Being Tracker**: Keep an eye on your well-being
+- **Digital Diary**: Create short diary entries
+- **Visualization**: Visualize connections between your well-being and your activities
+- **Receive Suggestions**: Learn how to make your day more productive
+- **Self-hosted AI**: Prevent unproductive days before they occur
 
 ## Contributing
 
 Contributions are welcome! If you want to contribute to the project you can take a look into [CONTRIBUTING.md](./CONTRIBUTING.md). There you can find guidelines and useful tips to get started.
 
-### Thanks to
-
-😭 No contributers yet...
-
-## Installation
-
-### Pre-Requirements
-
-- **Python (v3.12)**: <a href="https://www.debugpoint.com/install-python-3-12-ubuntu/">Installation Guide</a>
-- **Poetry (v1.8.2)**: <a href="https://python-poetry.org/docs/">Installation Guide</a>
-- **Node.js (v20.16.0)**: <a href="https://nodejs.org/en/download/package-manager">Installation Guide</a>
-
-1. **Clone the repository:**
-
-   ```
-   git clone git@github.com:adf-web/daytistics-core.git && cd daytistics-core
-   ```
-
-2. **Install the required dependencies:**
-   ```
-   poetry install
-   ```
-3. **Install Tailwind CSS:**
-   ```
-   poetry run python manage.py tailwind install
-   ```
-4. **Run database migrations:**
-   ```
-   poetry run python manage.py makemigrations && poetry run python manage.py migrate
-   ```
-5. **Start the tailwind watcher:**
-   ```
-   poetry run python manage.py tailwind start
-   ```
-6. **Start the development server:**
-   ```
-   poetry run python manage.py runserver
-   ```
-7. **Run the tests:**
-   ```
-   poetry run pytest
-   ```
+If you are not a programmer, you can still contribute financially. Financial contributions help me prioritize work on this project over others and show me that there is a real need for project development.
 
 ## License
 
