@@ -17,6 +17,11 @@ django-mathfilters = "^1.0.0"
 django-tailwind = "^3.8.0"
 django-htmx = "^1.19.0"
 django-browser-reload = "^1.13.0"
+whitenoise = {extras = ["brotli"], version = "^6.7.0"}
+gunicorn = "^23.0.0"
+pymysql = "^1.1.1"
+mysqlclient = "^2.2.4"
+python-dotenv = "^1.0.1"
 
 
 [tool.poetry.group.dev.dependencies]
