@@ -19,6 +19,9 @@ django-htmx = "^1.19.0"
 django-browser-reload = "^1.13.0"
 
 
+[tool.poetry.group.dev.dependencies]
+ruff = "^0.6.1"
+
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"

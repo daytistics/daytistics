@@ -5,7 +5,7 @@ from config.app_settings import DEFAULT_ACTIVITIES
 
 @receiver(post_migrate)
 def create_default_activities(sender, **kwargs):
-    if sender.name == 'main':  # Ensure the signal is only processed for the 'main' app
+    if sender.name == 'daytistics':  # Ensure the signal is only processed for the 'main' app
         for activity in DEFAULT_ACTIVITIES:
             if not Activity.objects.filter(name=activity).exists():
                 Activity.objects.create(name=activity, is_global=True)

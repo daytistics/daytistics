@@ -1,13 +1,14 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+import datetime
 
 class CustomUser(AbstractUser):
     activities = models.ManyToManyField('activities.Activity', related_name='users', blank=True)
 
     def get_todays_activities(self):
         from daytistics.models import Daytistic
-        import datetime
-        daytistic = Daytistic.objects.filter(user=self, date__date=datetime.date.today())
+        
+        daytistic = Daytistic.objects.filter(user=self, date=datetime.date.today())
 
         if daytistic.exists():
             return daytistic[0].activities
