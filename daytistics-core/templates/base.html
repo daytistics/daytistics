@@ -1,0 +1,58 @@
+{% load static tailwind_tags %} {% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <meta
+      name="description"
+      content="Daytistics - Erfolgreiche Tage durch Daten"
+    />
+    <meta name="author" content="Adfectatio" />
+    <link
+      rel="icon"
+      type="image/x-icon"
+      href="{% static 'images/logo.png' %}"
+    />
+    <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+    <title>
+      {% block title %}Daytistics - Erfolgreiche Tage durch Daten"{% endblock %}
+    </title>
+    {% tailwind_css %}
+
+    <script
+      defer
+      src="https://cdn.jsdelivr.net/npm/@alpinejs/mask@3.x.x/dist/cdn.min.js"
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"
+      defer
+    ></script>
+
+    <script src="https://unpkg.com/htmx.org@2.0.1"></script>
+    {% load django_htmx %} {% django_htmx_script %}
+  </head>
+
+  <body hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}' class="font-mono">
+    {% block content %}{% endblock %}
+  </body>
+
+  <script>
+    document.addEventListener("alpine:init", () => {
+      Alpine.store("darkMode", {
+        on: false,
+
+        toggle() {
+          this.on = !this.on;
+        },
+      });
+
+      const darkMode = localStorage.getItem("darkMode");
+      if (darkMode === "true") {
+        Alpine.store("darkMode").on = true;
+      }
+    });
+  </script>
+</html>

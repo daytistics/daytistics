@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% load widget_tweaks %}
+
+{% block content %}
+
+{% include 'components/common/navbar.html' %}
+
+<main class="flex flex-col items-center justify-center h-screen dark">
+    <div class="w-full max-w-md bg-white-dark rounded-lg shadow-md p-6">
+        <h2 class="text-2xl font-bold text-black mb-4">Logout</h2>
+        <p class="text-gray-500 mb-4">Möchten Sie sich wirklich abmelden?</p>
+        <form method="post" action="{% url 'account_logout' %}" class="flex flex-row justify-between">
+            {% csrf_token %}
+            <button class="mx-2 w-64 bg-gradient-to-r from-lime-500 to-green-500 text-white font-bold py-2 px-4 rounded-md mt-4 hover:bg-lime-800 hover:to-green-800 hover:scale-105 transition ease-in-out duration-200" type="submit">Ja</button>
+            <a href="{% url 'home' %}" class="w-64 mx-2">
+                <button class="w-full bg-gradient-to-r from-red-600 to-red-800 text-white font-bold py-2 px-4 rounded-md mt-4 hover:bg-red-800 hover:to-red-900 hover:scale-105 transition ease-in-out duration-200" type="button">Nein</button>
+            </a>
+        </form>
+    </div>
+</main>
+
+{% include 'components/common/footer.html' %}
+
+{% endblock %}

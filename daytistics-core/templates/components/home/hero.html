@@ -1,0 +1,65 @@
+{% load static %}
+{% load i18n %}
+
+<header class="mx-auto h-full px-4 py-28 md:pb-40 md:pt-20 sm:max-w-xl md:max-w-full md:px-24 lg:max-w-screen-xl lg:px-8">
+  <div class="flex flex-col items-center justify-between lg:flex-row">
+    <div class="">
+      <div class="lg:max-w-xl lg:pr-5">
+        <p class="flex text-sm uppercase text-gray-300">
+          <svg xmlns="http://www.w3.org/2000/svg" class="mr-1 inline h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M5 2a1 1 0 011 1v1h1a1 1 0 010 2H6v1a1 1 0 01-2 0V6H3a1 1 0 010-2h1V3a1 1 0 011-1zm0 10a1 1 0 011 1v1h1a1 1 0 110 2H6v1a1 1 0 11-2 0v-1H3a1 1 0 110-2h1v-1a1 1 0 011-1zM12 2a1 1 0 01.967.744L14.146 7.2 17.5 9.134a1 1 0 010 1.732l-3.354 1.935-1.18 4.455a1 1 0 01-1.933 0L9.854 12.8 6.5 10.866a1 1 0 010-1.732l3.354-1.935 1.18-4.455A1 1 0 0112 2z" clip-rule="evenodd" />
+          </svg>
+          {% trans 'For those who want more productivity' %}
+        </p>
+        <h2 class="mb-6 max-w-lg text-5xl font-bold leading-snug tracking-tight text-black sm:text-7xl sm:leading-snug">
+          {% trans 'Successful Days through' %}
+          <span class="my-1 inline-block border-b-8 border-white bg-green-500 px-4 font-bold text-white">{% trans 'Data' %}</span>
+        </h2>
+        <p class="text-base text-gray-400">
+          {% trans 'We bring you closer to the perfect life through artificial intelligence and data!' %}
+        </p>
+      </div>
+      <div class="mt-10 flex flex-col items-center md:flex-row">
+        {% if not user.is_authenticated %}
+          <a href="{% url 'daytistics_dashboard' %}" class="mb-3 inline-flex h-12 w-full items-center justify-center rounded bg-green-700 px-6 font-medium tracking-wide text-white shadow-md transition md:mr-4 md:mb-0 md:w-auto focus:outline-none hover:bg-green-800 hover:scale-105 ease-in-out">{% trans 'Sign up' %}</a>
+          <a href="/" aria-label="" class="group inline-flex items-center font-semibold text-black">
+            {% trans 'Learn more' %}
+            <svg xmlns="http://www.w3.org/2000/svg" class="group-hover:translate-x-2 ml-4 h-6 w-6 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+            </svg>
+          </a>
+        {% else %}
+          <a href="{% url 'daytistics_dashboard' %}" class="mb-3 inline-flex h-12 w-full items-center justify-center rounded bg-green-700 px-6 font-medium tracking-wide text-white shadow-md transition md:mr-4 md:mb-0 md:w-auto focus:outline-none hover:bg-green-800 hover:scale-105 ease-in-out">Dashboard</a>
+        {% endif %}
+      </div>
+    </div>
+    <div class="relative hidden lg:ml-32 lg:block lg:w-1/2">
+      <svg xmlns="http://www.w3.org/2000/svg" class="mx-auto my-6 h-10 w-10 animate-bounce rounded-full bg-blue-50 p-2 lg:hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M16 17l-4 4m0 0l-4-4m4 4V3" />
+      </svg>
+
+      <div class="abg-orange-400 w-fit rounded-[6rem] mx-auto overflow-hidden rounded-tl-none rounded-br-none">
+        <svg class="absolute -left-10 -top-20 h-28 w-28 rounded-xl text-green-400" width="800px" height="800px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M7 8H4C2.9 8 2 7.1 2 6V4C2 2.9 2.9 2 4 2H7C8.1 2 9 2.9 9 4V6C9 7.1 8.1 8 7 8Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+          <path d="M20.8 7H17.2C16.54 7 16 6.45999 16 5.79999V4.20001C16 3.54001 16.54 3 17.2 3H20.8C21.46 3 22 3.54001 22 4.20001V5.79999C22 6.45999 21.46 7 20.8 7Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+          <path d="M20.8 14.5H17.2C16.54 14.5 16 13.96 16 13.3V11.7C16 11.04 16.54 10.5 17.2 10.5H20.8C21.46 10.5 22 11.04 22 11.7V13.3C22 13.96 21.46 14.5 20.8 14.5Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+          <path d="M9 5H16" stroke="currentColor" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round" />
+          <path d="M12.5 5V18C12.5 19.1 13.4 20 14.5 20H16" fill="white" />
+          <path d="M12.5 5V18C12.5 19.1 13.4 20 14.5 20H16" stroke="currentColor" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round" />
+          <path d="M12.5 12.5H16" stroke="currentColor" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round" />
+          <path d="M20.8 22H17.2C16.54 22 16 21.46 16 20.8V19.2C16 18.54 16.54 18 17.2 18H20.8C21.46 18 22 18.54 22 19.2V20.8C22 21.46 21.46 22 20.8 22Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+
+        <svg class="absolute right-0 -bottom-20 h-28 w-28 rounded-xl text-green-400" width="800px" height="800px" viewBox="0 0 1024 1024" fill="currentColor" class="icon" version="1.1" xmlns="http://www.w3.org/2000/svg">
+          <path d="M659.171806 179.030837a123.432599 123.432599 0 0 1-70.907489 12.687225l-38.907489 38.907489 24.810573 21.286343c143.929515 14.237885 245.286344 75.700441 245.286343 131.38326 0 39.753304-51.735683 82.46696-133.497797 108.828194-21.427313 19.171806-49.480176 31.295154-80.352423 31.859031l-60.334802 58.643172c-0.140969 6.484581-0.845815 12.687225-1.973568 18.889868 99.38326-4.088106 186.361233-26.784141 249.797357-62.590309 1.409692 2.255507 2.960352 4.370044 4.792952 6.343612 14.237885 15.365639 21.568282 30.872247 21.568281 45.955948 0 63.436123-131.524229 134.343612-307.594713 134.343612S204.405286 654.378855 204.405286 590.942731c0-14.378855 6.625551-29.180617 19.594714-43.841409 2.396476-2.819383 4.370044-5.779736 5.920705-9.022027 20.017621 11.418502 42.713656 21.286344 67.242291 30.026432 2.960352-30.30837 16.9163-57.374449 37.638766-77.392071C254.731278 464.352423 204.405286 422.202643 204.405286 383.013216c0-34.537445 39.330396-71.330396 103.471366-97.69163a122.544493 122.544493 0 0 1-11.418502-51.876652c0-13.110132 2.114537-25.656388 5.779735-37.497797C191.013216 233.867841 119.823789 301.955947 119.823789 383.013216V804.933921c0 124.898678 168.599119 218.92511 392.176211 218.92511s392.176211-94.167401 392.176211-218.92511V383.013216c0-95.436123-98.678414-172.828194-245.004405-203.982379zM512 939.418502C335.929515 939.418502 204.405286 868.511013 204.405286 805.07489c0-14.378855 6.625551-29.180617 19.594714-43.84141 3.665198-4.229075 6.343612-8.881057 8.176211-13.955947 70.061674 39.189427 168.176211 62.590308 279.823789 62.590308 111.22467 0 208.77533-23.259912 278.837004-62.026431 1.832599 3.947137 4.088106 7.753304 7.189428 11.136564 14.237885 15.365639 21.568282 30.872247 21.568282 45.955947 0 63.577093-131.524229 134.484581-307.594714 134.484581zM603.066079 331.277533c-6.76652 0-13.110132 1.268722-19.171806 3.101322l-97.409692-83.594714c1.409692-5.497797 2.396476-11.136564 2.396476-17.198238 0-6.76652-1.268722-13.110132-3.101321-19.171806l86.132158-86.132159c9.444934 4.933921 19.876652 7.894273 31.154185 7.894273a68.229075 68.229075 0 0 0 68.088106-68.088105A68.229075 68.229075 0 0 0 603.066079 0a68.229075 68.229075 0 0 0-68.088105 68.088106c0 1.268722 0.281938 2.396476 0.422907 3.524229l-96.563877 96.563876c-5.779736-1.550661-11.700441-2.678414-17.903083-2.678414-37.497797 0-68.088106 30.590308-68.088106 68.088106s30.590308 68.088106 68.088106 68.088106c6.907489 0 13.53304-1.409692 19.876652-3.242291l96.845815 83.171806c-1.550661 5.638767-2.678414 11.559471-2.678414 17.762115 0 6.76652 1.268722 13.251101 3.24229 19.453744l-98.960352 96.281939c-5.920705-1.69163-11.982379-2.819383-18.325991-2.819384-37.497797 0-68.088106 30.590308-68.088106 68.088106S383.436123 648.45815 420.933921 648.45815a68.229075 68.229075 0 0 0 68.088105-68.088106c0-6.625551-1.268722-12.828194-2.960352-18.748899l99.38326-96.704845c5.638767 1.550661 11.559471 2.678414 17.621145 2.678414a68.15859 68.15859 0 0 0 0-136.317181z m0.140969-285.885463a22.681938 22.681938 0 1 1 0 45.392071 22.681938 22.681938 0 1 1 0-45.392071zM421.07489 256.281938a22.681938 22.681938 0 1 1 0-45.39207 22.681938 22.681938 0 1 1 0 45.39207z m0 346.502203a22.681938 22.681938 0 1 1 0-45.392071 22.681938 22.681938 0 1 1 0 45.392071z m182.132158-180.722467a22.681938 22.681938 0 1 1 0-45.39207 22.681938 22.681938 0 1 1 0 45.39207z" />
+        </svg>
+        <div class="flex w-96 flex-wrap">
+          <div class="h-48 w-1/2 rounded-full rounded-br-none bg-green-800"></div>
+          <div class="rounded-[6rem] h-48 w-1/2 rounded-tl-none rounded-br-none bg-green-700"></div>
+          <div class="h-48 w-1/2 rounded-full rounded-b-none rounded-br-none bg-green-400"></div>
+          <div class="h-48 w-1/2 rounded-full rounded-t-none rounded-br-none bg-green-600"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
