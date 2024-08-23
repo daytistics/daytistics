@@ -1,12 +1,12 @@
 from pytest_factoryboy import register
 import pytest
 from tests.factories import ActivityFactory, DaytisticFactory, CustomUserFactory, ActivityEntryFactory
+import os
 
 register(ActivityFactory)
 register(DaytisticFactory)
 register(CustomUserFactory)
 register(ActivityEntryFactory)
-
 
 @pytest.fixture
 def custom_user():

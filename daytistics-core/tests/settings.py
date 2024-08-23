@@ -4,6 +4,7 @@ from config.settings.dev import *
 
 DEBUG = False
 
+ALLOWED_HOSTS = ['localhost', 'example.com']
 
 # DATABASE SETTINGS
 

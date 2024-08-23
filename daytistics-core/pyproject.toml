@@ -26,10 +26,15 @@ ruff = "^0.6.1"
 pytest-django = "^4.8.0"
 pytest-factoryboy = "^2.7.0"
 faker = "^26.1.0"
+pytest-env = "^1.1.3"
 
 [tool.pytest.ini_options]
 DJANGO_SETTINGS_MODULE = "tests.settings"
 python_files = ["tests.py", "test_*.py", "*_tests.py"]
+
+[tool.pytest_env]
+DJANGO_SECRET_KEY = "RtcPToOOZ82erjag0zAVAQ3mmha9MrTx"
+DJANGO_ALLOWED_HOSTS = "localhost,example.com"
 
 
 [build-system]
