@@ -5,6 +5,9 @@ Daytistics is a web application written primarily in Python where you can enter 
 - [Don't forget to join our discord](https://discord.gg/GTV7XnPb)
 - [Take a look in our documentation]()
 
+> [!IMPORTANT]
+> Daytistics is currently under heavy development.
+
 ## Key Features
 
 - **Activity Tracker**: Track your activities by time
