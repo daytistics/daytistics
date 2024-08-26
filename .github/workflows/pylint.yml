@@ -7,7 +7,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: ["3.8", "3.9", "3.10"]
+        python-version: ["3.12"]
     steps:
     # Check out the code from the repository
     - uses: actions/checkout@v4
@@ -24,12 +24,14 @@ jobs:
         curl -sSL https://install.python-poetry.org | python3 -
         echo 'export PATH="$HOME/.local/bin:$PATH"' >> $GITHUB_ENV
 
-    # Install dependencies using Poetry
-    - name: Install dependencies
+    # Navigate to the subfolder and install dependencies using Poetry
+    - name: Install dependencies in daytistics-core
+      working-directory: ./daytistics-core
       run: |
         poetry install
 
-    # Run Pylint on the Python files in the repository
+    # Run Pylint on the Python files in the daytistics-core subfolder
     - name: Analysing the code with pylint
+      working-directory: ./daytistics-core
       run: |
         poetry run pylint $(git ls-files '*.py')
