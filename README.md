@@ -22,6 +22,11 @@ Contributions are welcome! If you want to contribute to the project you can take
 
 If you are not a programmer, you can still contribute financially. Financial contributions help me prioritize work on this project over others and show me that there is a real need for project development.
 
+### Thanks to
+
+- [@DavydIkkes](https://github.com/DavydIkkes)
+- [@MrHoffnung](https://hopeware.de)
+
 ## Communication
 Consider joining our [discord](https://discord.gg/GTV7XnPb) to stay up-to-date on events, updates, and connect with other members.
 
