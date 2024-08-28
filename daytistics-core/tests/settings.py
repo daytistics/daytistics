@@ -1,16 +1,12 @@
-from config.settings.dev import *
+from app.config.settings.prod import *
 
-# DJANGO SETTINGS
-
-DEBUG = False
-
-ALLOWED_HOSTS = ['localhost', 'example.com']
+ALLOWED_HOSTS = ["*"]
 
 # DATABASE SETTINGS
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+    "default": {
+        "ENGINE": "django.db.backends.sqlite3",
+        "NAME": BASE_DIR / "db.sqlite3",
     }
 }
