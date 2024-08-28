@@ -1,162 +1,35 @@
 # Contributing to Daytistics
 
-First off, thanks for taking the time to contribute! ❤️
+Thank you for your interest in contributing to Daytistics! This document provides guidelines for submitting bug reports, feature suggestions, and code changes.
 
-All types of contributions are encouraged and valued. See the [Table of Contents](#table-of-contents) for different ways to help and details about how this project handles them. Please make sure to read the relevant section before making your contribution. It will make it a lot easier for us maintainers and smooth out the experience for all involved. The community looks forward to your contributions. 🎉
+## Getting Started
 
-> And if you like the project, but just don't have time to contribute, that's fine. There are other easy ways to support the project and show your appreciation, which we would also be very happy about:
->
-> - Star the project
-> - Tweet about it
-> - Refer this project in your project's readme
-> - Mention the project at local meetups and tell your friends/colleagues
+The easiest way to get started is by asking for help in our [Discord](https://discord.gg/xDgK5QTKJj) community.
 
-## Table of Contents
+### How to Contribute
 
-- [Code of Conduct](#code-of-conduct)
-- [I Have a Question](#i-have-a-question)
-- [I Want To Contribute](#i-want-to-contribute)
-  - [Reporting Bugs](#reporting-bugs)
-  - [Suggesting Enhancements](#suggesting-enhancements)
-  - [Your First Code Contribution](#your-first-code-contribution)
-  - [Improving The Documentation](#improving-the-documentation)
-- [Styleguides](#styleguides)
-  - [Commit Messages](#commit-messages)
-- [Join The Project Team](#join-the-project-team)
+There are several ways you can contribute to Daytistics:
 
-## Code of Conduct
-
-This project and everyone participating in it is governed by the
-[Daytistics Code of Conduct](./CODE_OF_CONDUCT.md).
-By participating, you are expected to uphold this code. Please report unacceptable behavior
-to <daytistics@gmail.com>.
-
-## I Have a Question
-
-If you have any questions you can post them in the [discussions](https://github.com/adf-web/daytistics/discussions/categories/questions).
-
-## I Want To Contribute
-
-> ### Legal Notice
->
-> When contributing to this project, you must agree that you have authored 100% of the content, that you have the necessary rights to the content and that the content you contribute may be provided under the project license.
-
-### Your first code contribution
-
-Before you can contribute to the project, find an issue that you want to work on and write under it that you are working on it. Please note that the issue should have the label `team approved`.<br><br>
-After you have found your issue, please follow the following workflow and integrate the code change:
-
-1. Fork the project repository on GitHub.
-2. Clone your forked repository to your local machine.
-3. Create a new branch for your code changes.
-4. Make your code changes and commit them to your branch.
-5. Push your branch to your forked repository on GitHub.
-6. Open a pull request to submit your code changes for review.
-
-If you are new to working with Github, we recommend [this tutorial](https://www.youtube.com/watch?v=RGOj5yH7evk&t=425s).
-<br><br>
-Please make sure to follow the project's coding style guidelines and provide clear documentation for your changes. We appreciate your contribution and look forward to reviewing your code!
-
-### Reporting Bugs
-
-#### Before Submitting a Bug Report
-
-A good bug report shouldn't leave others needing to chase you up for more information. Therefore, we ask you to investigate carefully, collect information and describe the issue in detail in your report. Please complete the following steps in advance to help us fix any potential bug as fast as possible.
-
-- Make sure that you are using the latest version.
-- Determine if your bug is really a bug and not an error on your side e.g. using incompatible environment components/versions. If you are looking for support, you might want to check [this section](https://github.com/adf-web/daytistics/discussions/categories/questions).
-- To see if other users have experienced (and potentially already solved) the same issue you are having, check if there is not already a bug report existing for your bug or error in the [bug tracker](https://github.com/adf-web/daytistics/issues?q=is%3Aopen+is%3Aissue+label%3Abug).
-- Also make sure to search the internet (including Stack Overflow) to see if users outside of the GitHub community have discussed the issue.
-- Collect information about the bug:
-  - Stack trace (Traceback)
-  - OS, Platform and Version (Windows, Linux, macOS, x86, ARM)
-  - Version of the interpreter, compiler, SDK, runtime environment, package manager, depending on what seems relevant.
-  - Possibly your input and the output
-  - Can you reliably reproduce the issue? And can you also reproduce it with older versions?
-
-#### How Do I Submit a Good Bug Report?
-
-> You must never report security related issues, vulnerabilities or bugs including sensitive information to the issue tracker, or elsewhere in public. Instead sensitive bugs must be sent by email to <gall.dev@proton.me>.
-
-We use GitHub issues to track bugs and errors. If you run into an issue with the project:
-
-- Open an [Issue](https://github.com/adf-web/issues/new). (Since we can't be sure at this point whether it is a bug or not, we ask you not to talk about a bug yet and not to label the issue.)
-- Explain the behavior you would expect and the actual behavior.
-- Please provide as much context as possible and describe the _reproduction steps_ that someone else can follow to recreate the issue on their own. This usually includes your code. For good bug reports you should isolate the problem and create a reduced test case.
-- Provide the information you collected in the previous section.
-
-Once it's filed:
-
-- The core team will label the issue accordingly.
-- A core team member will try to reproduce the issue with your provided steps. If there are no reproduction steps or no obvious way to reproduce the issue, the team will ask you for those steps and mark the issue as `needs repro`.
-- If the team is able to reproduce the issue, it will be marked `needs fix`, as well as possibly other tags (such as `critical`), and the issue will be left to be implemented by someone.
-
-### Suggesting Enhancements
-
-This section guides you through submitting an enhancement suggestion for Daytistics, **including completely new features and minor improvements to existing functionality**. Following these guidelines will help maintainers and the community to understand your suggestion and find related suggestions.
-
-#### Before Submitting an Enhancement
-
-- Make sure that you are using the latest version.
-- Read the [documentation]() carefully and find out if the functionality is already covered, maybe by an individual configuration.
-- Perform a [search](https://github.com/adf-web/daytistics-core/discussions/categories/ideas) to see if the enhancement has already been suggested. If it has, add a comment to the existing discussion instead of opening a new one.
-- Find out whether your idea fits with the scope and aims of the project. It's up to you to make a strong case to convince the project's developers of the merits of this feature. Keep in mind that we want features that will be useful to the majority of our users and not just a small subset.
-
-#### How Do I Submit a Good Enhancement Suggestion?
-
-Enhancement suggestions are tracked as [GitHub issues](https://github.com/daytistics/daytistics-core/issues).
-
-- Use a **clear and descriptive title** for the issue to identify the suggestion.
-- Provide a **step-by-step description of the suggested enhancement** in as many details as possible.
-- **Describe the current behavior** and **explain which behavior you expected to see instead** and why. At this point you can also tell which alternatives do not work for you.
-- You may want to **include screenshots and animated GIFs** which help you demonstrate the steps or point out the part which the suggestion is related to. You can use [this tool](https://www.cockos.com/licecap/) to record GIFs on macOS and Windows, and [this tool](https://github.com/colinkeenan/silentcast) or [this tool](https://github.com/GNOME/byzanz) on Linux.
-- **Explain why this enhancement would be useful** to most Daytistics users. You may also want to point out the other projects that solved it better and which could serve as inspiration.
+- **Reporting Bugs**:
+  If you encounter a bug, first search the issues for existing reports.
+  If no similar issue exists, open a new one.
+  Provide a clear description of the bug, including steps to reproduce it if possible.
+  Screenshots, logs, or code snippets can also be very helpful.
+- **Suggesting Features**:
+  If you have an idea to improve Daytistics, share it by opening an issue on the issue tracker.
+  Describe the proposed feature in detail, including its benefits and any potential implementation considerations.
+- **Submitting Pull Requests**:
+  If you want to contribute code, start by forking the Daytistics repository on GitHub.
+  Follow the instructions in [INSTALL.md](./INSTALL.md) to setup your local development environment.
+  Make your changes on your local fork and then create a pull request to the main repository.
+  Ensure your code follows our [project structure](./STRUCTURE.md) and [conventions](./CONVENTIONS.md).
 
 ### Project Structure
 
-- **`accounts`**: User editing & Allauth overrides
-- **`activities`**: Creating and editing activities
-- _**`feelings`**: Creating and editing feelings_
-- **`config`**: Django project base
-- _**`analyses`**: Statistical analyses and visualizations by Daytistics_
-- _**`model`**: Interface to the trained AI models_
-- **`daytistics`**: Creating and editing daytistics
-- **`home`**: Pages that do not require login
-- **`templates/pages`**: Template pages (consisting of components)
-- **`templates/components`**: Components for pages
-- **`tests`**: Tests written in PyTest
+Before contributing, it’s helpful to familiarize yourself with the project structure. For more details, visit [STRUCTURE.md](./STRUCTURE.md).
 
-If a folder is _italicized_, it is not yet integrated.
+### Additional Information
 
-## Styleguides
-
-### Commit Messages
-
-- **Formulate clearly and concisely**: The commit name should be a maximum of 50 characters long and precise.
-- **Use the imperative form**: Write the commit message as if you were giving commands.
-- **One commit, one change**: Keep your commits small and thematically consistent. A commit should only do one thing, e.g. a bug fix or a new feature.
-- **Provide relevant details**: If necessary, add more details, such as why the change was made or what impact it has.
-- **References to tickets or issues**: Reference the issue ID if given
-- **Avoid general statements**: Messages like "Update", "Fix bugs" or "Minor changes" are not meaningful. Be specific!
-- **One sentence per commit**: Use only one sentence per commit and use the description.
-- **Retroactive changes**: If you change something in a later commit that was introduced in an earlier commit, reference it.
-
-### Code Style
-
-New contributions should be created according to the following guidelines:
-
-- **[Django Coding Style](https://docs.djangoproject.com/en/dev/internals/contributing/writing-code/coding-style/)**: Rules for committing to the Django framework
-- **[PEP 8](https://peps.python.org/pep-0008/)**: Style Guide for Python Code
-- **[SOLID Principles](https://medium.com/@umaparvat/solid-principles-in-python-c9c3c337e0e1)**: The five golden rules of OOP
-- **[DRY](https://docs.getdbt.com/terms/dry#why-write-dry-code)**: "Don't repeat yourself!"
-- **Testing**: Write unit tests for every new/changed function or class
-- **Documentation**: Write doc-strings for every new/changed function or class
-
-## Join The Project Team
-
-Although we are always looking for new members for the core team, we need to ensure competence and activity. Therefore, it is not possible to apply for the core team.
-Instead, the existing core team will approach you if you do good work over a longer period of time.
-
-## Attribution
-
-This Contributing file is adapted from the [Contributing.md](https://generator.contributing.md/#) generator.
+We encourage you to comment on existing issues and pull requests to share your thoughts and feedback.
+Feel free to ask questions in the issue or reach out to the project maintainers if you need assistance.
+Before submitting a large contribution, consider opening an issue, starting a discussion, or talking with us on Discord to discuss your approach.
