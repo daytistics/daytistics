@@ -24,10 +24,11 @@ If you are not a programmer, you can still contribute financially. Financial con
 
 ### Thanks to
 
-- [@DavydIkkes](https://github.com/DavydIkkes)
+- [@DavydIkkes](https://www.linkedin.com/in/davyd-ikkes-19581b316/)
 - [@MrHoffnung](https://hopeware.de)
 
 ## Communication
+
 Consider joining our [discord](https://discord.gg/GTV7XnPb) to stay up-to-date on events, updates, and connect with other members.
 
 ## License
