@@ -23,12 +23,12 @@ You can find a full list of our features in the [documentation](http://docs.dayt
 - Navigate to the Project Directory: `cd my-project`
 - If you have a pyproject.toml file with dependencies listed, you can install them by running: `poetry install`
 - Fill `.env` file with environment variables values for: DJANGO_SECRET_KEY, DJANGO_ALLOWED_HOSTS, DEFAULT_ACTIVITIES
-- (Windows only) For npm support under the Python we should define path to npm in environment variable: NPM_BIN_PATH
+- **(Windows only)** For npm support under the Python we should define path to npm in environment variable: NPM_BIN_PATH
 [StackOverflow Discussion](https://stackoverflow.com/questions/72033027/i-am-making-a-website-using-django-and-tailwind-css-but-in-cpanel-i-am-getting)
 - Poetry automatically creates a virtual environment for your project. To activate it, run: `poetry shell`
-- Install all required packages for tailwind support
-- Make sure that you prepared static with tailwind
-- Apply existing migrations on the project: `python
+- Install all required packages for tailwind support: `python manage.py tailwind install`
+- Make sure that you prepared static with tailwind: `python manage.py tailwind start`
+- Apply existing migrations on the project: `python manage.py migrate`
 - With the virtual environment activated, you can run your project scripts or start development: `python manage.py runserver`
 
 ## Contributing
