@@ -16,6 +16,13 @@ Daytistics is a web application written primarily in Python where you can enter 
 
 You can find a full list of our features in the [documentation](http://docs.daytistics.com/)
 
+## Project setting up
+
+- Clone this repository
+- Ensure Poetry is Properly Installed [Poetry Official](https://python-poetry.org/docs/#installing-with-the-official-installer)
+- Navigate to the Project Directory
+`cd my-project`
+
 ## Contributing
 
 Contributions are welcome! If you want to contribute to the project you can take a look into [CONTRIBUTING.md](./CONTRIBUTING.md). There you can find guidelines and useful tips to get started.
