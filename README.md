@@ -19,7 +19,7 @@ You can find a full list of our features in the [documentation](http://docs.dayt
 ## Project setting up
 
 - Navigate to the Project Directory: `cd daytistics/daytistics-core`
-- If you have a pyproject.toml file with dependencies listed, you can install them by running: `poetry install`
+- Install the dependencies by running `poetry install`
 - Fill `.env` file with environment variables values for: DJANGO_SECRET_KEY, DJANGO_ALLOWED_HOSTS, DEFAULT_ACTIVITIES
 - **(Windows only)** For npm support under the Python we should define path to npm in environment variable: NPM_BIN_PATH
 [StackOverflow Discussion](https://stackoverflow.com/questions/72033027/i-am-making-a-website-using-django-and-tailwind-css-but-in-cpanel-i-am-getting)
