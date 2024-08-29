@@ -1,6 +1,6 @@
 # Contributing to Daytistics
 
-Thank you for your interest in contributing to Pumpkin! This document provides guidelines for submitting bug reports, feature suggestions, and code changes.
+Thank you for your interest in contributing to Daytistics! This document provides guidelines for submitting bug reports, feature suggestions, and code changes.
 
 ## Getting Started
 
@@ -8,7 +8,7 @@ The easiest way to get started is by asking for help in our [Discord](https://di
 
 ### How to Contribute
 
-There are several ways you can contribute to Pumpkin:
+There are several ways you can contribute to Daytistics:
 
 - **Reporting Bugs**:
   If you encounter a bug, first search the issues for existing reports.

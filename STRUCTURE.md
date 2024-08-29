@@ -76,7 +76,7 @@ Core of the application which is hosted by us on [daytistics.com](https://daytis
 
 ### Applications
 
-- **Accounts**: User management and overriding the Django built in user
+- **Account**: User management and overriding the Django built in user
 - **Activities**: Activity type management
 - **Config**: Django configuration
 - **Daytistics**: Daytistics management
