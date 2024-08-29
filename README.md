@@ -18,7 +18,6 @@ You can find a full list of our features in the [documentation](http://docs.dayt
 
 ## Project setting up
 
-- Ensure Poetry is Properly Installed [Poetry Official Documentation](https://python-poetry.org/docs/#installing-with-the-official-installer)
 - Navigate to the Project Directory: `cd my-project`
 - If you have a pyproject.toml file with dependencies listed, you can install them by running: `poetry install`
 - Fill `.env` file with environment variables values for: DJANGO_SECRET_KEY, DJANGO_ALLOWED_HOSTS, DEFAULT_ACTIVITIES
