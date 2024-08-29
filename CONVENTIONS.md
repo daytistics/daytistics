@@ -43,7 +43,7 @@ This document outlines the conventions used in this project. Following these con
 
 ## File and Directory Structure
 
-- **Source Code**: Place all source code files in the `src/` directory inside of the appropriate service directory (e.g. `daytistis-core`). You can find more information in the [STRUCTURE.md](./STRUCTURE.md) file.
+- **Source Code**: Place all source code files in the `app/` directory inside of the appropriate service directory (e.g. `daytistis-core`). You can find more information in the [STRUCTURE.md](./STRUCTURE.md) file.
 - **Tests**: Place test files in the `tests/` directory, mirroring the structure of the `src/` directory.
 - **Configuration**: Keep configuration files (e.g., .env) in the root directory.
 

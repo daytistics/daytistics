@@ -4,7 +4,7 @@ FROM python:3.12
 # Set environment variables
 ENV PYTHONUNBUFFERED=1 \
     PYTHONDONTWRITEBYTECODE=1 \
-    DJANGO_SETTINGS_MODULE=config.settings.prod
+    DJANGO_SETTINGS_MODULE=app.config.settings.prod
 
 # Set the working directory
 WORKDIR /app
