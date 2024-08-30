@@ -23,6 +23,7 @@ INSTALLED_APPS = [
     "app.home",
     "app.accounts",
     "app.tools",
+    "app.theme",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -34,7 +35,6 @@ INSTALLED_APPS = [
     "allauth.account",
     "allauth.socialaccount",
     "tailwind",
-    "app.theme",
     "django_browser_reload",
     "django_htmx",
     "widget_tweaks",
@@ -130,10 +130,11 @@ STATICFILES_DIRS = [
 
 # TAILWIND SETTINGS
 
-TAILWIND_APP_NAME = "theme"
+TAILWIND_APP_NAME = "app.theme"
 
 INTERNAL_IPS = [
     "127.0.0.1",
+    "localhost"
 ]
 
 
@@ -162,4 +163,4 @@ LOCALE_PATHS = [
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-NPM_BIN_PATH = "/usr/bin/npm"
+NPM_BIN_PATH = os.getenv("NPM_BIN_PATH") or "/usr/bin/npm"
