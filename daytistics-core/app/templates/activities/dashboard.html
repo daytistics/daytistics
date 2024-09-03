@@ -3,8 +3,21 @@
   <div class="min-h-screen flex">
     <!-- Sidebar -->
     {% include 'includes/_sidebar.html' %}
+    <!-- Main content -->
+    <main class="p-8" x-data>
+      <div class="grid grid-cols-1 gap-4 grid-rows-6">
+        {% include 'activities/includes/_activities_create.html' %}
 
-    </h1>Here is the list of your activities</h1>
+        <div class="bg-white p-6 rounded-lg shadow-lg">
+          <h1 class="text-2xl text-center font-bold mb-4">{% trans "Activities list" %}</h1>
+          <ul>
+            {% for activity in activities %}
+            <li>{{ activity.name }}</li>
+            {% endfor %}
+          </ul>
+        </div>
+      </div>
+    </main>
   </div>
 </div>
 {% endblock %}
