@@ -10,6 +10,7 @@ urlpatterns = i18n_patterns(
     path("accounts/", include("allauth.urls")),
     path("__reload__/", include("django_browser_reload.urls")),
     path("daytistics/", include("app.daytistics.urls")),
+    path("activities/", include("app.activities.urls")),
     path("", include("app.home.urls")),
 )
 
