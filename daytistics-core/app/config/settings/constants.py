@@ -1,6 +1,6 @@
 # Indicates how many Daytistics are shown in the dashboard
 DEFAULT_DAYTISTICS_NUMBER_IN_DASHBOARD = 9
-DEFAULT_ACTIVITIES=["Sleep", "Eat", "Work", "Sport", "Leisure", "Family", "Friends", "Household", "Shopping"]
+DEFAULT_ACTIVITIES = ["Sleep", "Eat", "Work", "Sport", "Leisure", "Family", "Friends", "Household", "Shopping"]
 
 
 ERROR_ONLY_INTERNAL_ACCESS = {

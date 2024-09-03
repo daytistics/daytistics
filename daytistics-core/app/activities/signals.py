@@ -1,8 +1,8 @@
 from django.db.models.signals import post_migrate
 from django.dispatch import receiver
 from app.activities.models import Activity
-import os
 from django.db.models.base import ModelBase
+from django.conf import settings
 
 
 # Todo: tests
@@ -22,7 +22,7 @@ def create_default_activities(sender: ModelBase, **kwargs) -> None:
         None
     """
     if sender.name == "activities":
-        for activity in os.environ.get("DEFAULT_ACTIVITIES", "").split(","):
+        for activity in settings.DEFAULT_ACTIVITIES:
             if not Activity.objects.filter(name=activity).exists():
                 Activity.objects.create(name=activity, is_global=True)
                 print(f"Activity {activity} created")
