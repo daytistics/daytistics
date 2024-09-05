@@ -14,11 +14,11 @@ Daytistics is a web application written primarily in Python where you can enter 
 - **Receive Suggestions**: Learn how to make your day more productive
 - **AI-Integration**: Prevent unproductive days before they occur
 
-You can find a full list of our features in our [docs](daytistics.github.io).
+You can find a full list of our features in our [docs](http://docs.daytistics.com).
 
 ## Contributing
 
-Contributions are welcome! If you want to contribute to the project you can take a look into the **Contributer Guide** section in our [docs](daytistics.github.io). There you can find guidelines and useful tips to get started.
+Contributions are welcome! If you want to contribute to the project you can take a look into the **Contributer Guide** section in our [docs](http://docs.daytistics.com). There you can find guidelines and useful tips to get started.
 
 If you are not a programmer, you can still contribute financially. Financial contributions help me prioritize work on this project over others and show me that there is a real need for project development.
 
