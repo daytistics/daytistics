@@ -1,0 +1,69 @@
+site_name: Daytistics
+theme:
+  name: material
+  favicon: "assets/logo.png"
+  font:
+    code: Roboto markdown_extensions
+  palette:
+    - scheme: default
+      primary: green
+      accent: green
+      toggle:
+        icon: material/weather-sunny
+        name: Switch to dark mode
+
+    # Dark mode
+    - scheme: slate
+      primary: green
+      accent: green
+      toggle:
+        icon: material/weather-night
+        name: Switch to light mode
+  features:
+    - navigation.expand
+    - search.highlight
+    - dark_mode
+
+nav:
+  - Home: "index.md"
+  - General:
+      - Contributers: "general/contributers.md"
+  #- User Guide:
+  #- Introduction: "tutorials/introduction.md"
+  #- Advanced Topics: "tutorials/advanced.md"
+  - Contributer Guide:
+      - Overview: "contributers_guide/overview.md"
+      - Conventions: "contributers_guide/conventions.md"
+      - Code of Conduct: "contributers_guide/code_of_conduct.md"
+      - Installation: "contributers_guide/install.md"
+      - App Docs:
+          - Config: "contributers_guide/apps/config.md"
+          - Core:
+              - Daytistics: "contributers_guide/apps/core/daytistics.md"
+              - Wellbeing: "contributers_guide/apps/core/wellbeing.md"
+              - Activities: "contributers_guide/apps/core/activities.md"
+              - Diary: "contributers_guide/apps/core/diary.md"
+          - Plots: "contributers_guide/apps/plots.md"
+          - Models:
+              - Predictor: "contributers_guide/apps/models/predictor.md"
+              - Suggestor: "contributers_guide/apps/models/suggestor.md"
+          - Account: "contributers_guide/apps/account.md"
+          - Tools: "contributers_guide/apps/tools.md"
+
+  # - Meeting Minutes:
+  #    - Overview: "minutes/overview.md"
+
+plugins:
+  - search
+
+markdown_extensions:
+  - toc:
+      permalink: true
+  - admonition
+  - codehilite
+
+extra_css:
+  - "styles/extra.css"
+
+extra_javascript:
+  - "scripts/extra.js"
