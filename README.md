@@ -22,8 +22,6 @@ Contributions are welcome! If you want to contribute to the project you can take
 
 If you are not a programmer, you can still contribute financially. Financial contributions help us prioritize work on this project over others and show us that there is a real need for project development.
 
-<a href="https://www.patreon.com/bePatron?u=138721392" data-patreon-widget-type="become-patron-button">Become a member!</a><script async src="https://c6.patreon.com/becomePatronButton.bundle.js"></script>
-
 ## Communication
 
 Consider joining our [discord](https://discord.gg/GTV7XnPb) to stay up-to-date on events, updates, and connect with other members.
