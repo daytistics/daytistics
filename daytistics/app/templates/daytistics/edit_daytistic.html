@@ -1,0 +1,164 @@
+{% extends 'base.html' %} {% load static %} {% load mathfilters %} 
+{% block content %}
+<div class="bg-gray-100">
+  <div class="min-h-screen flex">
+
+    {% include 'includes/_sidebar.html' %}
+
+    <main class="flex justify-start align-middle bg-gray-100">
+      <div>
+        <div
+          class="m-8 flex align-middle justify-center"
+          x-data="activitiesComponent()"
+          x-init="fetchActivities('{% url 'activities_availables_as_options_list' %}')"
+        >
+          <div
+            class="w-full max-w-2xl bg-white-dark rounded-lg shadow-md p-6 flex flex-col h-full"
+          >
+            <h1 class="text-xl text-center">Aktivität hinzufügen</h1>
+            <div class="flex align-middle justify-center">
+              <form
+                hx-trigger="submit"
+                hx-post="{% url 'daytistics:add_activity_to_daytistic' daytistic_id=daytistic.id %}"
+              >
+                <select
+                  name="activity_id"
+                  class="activities-add bg-white-light border rounded-md mb-4 focus:bg-white-light focus:ring-1 focus:ring-blue-500 transition ease-in-out duration-150 hover:scale-105"
+                  x-model="selectedActivity"
+                >
+                  <template
+                    x-for="available_activity in availableActivities"
+                    :key="available_activity.id"
+                  >
+                    <option
+                      :value="available_activity.id"
+                      x-text="available_activity.name"
+                    ></option>
+                  </template>
+                </select>
+
+                <select
+                  name="duration"
+                  class="bg-white-light border rounded-md mb-4 focus:bg-white-light focus:ring-1 focus:ring-blue-500 transition ease-in-out duration-150 hover:scale-105"
+                >
+                  <template
+                    x-for="halfHour in Array.from({length: 48}, (_, i) => (i + 1) * 30)"
+                  >
+                    <option
+                      :value="halfHour"
+                      x-text="`${Math.floor(halfHour / 60)}h ${halfHour % 60 === 0 ? '' : '30min'}`"
+                    ></option>
+                  </template>
+                </select>
+
+                <button
+                  class="w-36 bg-gradient-to-r from-lime-500 to-green-500 text-white font-bold py-2 px-4 rounded-md mt-4 hover:bg-lime-800 hover:to-green-800 hover:scale-105 transition ease-in-out duration-200"
+                  type="submit"
+                >
+                  Hinzufügen
+                </button>
+              </form>
+            </div>
+            <p
+              class="text-center mt-4 text-red-500"
+              id="activity-addition-error"
+            >
+              Irgendso ein Fehler ist hier aufgetreten!
+            </p>
+          </div>
+        </div>
+
+        <div
+          class="m-8 flex align-middle justify-center"
+          x-data="activitiesComponent()"
+          x-init="fetchActivities('{% url 'activities_availables_as_options_list' %}')"
+        >
+          <div
+            class="w-full max-w-2xl bg-white-dark rounded-lg shadow-md p-6 flex flex-col h-full"
+          >
+            <h1 class="text-xl text-center">Aktivitäten bearbeiten</h1>
+            <div class="flex align-middle justify-center flex-col">
+              {% for activity_entry in daytistic.activities.all %}
+              <form hx-trigger="submit" hx-post="/" class="mb-4">
+                <select
+                  name="activity_id"
+                  class="activities-edit bg-white-light border rounded-md mb-4 focus:bg-white-light focus:ring-1 focus:ring-blue-500 transition ease-in-out duration-150 hover:scale-105"
+                >
+                  <template
+                    x-for="available_activity in availableActivities"
+                    :key="available_activity.id"
+                  >
+                    <option
+                      :value="available_activity.id"
+                      :selected="available_activity.id == {{ activity_entry.activity.id }}"
+                      x-text="available_activity.name"
+                    ></option>
+                  </template>
+                </select>
+
+                <select
+                  name="duration"
+                  class="bg-white-light border rounded-md mb-4 focus:bg-white-light focus:ring-1 focus:ring-blue-500 transition ease-in-out duration-150 hover:scale-105"
+                >
+                  <template
+                    x-for="halfHour in Array.from({length: 48}, (_, i) => (i + 1) * 30)"
+                  >
+                    <option
+                      :value="halfHour"
+                      x-text="`${Math.floor(halfHour / 60)}h ${halfHour % 60 === 0 ? '' : '30min'}`"
+                      :selected="halfHour == {{ activity_entry.duration.total_seconds|div:60 }}"
+                    ></option>
+                  </template>
+                </select>
+
+                <button
+                  class="w-36 bg-gradient-to-r from-orange-400 to-orange-500 text-white font-bold py-2 px-4 rounded-md mt-4 hover:from-orange-500 hover:to-orange-600 hover:scale-105 transition ease-in-out duration-200"
+                  type="submit"
+                >
+                  Bearbeiten
+                </button>
+              </form>
+              {% empty %}
+              <p class="text-center mt-4 text-red-500">
+                Keine Aktivitäten vorhanden!
+              </p>
+              {% endfor %}
+            </div>
+            <p
+              class="text-center mt-4 text-red-500"
+              id="activity-addition-error"
+            >
+              Irgendso ein Fehler ist hier aufgetreten!
+            </p>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<script>
+  function activitiesComponent() {
+    return {
+      availableActivities: [],
+      selectedActivity: null,
+      fetchActivities(route) {
+        fetch(route)
+          .then((response) => response.text())
+          .then((html) => {
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(html, "text/html");
+            const options = doc.querySelectorAll("option");
+            this.availableActivities = Array.from(options).map((option) => ({
+              id: option.value,
+              name: option.textContent,
+            }));
+          })
+          .catch((error) => {
+            console.error("Error fetching activities:", error);
+          });
+      },
+    };
+  }
+</script>
+{% endblock %}
