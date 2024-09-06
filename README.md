@@ -20,7 +20,7 @@ You can find a full list of our features in our [docs](http://docs.daytistics.co
 
 Contributions are welcome! If you want to contribute to the project you can take a look into the **Contributer Guide** section in our [docs](http://docs.daytistics.com). There you can find guidelines and useful tips to get started.
 
-If you are not a programmer, you can still contribute financially. Financial contributions help me prioritize work on this project over others and show me that there is a real need for project development.
+If you are not a programmer, you can still contribute financially. Financial contributions help us prioritize work on this project over others and show us that there is a real need for project development.
 
 ## Communication
 
