@@ -27,6 +27,8 @@ theme:
 nav:
   - Home: "index.md"
   - General:
+      - Features: "general/features.md"
+      - Technologies: "general/technologies.md"
       - Contributers: "general/contributers.md"
   #- User Guide:
   #- Introduction: "tutorials/introduction.md"

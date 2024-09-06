@@ -13,7 +13,7 @@ Daytistics is a web application written primarily in Python where you can enter 
 - **Receive Suggestions**: Learn how to make your day more productive
 - **AI-Integration**: Prevent unproductive days before they occur
 
-You can find a full list of our features on this page.
+You can find a full list of our features on [this page](./general/features.md).
 
 ## Contributing
 
