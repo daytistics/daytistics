@@ -1,0 +1,648 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2024-08-22 16:51+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+
+# TODO: Translations required for: latest activities, error pages (internal only & daytistics access denied), everything with daytistic edit
+
+# SECTION: SENTENCES_STD
+
+# -> A
+
+# -> B
+
+# -> C
+
+#: templates/daytistics/dashboard.html:69
+msgid "Create a Diary Entry"
+msgstr "Tagebucheintrag erstellen"
+
+# -> D
+
+#: templates/daytistics/dashboard.html:70
+msgid "Diary entries are optional. Click"
+msgstr "Tagebucheinträge sind optional. Klicke"
+
+# -> E
+
+# -> F
+
+#: templates/components/home/hero.html:12
+msgid "For those who want more productivity"
+msgstr "Für alle die mehr Produktivität wollen"
+
+# -> G
+
+# -> H
+
+# -> I
+
+# -> J
+
+# -> K
+
+# -> L
+
+# -> M
+
+# -> N
+
+# -> O
+
+# -> P
+
+# -> Q
+
+# -> R
+
+# -> S
+
+#: templates/components/home/hero.html:15
+msgid "Successful Days through"
+msgstr "Erfolgreiche Tage durch"
+
+# -> T
+
+#: templates/daytistics/dashboard.html:20
+msgid "The Daytistic must not be older than 4 weeks."
+msgstr "Die Daytistic darf nicht älter als 4 Wochen sein."
+
+# -> U
+
+# -> V
+
+# -> W
+
+#: templates/components/home/hero.html:19
+msgid "We bring you closer to the perfect life through artificial intelligence and data!"
+msgstr "Durch künstliche Intelligenz und Daten bringen wir dich näher an das perfekte Leben!"
+
+# -> X
+
+# -> Y
+
+# -> Z
+
+
+# SECTION: SHORTS_STD
+
+# -> A
+
+#: templates/includes/_navbar.html:26
+#: templates/includes/_navbar.html:174
+msgid "About"
+msgstr "Wir"
+
+#: templates/includes/_footer.html:8
+msgid "All rights reserved."
+msgstr "Alle Rechte vorbehalten."
+
+#: templates/includes/_sidebar.html:8
+msgid "Analyses"
+msgstr "Analysen"
+
+# -> B
+
+# -> C
+
+#: templates/includes/_footer.html:11
+msgid "Contact"
+msgstr "Kontakt"
+
+#: templates/daytistics/dashboard.html:19
+msgid "Create a Daytistic"
+msgstr "Daytistic erstellen"
+
+# -> D
+
+#: templates/includes/_navbar.html:25
+#: templates/includes/_navbar.html:173
+msgid "Docs"
+msgstr "Docs"
+
+#: templates/components/home/hero.html:16
+msgid "Data"
+msgstr "Daten"
+
+#: templates/daytistics/dashboard.html:32
+msgid "Date"
+msgstr "Datum"
+
+#: templates/daytistics/dashboard.html:32
+#: templates/daytistics/navbar.html:184
+#: templates/daytistics/sidebar.html:57
+msgid "Dashboard"
+msgstr "Dashboard"
+
+# -> E
+
+#: config/settings/base.py:164
+msgid "English"
+msgstr "Englisch"
+
+#: activities/views.py:19
+msgid "Eat"
+msgstr "Essen"
+
+# -> F
+
+#: templates/includes/_navbar.html:24
+#: templates/includes/_navbar.html:172
+# msgid "Features"
+# msgstr "Features"
+
+#: activities/views.py:19
+msgid "Family"
+msgstr "Familie"
+
+#: activities/views.py:19
+msgid "Friends"
+msgstr "Freunde"
+
+# -> G
+
+#: config/settings/base.py:165
+msgid "German"
+msgstr "Deutsch"
+
+# -> H
+
+#: templates/daytistics/dashboard.html:20 templates/daytistics/dashboard.html:70
+msgid "Hint"
+msgstr "Hinweis"
+
+#: templates/daytistics/dashboard.html:70
+msgid "here"
+msgstr "hier"
+
+#: activities/views.py:19
+msgid "Household"
+msgstr "Haushalt"
+
+# -> I
+
+#: templates/includes/_footer.html:13
+msgid "Imprint"
+msgstr "Impressum"
+
+# -> J
+
+# -> K
+
+# -> L
+
+#: templates/components/home/hero.html:26
+msgid "Learn more"
+msgstr "Mehr erfahren"
+
+#: activities/views.py:19
+msgid "Leisure"
+msgstr "Freizeit"
+
+#: templates/includes/_navbar.html:71
+#: templates/includes/_navbar.html:191
+msgid "Login"
+msgstr "Login"
+
+#: templates/includes/_navbar.html:189
+#: templates/includes/_sidebar.html:169
+msgid "Logout"
+msgstr "Logout"
+
+# -> M
+
+# -> N
+
+#: templates/daytistics/dashboard.html:46
+msgid "New Daytistic"
+msgstr "Neue Daytistic"
+
+# -> O
+
+# -> P
+
+#: templates/includes/_navbar.html:23
+#: templates/includes/_navbar.html:171
+msgid "Product"
+msgstr "Produkt"
+
+#: templates/includes/_footer.html:12
+msgid "Privacy"
+msgstr "Datenschutz"
+
+# -> Q
+
+# -> R
+
+# -> S
+
+#: templates/includes/_navbar.html:132 
+#: templates/includes/_sidebar.html:135
+#: templates/includes/_navbar.html:187
+msgid "Settings"
+msgstr "Einstellungen"
+
+#: templates/components/home/hero.html:24
+#: templates/includes/_navbar.html:193
+msgid "Sign up"
+msgstr "Registrieren"
+
+#: activities/views.py:19
+msgid "Sleep"
+msgstr "Schlaf"
+
+#: activities/views.py:19
+msgid "Shopping"
+msgstr "Einkaufen"
+
+#: activities/views.py:19
+msgid "Sports"
+msgstr "Sport"
+
+# -> T
+
+#: templates/daytistics/dashboard.html:70
+msgid "to learn more."
+msgstr "um mehr zu erfahren."
+
+# -> U
+
+# -> V
+
+# -> W
+
+#: activities/views.py:19
+msgid "Work"
+msgstr "Arbeit"
+
+# -> X
+
+# -> Y
+
+# -> Z
+
+
+# SECTION: BODY_TEXT_STD
+
+# -> A
+
+# -> B
+
+# -> C
+
+# -> D
+
+# -> E
+
+# -> F
+
+# -> G
+
+# -> H
+
+# -> I
+
+# -> J
+
+# -> K
+
+# -> L
+
+# -> M
+
+# -> N
+
+# -> O
+
+# -> P
+
+# -> Q
+
+# -> R
+
+# -> S
+
+# -> T
+
+# -> U
+
+# -> V
+
+# -> W
+
+# -> X
+
+# -> Y
+
+# -> Z
+
+
+# SECTION: ERRORS_STD
+
+# -> A
+
+#: daytistics/views.py:43
+msgid "Error: Are you watching Back To The Future right now? :D"
+msgstr "Fehler: Schaust du gerade Zurück in die Zukunft an? :D"
+
+# -> B
+
+# -> C
+
+# -> D
+
+#: daytistics/views.py:37
+msgid "Error: Daytistic already exists"
+msgstr "Fehler: Daytistic existiert bereits"
+
+#: daytistics/views.py:29
+msgid "Error: Date is missing"
+msgstr "Fehler: Datum nicht angegeben"
+
+# -> E
+
+# -> F
+
+# -> G
+
+# -> H
+
+# -> I
+
+#: daytistics/views.py:34
+msgid "Error: Invalid date"
+msgstr "Fehler: Ungültiges Datum"
+
+# -> J
+
+# -> K
+
+# -> L
+
+# -> M
+
+# -> N
+
+# -> O
+
+# -> P
+
+# -> Q
+
+# -> R
+
+# -> S
+
+# -> T
+
+#: daytistics/views.py:40
+msgid "Error: The Daytistic can't be older than 4 weeks"
+msgstr "Fehler: Die Daytistic darf nicht älter als 4 Wochen sein"
+
+# -> U
+
+# -> V
+
+# -> W
+
+# -> X
+
+# -> Y
+
+# -> Z
+
+
+# SECTIONS: SENTENCES_FORMAT
+
+# -> A
+
+# -> B
+
+# -> C
+
+# -> D
+
+# -> E
+
+# -> F
+
+# -> G
+
+# -> H
+
+# -> I
+
+# -> J
+
+# -> K
+
+# -> L
+
+# -> M
+
+# -> N
+
+# -> O
+
+# -> P
+
+# -> Q
+
+# -> R
+
+# -> S
+
+# -> T
+
+# -> U
+
+# -> V
+
+# -> W
+
+# -> X
+
+# -> Y
+
+# -> Z
+
+
+# SECTION: SHORTS_FORMAT
+
+# -> A
+
+# -> B
+
+# -> C
+
+# -> D
+
+# -> E
+
+# -> F
+
+# -> G
+
+# -> H
+
+# -> I
+
+# -> J
+
+# -> K
+
+# -> L
+
+# -> M
+
+# -> N
+
+# -> O
+
+# -> P
+
+# -> Q
+
+# -> R
+
+# -> S
+
+# -> T
+
+# -> U
+
+# -> V
+
+# -> W
+
+# -> X
+
+# -> Y
+
+# -> Z
+
+
+# SECTION: BODY_TEXT_FORMAT
+
+# -> A
+
+# -> B
+
+# -> C
+
+# -> D
+
+# -> E
+
+# -> F
+
+# -> G
+
+# -> H
+
+# -> I
+
+# -> J
+
+# -> K
+
+# -> L
+
+# -> M
+
+# -> N
+
+# -> O
+
+# -> P
+
+# -> Q
+
+# -> R
+
+# -> S
+
+# -> T
+
+# -> U
+
+# -> V
+
+# -> W
+
+# -> X
+
+# -> Y
+
+# -> Z
+
+
+# SECTION: ERRORS_FORMAT
+
+# -> A
+
+# -> B
+
+# -> C
+
+# -> D
+
+# -> E
+
+# -> F
+
+# -> G
+
+# -> H
+
+# -> I
+
+# -> J
+
+# -> K
+
+# -> L
+
+# -> M
+
+# -> N
+
+# -> O
+
+# -> P
+
+# -> Q
+
+# -> R
+
+# -> S
+
+# -> T
+
+# -> U
+
+# -> V
+
+# -> W
+
+# -> X
+
+# -> Y
+
+# -> Z
