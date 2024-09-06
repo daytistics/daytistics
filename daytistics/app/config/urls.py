@@ -14,6 +14,20 @@ urlpatterns = i18n_patterns(
     path("", include("app.home.urls")),
 )
 
+urlpatterns += [
+    path("", lambda request: render(request, "home/home.html"), name="home"),
+    path(
+        "imprint/",
+        lambda request: render(request, "home/impressum.html"),
+        name="imprint",
+    ),
+    path(
+        "licenses/",
+        lambda request: render(request, "home/licenses.html"),
+        name="licenses",
+    ),
+]
+
 if settings.DEBUG:
     urlpatterns += static(
         settings.STATIC_URL, document_root=settings.STATIC_ROOT

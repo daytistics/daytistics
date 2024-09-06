@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "daytistics-core"
+name = "daytistics"
 version = "0.1.0"
 description = ""
 authors = ["Leo Gall <gall.dev@proton.me>"]

@@ -1,4 +1,4 @@
-# Code of Conduct - Daytistics
+# Code of Conduct
 
 ## Our Pledge
 

@@ -27,14 +27,14 @@ jobs:
       run: |
         curl -sSL https://install.python-poetry.org | python3 -
         echo "${{ runner.tool_cache }}/poetry/bin" >> $GITHUB_PATH
-      working-directory: ./daytistics-core
+      working-directory: ./daytistics
     
     - name: Install Dependencies
       run: |
         poetry install
-      working-directory: ./daytistics-core
+      working-directory: ./daytistics
 
     - name: Run Tests
       run: |
         poetry run pytest
-      working-directory: ./daytistics-core
+      working-directory: ./daytistics

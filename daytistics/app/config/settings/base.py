@@ -20,7 +20,6 @@ WSGI_APPLICATION = "app.config.wsgi.application"
 INSTALLED_APPS = [
     "app.daytistics",
     "app.activities",
-    "app.home",
     "app.accounts",
     "app.tools",
     "app.theme",
