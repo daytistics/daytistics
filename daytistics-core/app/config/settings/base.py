@@ -20,7 +20,6 @@ WSGI_APPLICATION = "app.config.wsgi.application"
 INSTALLED_APPS = [
     "app.daytistics",
     "app.activities",
-    "app.home",
     "app.accounts",
     "app.tools",
     "django.contrib.admin",
@@ -130,7 +129,7 @@ STATICFILES_DIRS = [
 
 # TAILWIND SETTINGS
 
-TAILWIND_APP_NAME = "theme"
+TAILWIND_APP_NAME = "app.theme"
 
 INTERNAL_IPS = [
     "127.0.0.1",

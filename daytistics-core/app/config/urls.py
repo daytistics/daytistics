@@ -10,8 +10,21 @@ urlpatterns = i18n_patterns(
     path("accounts/", include("allauth.urls")),
     path("__reload__/", include("django_browser_reload.urls")),
     path("daytistics/", include("app.daytistics.urls")),
-    path("", include("app.home.urls")),
 )
+
+urlpatterns += [
+    path("", lambda request: render(request, "home/home.html"), name="home"),
+    path(
+        "imprint/",
+        lambda request: render(request, "home/impressum.html"),
+        name="imprint",
+    ),
+    path(
+        "licenses/",
+        lambda request: render(request, "home/licenses.html"),
+        name="licenses",
+    ),
+]
 
 if settings.DEBUG:
     urlpatterns += static(

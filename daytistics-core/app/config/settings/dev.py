@@ -7,14 +7,14 @@ DEBUG = True
 
 # EMAIL SETTINGS
 
-EMAIL_BACKEND = "django.app.mail.backends.console.EmailBackend"
+EMAIL_BACKEND = os.getenv("EMAIL_BACKEND", "django.core.mail.backends.console.EmailBackend")
 
 
 # DATABASE SETTINGS
 
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR.parent / "db.sqlite3",
+        "ENGINE": os.getenv("DATABASE_ENGINE", "django.db.backends.sqlite3"),
+        "NAME": BASE_DIR.parent / os.getenv("DATABASE_NAME", "db.sqlite3"),
     }
 }
