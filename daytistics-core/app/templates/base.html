@@ -17,6 +17,7 @@
       href="{% static 'images/logo.png' %}"
     />
     <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/fonts.css' %}" />
     <title>
       {% block title %}Daytistics - Erfolgreiche Tage durch Daten"{% endblock %}
     </title>
@@ -35,7 +36,7 @@
     {% load django_htmx %} {% django_htmx_script %}
   </head>
 
-  <body hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}' class="font-mono">
+  <body hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}' class="font-comfortaa">
     {% block content %}{% endblock %}
   </body>
 

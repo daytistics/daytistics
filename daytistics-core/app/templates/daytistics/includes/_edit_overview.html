@@ -5,9 +5,9 @@
     <div class="flex justify-center align-middle items-center">
       <div id="star-container">
         {% if daytistic.important %}
-          <img src="{% static 'icons/yellow_star_filled.svg' %}" class="w-6 h-6 mr-2 hover:cursor-pointer" @click="toggleImportant('{% url 'daytistics:toggle_important' daytistic_id=daytistic.id %}')"/>
+          <img src="{% static 'icons/yellow_star_filled.svg' %}" class="w-6 h-6 mr-2 hover:cursor-pointer" @click="toggleImportant('{% url 'daytistics:toggle_important' daytistic_id=daytistic.id %}', '{% static 'icons/' %})"/>
         {% else %}
-          <img src="{% static 'icons/yellow_star_unfilled.svg' %}" class="w-6 h-6 mr-2 hover:cursor-pointer" @click="toggleImportant('{% url 'daytistics:toggle_important' daytistic_id=daytistic.id %}')"/>
+          <img src="{% static 'icons/yellow_star_unfilled.svg' %}" class="w-6 h-6 mr-2 hover:cursor-pointer" @click="toggleImportant('{% url 'daytistics:toggle_important' daytistic_id=daytistic.id %}', '{% static 'icons/' %}')"/>
         {% endif %}
       </div>
       <h2 class="text-xl font-bold">{{ daytistic.date }}</h2>
@@ -66,8 +66,8 @@
         </div>
         <button
           type="submit"
-          @click.prevent="addActivity('{% url 'daytistics:add_activity_to_daytistic' daytistic_id=daytistic.id %}')"
-          class="h-11 col-span-1 bg-gradient-to-r from-lime-500 to-green-500 text-white font-bold py-2 rounded-md hover:bg-lime-800 hover:to-green-800 hover:scale-105 transition ease-in-out duration-200"
+          @click.prevent="addActivity('{% url 'daytistics:add_activity_to_daytistic' daytistic_id=daytistic.id %}'); refreshActivities()"
+          class="h-11 col-span-1 bg-green-500 text-white font-bold py-2 rounded-md hover:bg-green-600 transition ease-in-out duration-200 hover:translate-y-0.5"
         >
           Add
         </button>

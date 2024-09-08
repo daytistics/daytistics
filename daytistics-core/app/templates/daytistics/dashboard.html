@@ -7,9 +7,9 @@
 
     <!-- Main content -->
     <main class="p-8" x-data>
-      <div class="grid grid-cols-4 grid-rows-6 gap-4">
+      <div class="flex flex-col xl:grid xl:grid-cols-4 xl:grid-rows-6 gap-4">
         <div
-          class="bg-white p-6 rounded-lg shadow-lg grid col-span-2"
+          class="bg-white p-6 rounded-lg shadow-lg grid col-span-2 order-1"
           x-data="{loading: false}"
         >
           <h1 class="text-2xl font-bold mb-4">
@@ -38,11 +38,12 @@
               required
             />
 
-            <div id="submit-button-container" class="inline">
+            <div class="flex flex-row mr-1.5 justify-end md:justify-start md:mr-0">
+              <div id="submit-button-container" class="inline">
               <button
                 type="submit"
                 id="submit-button"
-                class="h-11 w-48 bg-gradient-to-r from-lime-500 to-green-500 text-white font-bold py-2 px-4 rounded-md hover:bg-lime-800 hover:to-green-800 hover:scale-105 transition ease-in-out duration-200"
+                class="h-11 w-48 bg-green-500 text-white font-bold py-2 px-4 rounded-md hover:bg-green-600 hover:scale-105 transition ease-in-out duration-200"
               >
                 {% trans "New Daytistic" %}
               </button>
@@ -63,10 +64,11 @@
                 </span>
               </span>
             </div>
+            </div>
           </form>
           <div id="result"></div>
         </div>
-        <div class="bg-white p-6 rounded-lg shadow-lg col-span-2">
+        <div class="bg-white p-6 rounded-lg shadow-lg col-span-2 order-2">
           <h1 class="text-2xl font-bold mb-4">
             {% trans "Create a Diary Entry" %}
           </h1>
@@ -75,9 +77,9 @@
           </p>
         </div>
 
-        <div class="bg-white p-6 rounded-lg shadow-lg col-span-1 row-span-5">
-          <form class="flex justify-between items-center align-middle" x-data="itemListHandler()">
-            <div class="flex align-middle text-2xl font-bold">
+        <div class="bg-white p-6 rounded-lg shadow-lg col-span-1 row-span-5 order-4 xl:order-3">
+          <form class="flex justify-between items-start md:items-center align-middle flex-col md:flex-row" x-data="itemListHandler()">
+            <div class="flex align-middle text-2xl font-bold mb-3">
               <h1>
                 Your Daytistics
               </h1>
@@ -108,7 +110,7 @@
           </ul>
         </div>
         <div
-          class="bg-white p-6 rounded-lg shadow-lg col-span-3 row-span-5 col-start-2 flex flex-col"
+          class="bg-white p-6 rounded-lg shadow-lg col-span-3 row-span-5 col-start-2 flex flex-col order-3 xl:order-4"
         ></div>
       </div>
     </main>

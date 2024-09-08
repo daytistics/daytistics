@@ -11,37 +11,35 @@ fake = Faker()
 
 
 class ActivityFactory(DjangoModelFactory):
-    class Meta:
-        model = Activity
+	class Meta:
+		model = Activity
 
-    name = factory.LazyFunction(lambda: fake.word())
-    is_global = False
+	name = factory.LazyFunction(lambda: fake.word())
+	is_global = False
 
 
 class DaytisticFactory(DjangoModelFactory):
-    class Meta:
-        model = Daytistic
+	class Meta:
+		model = Daytistic
 
-    user = factory.SubFactory("tests.factories.CustomUserFactory")
-    date = factory.LazyFunction(timezone.now)
-    created_at = factory.LazyFunction(timezone.now)
-    updated_at = factory.LazyFunction(timezone.now)
+	user = factory.SubFactory('tests.factories.CustomUserFactory')
+	date = factory.LazyFunction(timezone.now)
+	created_at = factory.LazyFunction(timezone.now)
+	updated_at = factory.LazyFunction(timezone.now)
 
 
 class CustomUserFactory(DjangoModelFactory):
-    class Meta:
-        model = CustomUser
+	class Meta:
+		model = CustomUser
 
-    username = factory.LazyFunction(lambda: fake.user_name())
-    email = factory.LazyFunction(lambda: fake.email())
+	username = factory.LazyFunction(lambda: fake.user_name())
+	email = factory.LazyFunction(lambda: fake.email())
 
 
 class ActivityEntryFactory(DjangoModelFactory):
-    class Meta:
-        model = ActivityEntry
+	class Meta:
+		model = ActivityEntry
 
-    daytistic = factory.SubFactory(DaytisticFactory)
-    activity = factory.SubFactory(ActivityFactory)
-    duration = factory.LazyFunction(
-        lambda: timedelta(minutes=fake.random_int(min=1, max=1440))
-    )
+	daytistic = factory.SubFactory(DaytisticFactory)
+	activity = factory.SubFactory(ActivityFactory)
+	duration = factory.LazyFunction(lambda: timedelta(minutes=fake.random_int(min=1, max=1440)))

@@ -95,7 +95,7 @@ function editDaytisticHandler(csrfToken) {
       }
     },
 
-    async toggleImportant(route) {
+    async toggleImportant(route, starsRoute) {
       try {
         const response = await fetch(route, {
           method: "POST",
@@ -108,7 +108,9 @@ function editDaytisticHandler(csrfToken) {
         if (response.ok) {
           const data = await response.json();
           const starContainer = document.querySelector("#star-container");
+          const icon = data.icon;
 
+          starContainer.innerHTML = `<img src="${starsRoute}/${icon}" class="w-6 h-6 mr-2 hover:cursor-pointer" @click="toggleImportant('${route}', '${starsRoute}')"/>`;
         } else {
           console.error("Failed to toggle importance");
         }
@@ -116,5 +118,14 @@ function editDaytisticHandler(csrfToken) {
         console.error("Error:", error);
       }
     },
+
+    refreshActivities() {
+      const activityContainer = document.querySelector("#activity-container");
+      activityContainer.setAttribute("x-show", "false");
+      activityContainer.setAttribute("x-show", "true");
+      console.log("Activities refreshed");
+    },
+
+    async loadActivities(activitiesRoute) {},
   };
 }

@@ -1,24 +1,15 @@
+{% load static %}
+
 <li>
   <div class="flex justify-between bg-slate-50 p-5 my-3 rounded-lg">
     <div class="flex align-middle justify-center items-center">
-      <span class="text-xl">{{ daytistic.date }}</span>
+      <span class="text-xl hidden md:block xl:hidden">{{ daytistic.date }}</span>
+      <span class="text-xl block md:hidden xl:block">{{ daytistic.date|date:"d. M" }}</span>
     </div>
 
-    <div class="grid grid-cols-3 grid-rows-1 gap-2">
-      <a href="">
-        <div class="bg-green-500 p-2 max-w-fit rounded-md">
-          <svg width="25px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="#ffffff">
-            <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
-            <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
-            <g id="SVGRepo_iconCarrier">
-              <path d="M15.0007 12C15.0007 13.6569 13.6576 15 12.0007 15C10.3439 15 9.00073 13.6569 9.00073 12C9.00073 10.3431 10.3439 9 12.0007 9C13.6576 9 15.0007 10.3431 15.0007 12Z" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
-              <path d="M12.0012 5C7.52354 5 3.73326 7.94288 2.45898 12C3.73324 16.0571 7.52354 19 12.0012 19C16.4788 19 20.2691 16.0571 21.5434 12C20.2691 7.94291 16.4788 5 12.0012 5Z" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
-            </g>
-          </svg>
-        </div>
-      </a>
-      <div x-data="editModalHandler">
-        <button @click="openModal('{{ daytistic.id }}')">
+    <div>
+      <div x-data="editModalHandler" class="flex flex-row">
+        <button @click="openModal('{{ daytistic.id }}')" class="mr-3">
           <div class="bg-orange-500 p-2 max-w-fit rounded-md">
             <svg fill="#ffffff" version="1.1" id="Layer_1" xmlns:x="&amp;ns_extend;" xmlns:i="&amp;ns_ai;" xmlns:graph="&amp;ns_graphs;" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="25px" viewBox="0 0 24 24" enable-background="new 0 0 24 24" xml:space="preserve" stroke="#ffffff">
                 <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
@@ -51,18 +42,7 @@
             </svg>
         </div>
       </button>
-      <div x-show="isOpen" 
-         @click.away="closeModal" 
-         class="fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center z-50">
-      <div @click.stop class="bg-white p-6 rounded-lg shadow-lg">
-        <button @click="closeModal" class="absolute top-2 right-2 text-gray-500 hover:text-gray-700">
-          &times;
-        </button>
-        <div x-html="modalContent"></div>
-      </div>
-    </div>
-      </div>
-      <a href="">
+      <button>
         <div class="bg-blue-500 p-2 max-w-fit rounded-md">
           <svg width="25px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="#ffffff">
             <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
@@ -73,7 +53,23 @@
             </g>
           </svg>
         </div>
-      </a>
+      </button>
+      <div x-show="isOpen" 
+         @click.away="closeModal" 
+         class="fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center z-50">
+      <div @click.stop class="bg-white p-6 rounded-lg shadow-lg">
+        <button @click="closeModal" class="absolute top-2 right-2 text-gray-500 hover:text-gray-700">
+          &times;
+        </button>
+        <div 
+            x-data="editDaytisticHandler($el.dataset.csrfToken)" 
+            data-csrf-token="{{ csrf_token }}" 
+            x-html="modalContent"
+        >
+        </div>
+      </div>
+    </div>
+      </div>
     </div>
   </div>
 </li>
@@ -83,7 +79,7 @@
       return {
         isOpen: false,
         modalContent: '',
-        addActivityResult: '',
+        overview: true,
 
         openModal(daytisticId) {
           fetch(`{% url "daytistics:edit_daytistic" daytistic_id=0 %}`.replace('0', daytisticId))
@@ -99,44 +95,13 @@
           this.modalContent = ''; 
         },
 
-        async addActivity(route) {
-          try {
+        toggleOverview() {
+          this.overview = !this.overview;
+        }
 
-            console.log(document.querySelector('select[name="activity_id"]').value);
-            console.log(document.querySelector('input[name="duration"]').value);
-
-            const response = await fetch(route, {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-                'X-CSRFToken': '{{ csrf_token }}',
-              },
-              body: JSON.stringify({
-                activity_id: document.querySelector('select[name="activity_id"]').value,
-                duration: document.querySelector('input[name="duration"]').value,
-              }),
-            });
-
-
-            if (!response.ok) {
-              throw new Error(`HTTP error! status: ${response.status}`);
-            }
-
-            const contentType = response.headers.get('Content-Type');
-            let data;
-            if (contentType && contentType.includes('application/json')) {
-              data = await response.json();
-              console.log('Success:', data);
-              // Handle the JSON response data here
-            } else {
-              data = await response.text();
-              console.log('Received HTML:', data);
-              document.querySelector('#add-activity-result').innerHTML = data;
-            }
-          } catch (error) {
-            console.error('Error:', error);
-          }
-        },
+        
       };
     }
 </script>
+
+<script src="{% static 'js/edit_daytistic_handler.js' %}"></script>
