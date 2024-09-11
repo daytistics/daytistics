@@ -13,6 +13,7 @@ class CustomUser(AbstractUser):
 	Custom User model for the application, which inherits from Django's AbstractUser model and adds additional fields and methods.
 	"""
 
+	username = models.CharField(max_length=150, unique=True)
 	activities = models.ManyToManyField('activities.Activity', related_name='users', blank=True)
 
 	@property

@@ -11,40 +11,54 @@ BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
 SECRET_KEY = os.getenv('DJANGO_SECRET_KEY')
 
-ALLOWED_HOSTS = os.getenv('DJANGO_ALLOWED_HOSTS').split(',')
+ALLOWED_HOSTS = os.getenv('DJANGO_ALLOWED_HOSTS').split(', ')
+print(ALLOWED_HOSTS)
 
 ROOT_URLCONF = 'app.config.urls'
 
 WSGI_APPLICATION = 'app.config.wsgi.application'
 
+SITE_URL = 'http://localhost:3000'
+
 INSTALLED_APPS = [
-    "app.daytistics",
-    "app.activities",
-    "app.accounts",
-    "app.tools",
-    "django.contrib.admin",
-    "django.contrib.auth",
-    "django.contrib.contenttypes",
-    "django.contrib.sessions",
-    "django.contrib.messages",
-    "django.contrib.sites",
-    "django.contrib.staticfiles",
-    "allauth",
-    "allauth.account",
-    "allauth.socialaccount",
-    "tailwind",
-    "app.theme",
-    "django_browser_reload",
-    "django_htmx",
-    "widget_tweaks",
-    "mathfilters",
+	# Custom Apps
+	'app.daytistics',
+	'app.activities',
+	'app.accounts',
+	'app.tools',
+	'app.users',
+	# Django Apps
+	'django.contrib.admin',
+	'django.contrib.auth',
+	'django.contrib.contenttypes',
+	'django.contrib.sessions',
+	'django.contrib.messages',
+	'django.contrib.sites',
+	'django.contrib.staticfiles',
+	# Third Party Apps
+	'tailwind',
+	'app.theme',
+	'django_browser_reload',
+	'django_htmx',
+	'widget_tweaks',
+	'mathfilters',
+	'django_unicorn',
+	'corsheaders',
+	# API
+	'rest_framework',
+	'rest_framework.authtoken',
+	# Authentication
+	'allauth',
+	'allauth.account',
+	'allauth.socialaccount',
+	'dj_rest_auth',
+	'dj_rest_auth.registration',
 ]
 
 MIDDLEWARE = [
 	'django.middleware.security.SecurityMiddleware',
 	'whitenoise.middleware.WhiteNoiseMiddleware',
 	'django.contrib.sessions.middleware.SessionMiddleware',
-	'django.middleware.locale.LocaleMiddleware',
 	'django.middleware.common.CommonMiddleware',
 	'django.middleware.csrf.CsrfViewMiddleware',
 	'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -53,8 +67,20 @@ MIDDLEWARE = [
 	'allauth.account.middleware.AccountMiddleware',
 	'django_htmx.middleware.HtmxMiddleware',
 	'django_browser_reload.middleware.BrowserReloadMiddleware',
+	'corsheaders.middleware.CorsMiddleware',
 ]
 
+# REST FRAMEWORK SETTINGS
+
+REST_USE_JWT = True
+
+JWT_AUTH_COOKIE = 'daytistics-auth'
+
+REST_FRAMEWORK = {
+	'DEFAULT_AUTHENTICATION_CLASSES': [
+		'dj_rest_auth.jwt_auth.JWTCookieAuthentication',
+	],
+}
 
 # AUTHENTICATION SETTINGS
 
@@ -69,6 +95,7 @@ ACCOUNT_USERNAME_REQUIRED = True
 ACCOUNT_SIGNUP_PASSWORD_ENTER_TWICE = False
 ACCOUNT_LOGIN_ON_EMAIL_CONFIRMATION = True
 
+LOGIN_URL = '/daytistics/login/'
 LOGIN_REDIRECT_URL = '/daytistics/dashboard/'
 LOGOUT_REDIRECT_URL = '/daytistics/dashboard/'
 
@@ -76,6 +103,7 @@ AUTH_USER_MODEL = 'accounts.CustomUser'
 
 AUTHENTICATION_BACKENDS = [
 	'allauth.account.auth_backends.AuthenticationBackend',
+	'django.contrib.auth.backends.ModelBackend',
 ]
 
 AUTH_PASSWORD_VALIDATORS = [
@@ -92,7 +120,6 @@ AUTH_PASSWORD_VALIDATORS = [
 		'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
 	},
 ]
-
 
 # TEMPLATE SETTINGS
 
@@ -117,7 +144,6 @@ TEMPLATES = [
 	},
 ]
 
-
 # STATIC FILES SETTINGS
 
 STATIC_URL = 'static/'
@@ -126,15 +152,13 @@ STATICFILES_DIRS = [
 	BASE_DIR / 'static',
 ]
 
-
 # TAILWIND SETTINGS
 
-TAILWIND_APP_NAME = "app.theme"
+TAILWIND_APP_NAME = 'app.theme'
 
 INTERNAL_IPS = [
 	'127.0.0.1',
 ]
-
 
 # INTERNATIONALIZATION SETTINGS
 
@@ -145,17 +169,6 @@ TIME_ZONE = 'UTC'
 USE_I18N = True
 
 USE_L10N = True
-
-from django.utils.translation import gettext_lazy as _
-
-LANGUAGES = [
-	('en', _('English')),
-	('de', _('German')),
-]
-
-LOCALE_PATHS = [
-	BASE_DIR / 'locale',
-]
 
 # MISCELLANEOUS SETTINGS
 

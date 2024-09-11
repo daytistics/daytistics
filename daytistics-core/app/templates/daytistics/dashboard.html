@@ -1,4 +1,7 @@
-{% extends 'base.html' %} {% load i18n %} {% block content %}
+{% extends 'base.html' %} {% load i18n %} 
+{% load unicorn %}%
+
+{% block content %}
 
 <div class="bg-gray-100">
   <div class="min-h-screen flex">
@@ -27,6 +30,7 @@
             hx-indicator="#spinner"
             @submit.prevent="loading = true"
             @htmx:afterRequest="loading = false"
+            @click="window.Unicorn.call('daytistics_list.update');"
           >
             {% csrf_token %}
             <label for="date" class="mt-4">{% trans "Date" %}: </label>
@@ -77,7 +81,8 @@
           </p>
         </div>
 
-        <div class="bg-white p-6 rounded-lg shadow-lg col-span-1 row-span-5 order-4 xl:order-3">
+        {% unicorn 'daytistics-list' daytistic_id=daytistic.id %}
+        {% comment %} <div class="bg-white p-6 rounded-lg shadow-lg col-span-1 row-span-5 order-4 xl:order-3">
           <form class="flex justify-between items-start md:items-center align-middle flex-col md:flex-row" x-data="itemListHandler()">
             <div class="flex align-middle text-2xl font-bold mb-3">
               <h1>
@@ -85,16 +90,6 @@
               </h1>
             </div>
             <div class="flex flex-row items-center space-x-2 justify-end">
-              {% comment %} <input
-              type="number"
-              name="listSize"
-              id="size"
-              value="5"
-              x-model.number="listSize"
-              min="1"
-              max="10"
-              class="w-16"
-              /> {% endcomment %}
               <select name="listType" @change="submitForm($event.target)" x-model="listType">
                 <option value="date">Last Date</option>
                 <option value="updatedAt">Last Updated</option>
@@ -112,7 +107,7 @@
         <div
           class="bg-white p-6 rounded-lg shadow-lg col-span-3 row-span-5 col-start-2 flex flex-col order-3 xl:order-4"
         ></div>
-      </div>
+      </div> {% endcomment %}
     </main>
 
     {% include 'includes/_bottombar.html' %}

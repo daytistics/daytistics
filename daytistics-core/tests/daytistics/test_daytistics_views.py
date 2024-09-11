@@ -701,176 +701,176 @@ class TestDeleteDaytistic:
 
 @pytest.mark.django_db
 class TestEditActivityEntry:
-    def test_edit_activity_entry_success(self, client):
-        with translation.override('en'):
-            user = CustomUserFactory()
-            daytistic = DaytisticFactory(user=user)
-            activity_entry = ActivityEntryFactory(daytistic=daytistic)
-            client.force_login(user)
+	def test_edit_activity_entry_success(self, client):
+		with translation.override('en'):
+			user = CustomUserFactory()
+			daytistic = DaytisticFactory(user=user)
+			activity_entry = ActivityEntryFactory(daytistic=daytistic)
+			client.force_login(user)
 
-            new_duration = '01:30'
-            new_activity = ActivityFactory()  
+			new_duration = '01:30'
+			new_activity = ActivityFactory()
 
-            with pytest.raises(ActivityEntry.DoesNotExist):
-                assert ActivityEntry.objects.get(daytistic=daytistic, activity=new_activity, duration=timedelta(hours=1, minutes=30)) is None
+			with pytest.raises(ActivityEntry.DoesNotExist):
+				assert (
+					ActivityEntry.objects.get(
+						daytistic=daytistic,
+						activity=new_activity,
+						duration=timedelta(hours=1, minutes=30),
+					)
+					is None
+				)
 
-            url = reverse('daytistics:edit_activity_entry', args=[daytistic.id])
-            data = {
-                'activityEntryId': activity_entry.id,
-                'duration': new_duration,
-                'activityId': new_activity.id,
-				'delete': 'false'
-            }								
-            response = client.post(url, data=data, content_type='application/json')
+			url = reverse('daytistics:edit_activity_entry', args=[daytistic.id])
+			data = {
+				'activityEntryId': activity_entry.id,
+				'duration': new_duration,
+				'activityId': new_activity.id,
+				'delete': 'false',
+			}
+			response = client.post(url, data=data, content_type='application/json')
 
-            assert response.status_code == 200
+			assert response.status_code == 200
 
-            activity_entry = ActivityEntry.objects.get(daytistic=daytistic, activity=new_activity)
-            assert activity_entry is not None
-            assert activity_entry.duration == timedelta(hours=1, minutes=30)
-            assert activity_entry.activity == new_activity
+			activity_entry = ActivityEntry.objects.get(daytistic=daytistic, activity=new_activity)
+			assert activity_entry is not None
+			assert activity_entry.duration == timedelta(hours=1, minutes=30)
+			assert activity_entry.activity == new_activity
 
+	def test_delete_activity_entry_success(self, client):
+		with translation.override('en'):
+			user = CustomUserFactory()
+			daytistic = DaytisticFactory(user=user)
+			activity_entry = ActivityEntryFactory(daytistic=daytistic)
+			client.force_login(user)
 
-    def test_delete_activity_entry_success(self, client):
-        with translation.override('en'):
-            user = CustomUserFactory()
-            daytistic = DaytisticFactory(user=user)
-            activity_entry = ActivityEntryFactory(daytistic=daytistic)
-            client.force_login(user)
+			url = reverse('daytistics:edit_activity_entry', args=[daytistic.id])
+			data = {'activityEntryId': activity_entry.id, 'delete': True}
+			response = client.post(url, data=data, content_type='application/json')
 
-            url = reverse('daytistics:edit_activity_entry', args=[daytistic.id])
-            data = {
-                'activityEntryId': activity_entry.id,
-                'delete': True
-            }
-            response = client.post(url, data=data, content_type='application/json')	
+			assert response.status_code == 200
+			assert not ActivityEntry.objects.filter(id=activity_entry.id).exists()
 
-            assert response.status_code == 200
-            assert not ActivityEntry.objects.filter(id=activity_entry.id).exists()
-            
-    def test_activity_entry_duration_sum_more_than_24_hours(self, client):
-        with translation.override('en'):
-            user = CustomUserFactory()
-            daytistic = DaytisticFactory(user=user)
-            activity_entry = ActivityEntryFactory(daytistic=daytistic, duration=timedelta(hours=23, minutes=30))
-            client.force_login(user)
+	def test_activity_entry_duration_sum_more_than_24_hours(self, client):
+		with translation.override('en'):
+			user = CustomUserFactory()
+			daytistic = DaytisticFactory(user=user)
+			activity_entry = ActivityEntryFactory(
+				daytistic=daytistic, duration=timedelta(hours=23, minutes=30)
+			)
+			client.force_login(user)
 
-            new_duration = '01:30'
-            new_activity = ActivityFactory()
+			new_duration = '01:30'
+			new_activity = ActivityFactory()
 
-            url = reverse('daytistics:edit_activity_entry', args=[daytistic.id])
-            data = {
-                'activityEntryId': activity_entry.id,
-                'duration': new_duration,
-                'activityId': new_activity.id
-            }
-            response = client.post(url, data=data, content_type='application/json')
+			url = reverse('daytistics:edit_activity_entry', args=[daytistic.id])
+			data = {
+				'activityEntryId': activity_entry.id,
+				'duration': new_duration,
+				'activityId': new_activity.id,
+			}
+			response = client.post(url, data=data, content_type='application/json')
 
-            assert response.status_code == 200
-            assert "Error: The total duration of activities can't be more than 24 hours" in response.content.decode()
+			assert response.status_code == 200
+			assert (
+				"Error: The total duration of activities can't be more than 24 hours"
+				in response.content.decode()
+			)
 
-    def test_activity_entry_not_found(self, client):
-        with translation.override('en'):
-            user = CustomUserFactory()
-            daytistic = DaytisticFactory(user=user)
-            client.force_login(user)
+	def test_activity_entry_not_found(self, client):
+		with translation.override('en'):
+			user = CustomUserFactory()
+			daytistic = DaytisticFactory(user=user)
+			client.force_login(user)
 
-            new_duration = '01:30'
-            new_activity = ActivityFactory()  
+			new_duration = '01:30'
+			new_activity = ActivityFactory()
 
-            # Use an activity entry ID that does not exist
-            url = reverse('daytistics:edit_activity_entry', args=[daytistic.id])
-            data = {
-                'activityEntryId': 999,
-                'duration': new_duration,
-                'activityId': new_activity.id
-            }
-            response = client.post(url, data=data, content_type='application/json')
+			# Use an activity entry ID that does not exist
+			url = reverse('daytistics:edit_activity_entry', args=[daytistic.id])
+			data = {'activityEntryId': 999, 'duration': new_duration, 'activityId': new_activity.id}
+			response = client.post(url, data=data, content_type='application/json')
 
-            assert response.status_code == 200
-            assert 'Activity entry not found' in response.content.decode()
+			assert response.status_code == 200
+			assert 'Activity entry not found' in response.content.decode()
 
-    def test_daytistic_not_found(self, client):
-        with translation.override('en'):
-            user = CustomUserFactory()
-            client.force_login(user)
+	def test_daytistic_not_found(self, client):
+		with translation.override('en'):
+			user = CustomUserFactory()
+			client.force_login(user)
 
-            new_duration = '01:30'
-            new_activity = ActivityFactory()  
+			new_duration = '01:30'
+			new_activity = ActivityFactory()
 
-            # Use a daytistic ID that does not exist
-            url = reverse('daytistics:edit_activity_entry', args=[999])
-            data = {
-                'activityEntryId': 999,
-                'duration': new_duration,
-                'activityId': new_activity.id
-            }
-            response = client.post(url, data=data, content_type='application/json')
+			# Use a daytistic ID that does not exist
+			url = reverse('daytistics:edit_activity_entry', args=[999])
+			data = {'activityEntryId': 999, 'duration': new_duration, 'activityId': new_activity.id}
+			response = client.post(url, data=data, content_type='application/json')
 
-            assert response.status_code == 200
-            assert 'Daytistic not found' in response.content.decode()
+			assert response.status_code == 200
+			assert 'Daytistic not found' in response.content.decode()
 
-    def test_activity_not_found(self, client):
-        with translation.override('en'):
-            user = CustomUserFactory()
-            daytistic = DaytisticFactory(user=user)
-            activity_entry = ActivityEntryFactory(daytistic=daytistic)
-            client.force_login(user)
+	def test_activity_not_found(self, client):
+		with translation.override('en'):
+			user = CustomUserFactory()
+			daytistic = DaytisticFactory(user=user)
+			activity_entry = ActivityEntryFactory(daytistic=daytistic)
+			client.force_login(user)
 
-            new_duration = '01:30'
+			new_duration = '01:30'
 
-            # Use an activity ID that does not exist
-            url = reverse('daytistics:edit_activity_entry', args=[daytistic.id])
-            data = {
-                'activityEntryId': activity_entry.id,
-                'duration': new_duration,
-                'activityId': 999
-            }
-            response = client.post(url, data=data, content_type='application/json')
+			# Use an activity ID that does not exist
+			url = reverse('daytistics:edit_activity_entry', args=[daytistic.id])
+			data = {
+				'activityEntryId': activity_entry.id,
+				'duration': new_duration,
+				'activityId': 999,
+			}
+			response = client.post(url, data=data, content_type='application/json')
 
-            assert response.status_code == 200
-            assert 'Activity not found' in response.content.decode()
+			assert response.status_code == 200
+			assert 'Activity not found' in response.content.decode()
 
-    def test_invalid_duration_format(self, client):
-        with translation.override('en'):
-            user = CustomUserFactory()
-            daytistic = DaytisticFactory(user=user)
-            activity_entry = ActivityEntryFactory(daytistic=daytistic)
-            client.force_login(user)
+	def test_invalid_duration_format(self, client):
+		with translation.override('en'):
+			user = CustomUserFactory()
+			daytistic = DaytisticFactory(user=user)
+			activity_entry = ActivityEntryFactory(daytistic=daytistic)
+			client.force_login(user)
 
-            new_duration = 'invalid_duration'
-            new_activity = ActivityFactory()  
+			new_duration = 'invalid_duration'
+			new_activity = ActivityFactory()
 
-            url = reverse('daytistics:edit_activity_entry', args=[daytistic.id])
-            data = {
-                'activityEntryId': activity_entry.id,
-                'duration': new_duration,
-                'activityId': new_activity.id
-            }
-            response = client.post(url, data=data, content_type='application/json')
+			url = reverse('daytistics:edit_activity_entry', args=[daytistic.id])
+			data = {
+				'activityEntryId': activity_entry.id,
+				'duration': new_duration,
+				'activityId': new_activity.id,
+			}
+			response = client.post(url, data=data, content_type='application/json')
 
-            assert response.status_code == 200
-            assert "Error: Invalid duration format" in response.content.decode()
+			assert response.status_code == 200
+			assert 'Error: Invalid duration format' in response.content.decode()
 
-    def test_invalid_request_method(self, client):
-        with translation.override('en'):
-            user = CustomUserFactory()
-            daytistic = DaytisticFactory(user=user)
-            activity_entry = ActivityEntryFactory(daytistic=daytistic)
-            client.force_login(user)
+	def test_invalid_request_method(self, client):
+		with translation.override('en'):
+			user = CustomUserFactory()
+			daytistic = DaytisticFactory(user=user)
+			activity_entry = ActivityEntryFactory(daytistic=daytistic)
+			client.force_login(user)
 
-            new_duration = '01:30'
-            new_activity = ActivityFactory()  
+			new_duration = '01:30'
+			new_activity = ActivityFactory()
 
-            url = reverse('daytistics:edit_activity_entry', args=[daytistic.id])
-            data = {
-                'activityEntryId': activity_entry.id,
-                'duration': new_duration,
-                'activityId': new_activity.id
-            }
-            response = client.get(url)
+			url = reverse('daytistics:edit_activity_entry', args=[daytistic.id])
+			data = {
+				'activityEntryId': activity_entry.id,
+				'duration': new_duration,
+				'activityId': new_activity.id,
+			}
+			response = client.get(url)
 
-            assert response.status_code == 405
+			assert response.status_code == 405
 
 
 @pytest.mark.django_db

@@ -57,26 +57,34 @@ This document outlines the conventions used in this project. Following these con
 - **Unit Tests**: Write unit tests for all new features and bug fixes.
 - **Test Naming**: Name test files and functions descriptively, using `test_` as a prefix for functions.
 
-## Translation
+## API-Design
 
-Please make sure that you add all translatable strings to the corresponding files (currently only `locale/de/LC_MESSAGES/django.po`). If you cannot translate the messages yourself, please create a new issue with the tag `translation` after merging your pull request, in which you explain which snippets need to be translated.
+1. **Resource Naming**: Use **plural nouns** (e.g., `/users`, `/orders`).
+2. **Status Codes**: Use standard codes like `200` (OK), `201` (Created), `400` (Bad Request), `404` (Not Found), `500` (Server Error).
+3. **JSON Structure**: Use **camelCase** for keys, and ensure consistent and clear data structures.
+4. **Error Handling**: Return structured error responses with a `message` and an optional `location`, where the error occured.
+5. **Security**: Use **HTTPS**, and support **JWT** for authentication.
 
-### Conventions
+**Success Example**:
 
-Please follow the following conventions to secure readability and maintainability:
+```json
+{
+  "id": 1,
+  "username": "leo",
+  "email": "leo@example.com",
+  "links": {
+    "self": "/v1/users/1"
+  }
+}
+```
 
-- **Write in the appropriate section**: Sections are marked by the `# SECTION` comment.
-  - `SENTENCES_STD`: This section includes standard sentences used across the application, such as common phrases or dialogue.
-  - `SHORTS_STD`: This section contains short, standard texts like labels and buttons (max 3 words).
-  - `BODY_TEXT_STD`: This section holds longer blocks of standard text, such as paragraphs or descriptions.
-  - `ERROR_STD`: This section includes standard error messages that are used throughout the application.
-  - `SENTENCES_FORMAT`: This section is for sentences with specific formatting or placeholders.
-  - `SHORTS_FORMAT`: This section contains short texts with formatting or placeholders.
-  - `BODY_TEXT_FORMAT`: This section includes longer blocks of text with formatting or placeholders.
-  - `ERROR_FORMAT`: This section contains error messages that include formatting or placeholders.
-- **Use reference comments**: to explain relations with the source code
-- **Use the fuzzy flag**: For values that don't have to be translated (yet)
-- **Add context**: for non-self-explanatory values
-- **Snippet order**: Alphabetically
+**Error Example**:
+
+```json
+{
+  "message": "Invalid username",
+  "location": "app.users.models.RegisterUserView"
+}
+```
 
 Adhering to these conventions ensures a consistent, clean, and maintainable codebase for everyone contributing to Daytistics.

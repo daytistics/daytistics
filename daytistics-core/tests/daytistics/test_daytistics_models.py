@@ -35,14 +35,12 @@ class TestActivityEntryModel:
 
 		assert activity_entry.created_at == old_created_at
 		assert activity_entry.updated_at > old_updated_at
-		
+
 	def test_human_readable_duration(self, activity_entry):
 		activity_entry.duration = timedelta(hours=1, minutes=30)
 		activity_entry.save()
 
 		assert activity_entry.human_readable_duration == '01:30'
-	
-	
 
 
 @pytest.mark.django_db
@@ -102,11 +100,11 @@ class TestDaytisticModel:
 			daytistic_with_fixed_updated_at.save()
 
 		assert daytistic_with_fixed_updated_at.updated_at == specific_date
-  
+
 	def test_get_total_duration(self, daytistic):
 		activity_entry_1 = ActivityEntryFactory(daytistic=daytistic, duration=timedelta(hours=1))
 		activity_entry_2 = ActivityEntryFactory(daytistic=daytistic, duration=timedelta(minutes=30))
 		daytistic.activities.add(activity_entry_1, activity_entry_2)
 
-		assert daytistic.get_total_duration() == "01:30"
+		assert daytistic.get_total_duration() == '01:30'
 		assert daytistic.get_total_duration(False) == timedelta(hours=1, minutes=30)

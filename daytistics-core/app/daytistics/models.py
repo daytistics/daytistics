@@ -14,7 +14,7 @@ class Daytistic(models.Model):
 	important = models.BooleanField(default=False)
 	created_at = models.DateTimeField(auto_now_add=True)
 	updated_at = models.DateTimeField(auto_now=True)
- 
+
 	def get_total_duration(self, human_readable=True):
 		"""
 		Property to return the total duration of all activities in the daytistic.
@@ -22,15 +22,14 @@ class Daytistic(models.Model):
 		Returns:
 			timedelta: Total duration of all activities in the daytistic.
 		"""
-		
+
 		total_duration = sum([activity.duration for activity in self.activities.all()], timedelta())
-  
+
 		if human_readable:
 			hours, remainder = divmod(total_duration.seconds, 3600)
 			minutes, _ = divmod(remainder, 60)
 			return f'{hours:02}:{minutes:02}'
 		return total_duration
-
 
 	def __str__(self):
 		return f'Datistic: {self.date} ({self.user.username})'

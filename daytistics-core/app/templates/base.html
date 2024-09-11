@@ -1,4 +1,5 @@
 {% load static tailwind_tags %} {% load static %}
+{% load unicorn %}
 
 <!DOCTYPE html>
 <html lang="en">
@@ -22,6 +23,7 @@
       {% block title %}Daytistics - Erfolgreiche Tage durch Daten"{% endblock %}
     </title>
     {% tailwind_css %}
+    {% unicorn_scripts %}
 
     <script
       defer
@@ -37,24 +39,7 @@
   </head>
 
   <body hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}' class="font-comfortaa">
+    {% csrf_token %}
     {% block content %}{% endblock %}
   </body>
-
-  {% comment %} TODO: Remove this {% endcomment %}
-  <script>
-    document.addEventListener("alpine:init", () => {
-      Alpine.store("darkMode", {
-        on: false,
-
-        toggle() {
-          this.on = !this.on;
-        },
-      });
-
-      const darkMode = localStorage.getItem("darkMode");
-      if (darkMode === "true") {
-        Alpine.store("darkMode").on = true;
-      }
-    });
-  </script>
 </html>
