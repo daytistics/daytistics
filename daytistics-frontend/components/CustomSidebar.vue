@@ -1,5 +1,5 @@
 <template>
-  <aside class="bg-green-700 text-white flex-shrink-0 transition-all duration-300"
+  <aside class="bg-green-700 text-white min-h-screen transition-all duration-300"
     :class="[sidebarOpen ? 'w-64' : 'w-16']">
     <div class="p-4" :class="{ 'flex justify-center items-center': !sidebarOpen }">
       <div class="flex items-center flex-row">
@@ -76,15 +76,26 @@
 </template>
 
 <script lang="ts" setup>
-import { ref } from 'vue';
 
 const sidebarOpen = ref(true);
+const emit = defineEmits(['close', 'open'])
 
 const toggleSidebar = () => {
   sidebarOpen.value = !sidebarOpen.value;
+
+  switch (sidebarOpen.value) {
+    case true:
+      emit('open');
+      break;
+    case false:
+      emit('close');
+      break;
+  }
 };
+
+
+
+
 </script>
 
-<style scoped>
-/* Fügen Sie hier bei Bedarf zusätzliche Stile hinzu */
-</style>
+<style scoped></style>
