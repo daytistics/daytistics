@@ -1,5 +1,10 @@
 import { jwtDecode } from 'jwt-decode';
 
+interface UserModel {
+    username: string;
+    // Add other properties as needed
+}
+
 export const useUser = () => {
     const isAuthenticated = async () => {
         checkAndRenewToken();
@@ -28,6 +33,7 @@ export const useUser = () => {
     };
 
     const checkAndRenewToken = async () => {
+        console.debug('Checking and renewing token...');
         const accessTokenCookie = useCookie('access_token');
 
         if (!accessTokenCookie.value) {
@@ -68,11 +74,10 @@ export const useUser = () => {
         }
     };
 
-    const getData = async () => {
-        var data = {};
+    const getModel = async () => {
         checkAndRenewToken();
 
-        await $fetch('/api/users/data/', {
+        return $fetch('/api/users/data/', {
             server: false,
             method: 'GET',
             headers: {
@@ -80,18 +85,23 @@ export const useUser = () => {
                 'X-CSRFToken': useCsrfToken().getToken(),
                 Authorization: `Bearer ${useCookie('access_token').value}`,
             },
-            onResponse: ({ request, response, options }) => {
-                if (response.status === 200) {
-                    data = response._data;
-                }
-            },
         });
+    };
 
-        return data;
+    const logout = () => {
+        const accessTokenCookie = useCookie('access_token');
+        const refreshTokenCookie = useCookie('refresh_token');
+
+        accessTokenCookie.value = null;
+        refreshTokenCookie.value = null;
+
+        useRouter().push('/');
     };
 
     return {
         isAuthenticated,
-        getData,
+        getModel,
+        checkAndRenewToken,
+        logout,
     };
 };

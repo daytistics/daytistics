@@ -1,6 +1,6 @@
 <template>
   <div>
-    <Navbar />
+    Welcome to the home page.
   </div>
 </template>
 

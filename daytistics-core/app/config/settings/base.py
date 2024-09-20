@@ -24,7 +24,6 @@ INSTALLED_APPS = [
 	# Custom Apps
 	'app.daytistics',
 	'app.activities',
-	'app.accounts',
 	'app.tools',
 	'app.users',
 	# Django Apps
@@ -36,13 +35,6 @@ INSTALLED_APPS = [
 	'django.contrib.sites',
 	'django.contrib.staticfiles',
 	# Third Party Apps
-	'tailwind',
-	'app.theme',
-	'django_browser_reload',
-	'django_htmx',
-	'widget_tweaks',
-	'mathfilters',
-	'django_unicorn',
 	'corsheaders',
 	# API
 	'rest_framework',
@@ -99,7 +91,7 @@ LOGIN_URL = '/daytistics/login/'
 LOGIN_REDIRECT_URL = '/daytistics/dashboard/'
 LOGOUT_REDIRECT_URL = '/daytistics/dashboard/'
 
-AUTH_USER_MODEL = 'accounts.CustomUser'
+AUTH_USER_MODEL = 'users.CustomUser'
 
 AUTHENTICATION_BACKENDS = [
 	'allauth.account.auth_backends.AuthenticationBackend',

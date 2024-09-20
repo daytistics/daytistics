@@ -1,0 +1,37 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Start Frontend",
+            "type": "shell",
+            "command": "bun run dev",
+            "windows": {
+                "command": "bun run dev"
+            },
+            "group": "none",
+            "presentation": {
+                "reveal": "always",
+                "panel": "new"
+            },
+            "runOptions": {
+                "runOn": "folderOpen",
+            }
+        },
+        // {
+        //     "label": "Start Test",
+        //     "type": "shell",
+        //     "command": "npm run test",
+        //     "windows": {
+        //         "command": "npm run test"
+        //     },
+        //     "group": "none",
+        //     "presentation": {
+        //         "reveal": "always",
+        //         "panel": "new"
+        //     },
+        //     "runOptions": {
+        //         "runOn": "folderOpen",
+        //     }
+        // }
+    ]
+}

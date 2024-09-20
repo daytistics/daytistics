@@ -3,7 +3,7 @@ import inspect
 from django.conf import settings
 
 def success_response(content: dict, status: int=200) -> JsonResponse:
-    return JsonResponse(content, status=status)
+    return JsonResponse(content, status=status, safe=False)
 
 def error_response(message: str, error_code: int=400) -> JsonResponse:
     """

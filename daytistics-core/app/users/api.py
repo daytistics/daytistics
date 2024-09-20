@@ -7,7 +7,7 @@ from django.template.loader import render_to_string
 from django.contrib.sites.shortcuts import get_current_site
 from django.utils.http import urlsafe_base64_encode
 from django.utils.encoding import force_bytes
-from app.accounts.models import CustomUser
+from app.users.models import CustomUser
 from django.shortcuts import redirect
 from django.utils.encoding import force_str
 from django.utils.http import urlsafe_base64_decode
@@ -50,7 +50,7 @@ class RegisterView(APIView):
 
         self._send_verification_email(user)
 
-        return HttpResponse('Please check your email to verify your account.', status=201)
+        return success_response('Please check your email to verify your account.', status=201)
 
     def _send_verification_email(self, user):
         mail_subject = 'Activate your user account.'
@@ -119,3 +119,4 @@ class DataView(APIView):
     def get(self, request):
         serializer = CustomUserSerializer(request.user)
         return success_response(serializer.data, 200)
+    

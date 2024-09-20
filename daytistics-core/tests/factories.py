@@ -3,7 +3,7 @@ from datetime import timedelta
 from faker import Faker
 from factory.django import DjangoModelFactory
 from django.utils import timezone
-from app.accounts.models import CustomUser
+from app.users.models import CustomUser
 from app.daytistics.models import Daytistic, ActivityEntry
 from app.activities.models import Activity
 

@@ -8,6 +8,9 @@ from tests.factories import (
 )
 import random
 from datetime import timedelta
+from rest_framework.test import APIClient
+from faker import Faker
+from rest_framework_simplejwt.tokens import RefreshToken
 
 register(ActivityFactory)
 register(DaytisticFactory)
@@ -16,16 +19,17 @@ register(ActivityEntryFactory)
 
 
 @pytest.fixture
-def custom_user():
-	return CustomUserFactory()
+def api_client():
+    user = CustomUserFactory()
+    client = APIClient()
+    refresh = RefreshToken.for_user(user)
+    client.credentials(HTTP_AUTHORIZATION=f'Bearer {refresh.access_token}')
 
+    return client
 
 @pytest.fixture
-def client():
-	from django.test import Client
-
-	return Client()
-
+def fake():
+    return Faker()
 
 @pytest.fixture
 def day_generator():

@@ -22,12 +22,15 @@ This document covers the technologies (infrastructure, tech- and toolstack) whic
 
 ## Infrastructure
 
-> Hosted by [**Scaleway**](https://www.scaleway.com/en/) in the Paris 1 data center.
+> Hosted by [**Hetzner**](https://www.hetzner.com/cloud) and .
 
-- **Webserver (€23.04/month)**: DEV1-M, 3 vCPUs, 4 GB RAM, 50 GB Storage
-- **ML-Server (€21.87/month)**: DEV1-M, 3 vCPUs, 4 GB RAM, 10 GB Storage
-- **Block-Storage (€8.496/month)**: Block Storage SSD, 100 GB Storage
-- **Database (€79.20/month)**: Cost-optimized DB-PRO2-XXS, 2 vCPUs, 8 GB RAM
+- **Frontend (€4.51/month)**: CX22 (2 vCPUs, 4 GB RAM, 40 GB Storage)
+- **Backend (€8.09/month)**: CX32 (4 vCPUs, 8 GB RAM, 80 GB Storage)
+- **ML-API (€19.52/month)**: CX42 (8 vCPUs, 16 GB RAM, 160 GB Storage)
+- **Webspace (€2.09/month)**: Webspace Level 1 (1 TB Storage)
+- **SupaBase (€33.15/month)**: Pro Level
+    - **PostgreSQL**: 48 GB Storage
+    - **Storage**: 250 GB Storage
 - **Documentation (free)**: Github Pages
 
-Overall, this calculation results in a total monthly amount of around **€153**. That doesn't sound like much, but please keep in mind that Daytistics is a non-profit project. If you would like to [support us](https://patreon.com/daytistics), we would be very grateful. We are also open to partnerships with hosting providers (<partnership@daytistics.com>).
+Overall, this calculation results in a total monthly amount of around **68 €**. That doesn't sound like much, but please keep in mind that Daytistics is a non-profit project. If you would like to [support us](https://patreon.com/daytistics), we would be very grateful. We are also open to partnerships with hosting providers (<partnership@daytistics.com>).
