@@ -22,7 +22,7 @@ jobs:
       - name: Copy core to deploy-core branch
         run: |
           cd daytistics-core
-          git checkout -m deploy-core
+          git checkout -b deploy-core
           git add .
           git commit -m "Copy core to deploy-core branch"
           git push origin deploy-core
@@ -31,9 +31,8 @@ jobs:
       - name: Copy frontend to deploy-frontend branch
         run: |
           cd daytistics-frontend
-          git checkout -m deploy-frontend
+          git checkout -b deploy-frontend
           git add .
           git commit -m "Copy frontend to deploy-frontend branch"
           git push origin deploy-frontend
           cd ..
-
