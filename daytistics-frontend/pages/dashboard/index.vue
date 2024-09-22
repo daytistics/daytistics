@@ -74,16 +74,16 @@
                 </button>
               </div>
               <ul class="divide-y divide-gray-200">
-                <li v-for="(day, index) in displayedDays" :key="index" class="py-4 cursor-pointer hover:bg-gray-50">
-                  <NuxtLink to="/dashboard/daytistics/{{ day.id }}">
+                <li v-for="(daytistic, index) in daytistics" :key="index" class="py-4 cursor-pointer hover:bg-gray-50">
+                  <NuxtLink :to="`/dashboard/daytistics/${daytistic.id}`">
                     <div class="flex items-center space-x-4">
                       <Calendar class="h-6 w-6 text-gray-400" />
                       <div class="flex-1 min-w-0">
                         <p class="text-sm font-medium text-gray-900 truncate">
-                          {{ day.date }}
+                          {{ daytistic.date }}
                         </p>
                         <p class="text-sm text-gray-500 truncate">
-                          {{ day.activities }} Activities / {{ day.duration }}
+                          {{ daytistic.total_activities }} Activities / {{ daytistic.total_duration }}
                         </p>
                       </div>
                     </div>
@@ -159,44 +159,46 @@ import { initDials, initDrawers, initFlowbite, initModals, Modal } from 'flowbit
 
 const greeting = ref<string>(useUtils().getGreeting());
 const username = ref<string>('User');
+const daytistics = ref<[]>([]);
 
-import { Layers, PlusCircle, AlertTriangle, BarChart2, Calendar, MessageCircle, Github, Brain, Server } from 'lucide-vue-next'
+import { Layers, PlusCircle, AlertTriangle, BarChart2, Calendar, MessageCircle, Github, Brain, Server } from 'lucide-vue-next';
 
 const cards = [
   { title: 'Create', description: 'Create a new daytistic, diary entry or AI model', icon: PlusCircle },
   { title: 'Issues', description: 'Report a bug or submit a feature request', icon: AlertTriangle },
   { title: 'Self-Hosting', description: 'Host your own Daytistics on your own server.', icon: Server },
   { title: 'Stats', description: 'See what you have achieved so far on Daytistic', icon: BarChart2 },
-]
+];
 
-const days = [
-  { date: '21.01.2008', activities: 12, duration: '23h 30m' },
-  { date: '22.01.2008', activities: 8, duration: '18h 45m' },
-  { date: '23.01.2008', activities: 15, duration: '22h 15m' },
-  { date: '24.01.2008', activities: 10, duration: '20h 00m' },
-  { date: '25.01.2008', activities: 14, duration: '21h 30m' },
-  { date: '26.01.2008', activities: 9, duration: '19h 15m' },
-  { date: '27.01.2008', activities: 11, duration: '20h 45m' },
-  { date: '28.01.2008', activities: 13, duration: '22h 00m' },
-  { date: '29.01.2008', activities: 7, duration: '17h 30m' },
-  { date: '30.01.2008', activities: 16, duration: '23h 45m' },
-]
+async function listDaytisticsRequest(page: number): Promise<any> {
+  return $fetch(`/api/daytistics/?page=${page}`, {
+    server: false,
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-CSRFToken': useCsrf().getToken(),
+      Authorization: `Bearer ${useCookie('access_token').value}`,
+    },
+  });
+}
+
+async function initDaytisticsList(page: number) {
+  const response = await listDaytisticsRequest(page);
+  daytistics.value = response.items;
+  totalPages.value = Math.ceil(response.count / 5);
+}
 
 const aiModels = [
   { name: 'Predictor', description: 'Predicts your well-being on a hypothetical day', status: 'Active', trainedOn: '2023-05-15', accuracy: '89%' },
   { name: 'Suggestor', description: 'Suggests optimal schedules for maximum productivity', status: 'Training', trainedOn: '2023-06-01', accuracy: '78%' },
-]
+];
 
-const currentPage = ref(1)
-const itemsPerPage = 5
+const currentPage = ref(1);
+const totalPages = ref(1);
 
-const totalPages = computed(() => Math.ceil(days.length / itemsPerPage))
-
-const displayedDays = computed(() => {
-  const start = (currentPage.value - 1) * itemsPerPage
-  const end = start + itemsPerPage
-  return days.slice(start, end)
-})
+watch(currentPage, async (newPage) => {
+  await initDaytisticsList(newPage);
+});
 
 const handleCardClick = (title: number) => {
   switch (title) {
@@ -208,31 +210,31 @@ const handleCardClick = (title: number) => {
     default:
       break;
   }
-}
+};
 
 const handleModelClick = (model) => {
-  console.log(`Clicked on AI model: ${model.name}`)
+  console.log(`Clicked on AI model: ${model.name}`);
   // Add your logic here for handling AI model clicks
-}
+};
 
 onBeforeMount(async () => {
   if (!await useUser().isAuthenticated()) {
     useRouter().push('/login');
   }
-})
+});
 
 onMounted(async () => {
 
   getModel();
-
+  initDaytisticsList(currentPage.value);
   initDrawers();
   initModals();
-})
+});
 
 async function getModel() {
-  const model: any = await useUser().getModel();
-  console.log(model);
-  username.value = model.username;
+  const profile: any = await useUser().getProfile();
+  console.log(profile);
+  username.value = profile.username;
 }
 
 </script>

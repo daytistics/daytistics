@@ -1,8 +1,8 @@
-export function useCsrfToken() {
+export function useCsrf() {
     const csrfToken = ref('');
 
     const generateToken = async () => {
-        await $fetch('/api/csrf-token/', {
+        await $fetch('/api/csrf/', {
             server: false,
             method: 'GET',
 

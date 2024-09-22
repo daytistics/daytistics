@@ -2,7 +2,9 @@
   <div :key="navbarKey" class="shadow-sm bg-white text-darkgray text-lg border-b-0 border-darkgray">
     <nav class="flex flex-row items-center mx-auto justify-between max-w-8xl">
       <div class="flex flex-row items-center gap-6">
-        <img src="/assets/graphics/images/logo.png" class="ml-3 md:ml-8 h-16 w-auto md:w-75px md:h-75px" />
+        <NuxtLink to="/">
+          <NuxtImg src="/images/logo.png" class="ml-3 md:ml-8 h-16 w-auto md:w-75px md:h-75px" />
+        </NuxtLink>
         <ul v-if="!currentUrl.includes('/dashboard')"
           class="hidden md:flex flex-row justify-around align-middle items-center gap-5 pl-0 p-5">
           <li v-for="link in navbarLinksLoggedOut">
@@ -151,7 +153,7 @@ const navbarLinksLoggedIn = [
     href: '/dashboard/settings',
     icon: Settings,
   },
-]
+];
 
 const navbarLinksLoggedOut = [
   {
@@ -179,7 +181,7 @@ const navbarLinksLoggedOut = [
     href: 'https://docs.daytistics.com/',
     icon: Paperclip,
   },
-]
+];
 
 onMounted(async () => {
   isAuthenticated.value = await useUser().isAuthenticated();
@@ -189,7 +191,7 @@ onMounted(async () => {
     console.log('user-login');
     navbarKey.value = Date.now();
     console.log(navbarKey.value);
-  })
+  });
 });
 </script>
 

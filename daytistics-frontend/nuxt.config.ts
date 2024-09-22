@@ -1,6 +1,3 @@
-import Lara from '@primevue/themes/lara';
-import Nora from '@primevue/themes/nora';
-
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
     ssr: false,
@@ -11,12 +8,17 @@ export default defineNuxtConfig({
         '~/components',
     ],
 
-    modules: ['@nuxt/image', '@nuxtjs/tailwindcss', '@nuxt/test-utils/module', '@pinia/nuxt'],
+    modules: [
+        '@nuxt/image',
+        '@nuxtjs/tailwindcss',
+        '@nuxt/test-utils/module',
+        '@pinia/nuxt',
+    ],
 
     nitro: {
         devProxy: {
             '/api': {
-                target: 'http://127.0.0.1:8000',
+                target: 'http://127.0.0.1:8000/api',
                 changeOrigin: true,
             },
         },

@@ -1,4 +1,4 @@
-<template>
+<!-- <template>
   <div class="">
     <div class="rounded-md p-2 bg-white">
       <div class="flex items-center justify-center my-3">
@@ -53,9 +53,57 @@
     </div>
   </div>
 
+</template> -->
+
+<template>
+  <div class="min-h-screen bg-gradient-to-br from-green-400 to-blue-500 flex items-center justify-center p-4">
+    <div class="max-w-md w-full bg-white rounded-lg shadow-xl overflow-hidden">
+      <div class="p-6 sm:p-8">
+        <div class="flex justify-center mb-8">
+          <img src="/assets/graphics/images/logo.png" alt="Logo" class="h-12 w-auto" />
+        </div>
+        <h2 class="text-2xl font-bold text-center text-gray-700 mb-6">Log in to your account</h2>
+        <form @submit.prevent="handleSubmit" class="space-y-6">
+          <div>
+            <label for="email" class="text-sm font-medium text-gray-700 block mb-2">Email address</label>
+            <input id="email" v-model="email" type="email" required
+              class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent" />
+          </div>
+          <div>
+            <label for="password" class="text-sm font-medium text-gray-700 block mb-2">Password</label>
+            <input id="password" v-model="password" type="password" required
+              class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent" />
+          </div>
+          <div class="flex items-center justify-between">
+            <div class="flex items-center">
+              <input id="remember-me" type="checkbox"
+                class="h-4 w-4 text-green-600 focus:ring-green-500 border-gray-300 rounded" />
+              <label for="remember-me" class="ml-2 block text-sm text-gray-700">Remember me</label>
+            </div>
+            <div class="text-sm">
+              <a href="#" class="font-medium text-green-600 hover:text-green-500">Forgot your password?</a>
+            </div>
+          </div>
+          <div>
+            <button type="submit"
+              class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-colors duration-300">
+              Log In
+            </button>
+          </div>
+        </form>
+      </div>
+      <div class="px-6 py-4 bg-gray-50 border-t border-gray-200 sm:px-8">
+        <p class="text-xs leading-5 text-gray-500">
+          Don't have an account?
+          <a href="#" class="font-medium text-green-600 hover:text-green-500">Sign up</a>
+        </p>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script lang="ts" setup>
+
 
 const eventBus = useEventBusStore();
 const email = ref('');
@@ -64,21 +112,21 @@ const loginError = ref<string>('');
 const csrfToken = ref('');
 
 onMounted(async () => {
-  csrfToken.value = useCsrfToken().getToken();
+  csrfToken.value = useCsrf().getToken();
 
   if (await useUser().isAuthenticated()) {
     useRouter().push('/dashboard');
   }
 });
 
-async function loginUser() {
+async function handleSubmit() {
 
   await $fetch('/api/users/login/', {
     server: false,
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'X-CSRFToken': useCsrfToken().getToken(),
+      'X-CSRFToken': useCsrf().getToken(),
     },
     body: {
       email: email.value,

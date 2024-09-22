@@ -9,6 +9,7 @@
                 "command": "bun run dev"
             },
             "group": "none",
+            "isBackground": true,
             "presentation": {
                 "reveal": "always",
                 "panel": "new"

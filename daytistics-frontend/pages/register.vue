@@ -1,5 +1,6 @@
 <template>
-  <div class="">
+
+  <div>
     <section class="rounded-md p-2 bg-white">
       <div class="flex items-center justify-center my-3">
         <div class="xl:mx-auto shadow-md p-4 xl:w-full xl:max-w-sm 2xl:max-w-md">
@@ -12,16 +13,8 @@
             <NuxtLink to="/login" class="text-sky-600">Log in</NuxtLink>
           </p>
           <form @submit.prevent="registerUser" class="mt-5">
+            <p class="text-red-500" id="error"></p>
             <div class="space-y-4">
-
-              <ul class="text-red-500 text-sm" id="registration-error">
-                <li v-if="!useInputValidation().isValidUsername(username)">Invalid username</li>
-                <li v-else-if="!useInputValidation().isValidEmail(email)">Invalid email address</li>
-                <li v-else-if="!useInputValidation().isValidPassword(password1)">Invalid or insecure password</li>
-                <li v-else-if="password1 != password2">Passwords do not match</li>
-
-              </ul>
-
               <div>
                 <label class="text-base font-medium text-gray-900">
                   User Name
@@ -69,13 +62,7 @@
               <div>
                 <button
                   class="inline-flex w-full items-center justify-center rounded-md bg-green-600 px-3.5 py-2.5 font-semibold leading-7 text-white hover:bg-black/80"
-                  type="submit"
-                  :disabled="!useInputValidation().isValidUsername(username) || !useInputValidation().isValidEmail(email) || !useInputValidation().isValidPassword(password1) || password1 != password2"
-                  :class="{
-                    'cursor-not-allowed': !useInputValidation().isValidUsername(username) ||
-                      !useInputValidation().isValidEmail(email) || !useInputValidation().isValidPassword(password1) ||
-                      password1 != password2
-                  }"> Create Account </button>
+                  type="submit"> Create Account </button>
               </div>
             </div>
           </form>
@@ -87,36 +74,54 @@
 </template>
 
 <script lang="ts" setup>
+import { Dismiss } from 'flowbite';
+
 
 const username = ref('');
 const password1 = ref('');
 const password2 = ref('');
 const email = ref('');
 const csrfToken = ref('');
-const backendErrorOccurred = ref(false);
-const backendErrorMessage = ref('');
+const inputValidation = useInputValidation();
+const errorMessage = document.getElementById('error');
 
 onMounted(async () => {
-  csrfToken.value = useCsrfToken().getToken();
+  csrfToken.value = useCsrf().getToken();
 
   if (await useUser().isAuthenticated()) {
     useRouter().push('/dashboard');
   }
 });
 
-async function registerUser() {
+function validateInput() {
+  if (!inputValidation.isValidUsername(username.value)) {
+    alert('Invalid username');
+  }
+
+  if (!inputValidation.isValidEmail(email.value)) {
+    alert('Invalid email');
+  }
+
+  // if (!inputValidation.isValidPassword(password1.value)) {
+  //   alert('Invalid password');
+  // }
 
   if (password1.value != password2.value) {
     alert('Passwords do not match');
-    return;
   }
+}
+
+
+async function registerUser() {
+
+  validateInput();
 
   await $fetch('/api/users/register/', {
     server: false,
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'X-CSRFToken': useCsrfToken().getToken(),
+      'X-CSRFToken': useCsrf().getToken(),
     },
     body: {
       username: username.value,
@@ -132,9 +137,9 @@ async function registerUser() {
     },
 
   }).catch((error) => {
-    const registrationError = document.getElementById('registration-error');
-    if (registrationError) {
-      registrationError.innerHTML = `<li>Backend error: ${error.data.message}</li>`;
+    console.log(error)
+    if (errorMessage) {
+      errorMessage.innerHTML = `${error.data.message}`;
     }
 
   });

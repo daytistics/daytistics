@@ -10,14 +10,14 @@ export const useUser = () => {
         checkAndRenewToken();
         var isAuthenticated = false;
 
-        await $fetch('/api/users/auth/', {
+        await $fetch('/api/token/verify', {
             server: false,
-            method: 'GET',
+            method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'X-CSRFToken': useCsrfToken().getToken(),
-                Authorization: `Bearer ${useCookie('access_token').value}`,
+                'X-CSRFToken': useCsrf().getToken(),
             },
+            body: JSON.stringify({ token: useCookie('access_token').value }),
             onResponse: ({ request, response, options }) => {
                 if (response.status === 200) {
                     isAuthenticated = true;
@@ -33,7 +33,6 @@ export const useUser = () => {
     };
 
     const checkAndRenewToken = async () => {
-        console.debug('Checking and renewing token...');
         const accessTokenCookie = useCookie('access_token');
 
         if (!accessTokenCookie.value) {
@@ -55,7 +54,7 @@ export const useUser = () => {
                 return;
             }
 
-            await $fetch('api/users/token/refresh/', {
+            await $fetch('api/token/refresh', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -66,23 +65,25 @@ export const useUser = () => {
                     if (response.status === 200) {
                         const data = response._data;
 
-                        refreshTokenCookie.value = data.refreshToken;
-                        accessTokenCookie.value = data.accessToken;
+                        refreshTokenCookie.value = data.refresh;
+                        accessTokenCookie.value = data.access;
+                    } else {
+                        useRouter().push('/login');
                     }
                 },
             });
         }
     };
 
-    const getModel = async () => {
+    const getProfile = async () => {
         checkAndRenewToken();
 
-        return $fetch('/api/users/data/', {
+        return $fetch('/api/users/profile', {
             server: false,
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
-                'X-CSRFToken': useCsrfToken().getToken(),
+                'X-CSRFToken': useCsrf().getToken(),
                 Authorization: `Bearer ${useCookie('access_token').value}`,
             },
         });
@@ -100,7 +101,7 @@ export const useUser = () => {
 
     return {
         isAuthenticated,
-        getModel,
+        getProfile,
         checkAndRenewToken,
         logout,
     };

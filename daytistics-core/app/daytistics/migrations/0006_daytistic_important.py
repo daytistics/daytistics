@@ -4,14 +4,14 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-	dependencies = [
-		('daytistics', '0005_remove_daytistic_important'),
-	]
+    dependencies = [
+        ("daytistics", "0005_remove_daytistic_important"),
+    ]
 
-	operations = [
-		migrations.AddField(
-			model_name='daytistic',
-			name='important',
-			field=models.BooleanField(default=False),
-		),
-	]
+    operations = [
+        migrations.AddField(
+            model_name="daytistic",
+            name="important",
+            field=models.BooleanField(default=False),
+        ),
+    ]

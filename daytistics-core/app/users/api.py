@@ -1,122 +1,181 @@
-from django.http import HttpResponse
-from django.shortcuts import render
-from requests import Response
-from rest_framework.views import APIView
+# from django.http import HttpResponse
+# from django.shortcuts import render
+# from requests import Response
+# from rest_framework.views import APIView
+# from django.core.mail import EmailMessage
+# from django.template.loader import render_to_string
+# from django.contrib.sites.shortcuts import get_current_site
+# from django.utils.http import urlsafe_base64_encode
+# from django.utils.encoding import force_bytes
+# from app.users.models import CustomUser
+# from django.shortcuts import redirect
+# from django.utils.encoding import force_str
+# from django.utils.http import urlsafe_base64_decode
+# from django.contrib.auth import get_user_model
+# from django.contrib.auth.models import User
+# from .tokens import account_activation_token
+# from app.utils.validation import is_valid_email, is_valid_username, is_valid_password
+# from app.utils.api import success_response, error_response
+# from rest_framework_simplejwt.authentication import JWTAuthentication
+# from rest_framework_simplejwt.tokens import RefreshToken, OutstandingToken
+# from .serializers import CustomUserSerializer
+# from django.utils import timezone
+
+
+# class CheckAuthView(APIView):
+#     authentication_classes = [JWTAuthentication]
+
+#     def get(self, request):
+#         return success_response({'message': 'You are authenticated!'}, 200)
+
+# class DataView(APIView):
+#     authentication_classes = [JWTAuthentication]
+
+#     def get(self, request):
+#         serializer = CustomUserSerializer(request.user)
+#         return success_response(serializer.data, 200)
+
 from django.core.mail import EmailMessage
 from django.template.loader import render_to_string
 from django.contrib.sites.shortcuts import get_current_site
-from django.utils.http import urlsafe_base64_encode
-from django.utils.encoding import force_bytes
-from app.users.models import CustomUser
-from django.shortcuts import redirect
-from django.utils.encoding import force_str
-from django.utils.http import urlsafe_base64_decode
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.utils.encoding import force_bytes, force_str
 from django.contrib.auth import get_user_model
-from django.contrib.auth.models import User
-from .tokens import account_activation_token
-from app.utils.validation import is_valid_email, is_valid_username, is_valid_password
-from app.utils.api import success_response, error_response
-from rest_framework_simplejwt.authentication import JWTAuthentication
-from rest_framework_simplejwt.tokens import RefreshToken, OutstandingToken
-from .serializers import CustomUserSerializer
 from django.utils import timezone
+from ninja import Router
+from ninja_jwt.tokens import RefreshToken
+from ninja_jwt.authentication import JWTAuth
 
-class RegisterView(APIView):
-    def post(self, request):
+from .tokens import account_activation_token
+from .schemes import (
+    UserRegisterRequest,
+    UserLoginRequest,
+    JwtTokensResponse,
+    UserProfileResponse,
+)
+from ..utils.schemes import Message
+from ..users.models import CustomUser
+from ..utils.validation import (
+    is_valid_email,
+    is_valid_username,
+    is_valid_password,
+)
 
-        print(request.data)
-
-        body = request.data
-        username = body.get('username')
-        email = body.get('email')
-        password = body.get('password1')
-
-        if not is_valid_username(username):
-            return error_response('Invalid username.', 400)
-
-        if not is_valid_email(email):
-            return error_response('Invalid email.', 400)
-
-        if not is_valid_password(password):
-            return error_response('Invalid password.', 400)
-
-        if CustomUser.objects.filter(username=username).exists():
-            return error_response('Username already exists.', 400)
+router = Router()
 
 
-        user = CustomUser.objects.create_user(
-         username=username, email=email, password=password, is_active=False
-        )
+@router.get("/activate/{uidb64}/{token}", response={200: Message, 400: Message})
+def activate(request, uidb64: str, token: str):
+    User = get_user_model()
 
-        self._send_verification_email(user)
+    try:
+        uid = force_str(urlsafe_base64_decode(uidb64))
+        user = User.objects.get(pk=uid)
+    except (TypeError, ValueError, OverflowError, User.DoesNotExist):
+        user = None
 
-        return success_response('Please check your email to verify your account.', status=201)
+    if user is not None and account_activation_token.check_token(user, token):
+        user.is_active = True
+        user.save()
 
-    def _send_verification_email(self, user):
-        mail_subject = 'Activate your user account.'
+        return 200, {"detail": "Account activated successfully!"}
+    else:
+        return 400, {"detail": "Activation link is invalid."}
+
+
+@router.post("register/", response={201: Message, 400: Message})
+def register(request, data: UserRegisterRequest):
+    def _send_verification_email(user):
+        mail_subject = "Activate your user account."
         message = render_to_string(
-         'emails/account_activation.html',
-         {
-          'username': user.username,
-          'domain': get_current_site(self.request).domain,
-          'uid': urlsafe_base64_encode(force_bytes(user.pk)),
-          'token': account_activation_token.make_token(user),
-          'protocol': 'https' if self.request.is_secure() else 'http',
-         },
+            "emails/account_activation.html",
+            {
+                "username": user.username,
+                "domain": get_current_site(request).domain,
+                "uid": urlsafe_base64_encode(force_bytes(user.pk)),
+                "token": account_activation_token.make_token(user),
+                "protocol": "https" if request.is_secure() else "http",
+            },
         )
         email = EmailMessage(mail_subject, message, to=[user.email])
         email.send()
 
+    username = data.username
+    email = data.email
+    password1 = data.password1
+    password2 = data.password2
 
-class AccountActivationView(APIView):
-    def get(self, request, uidb64, token):
-        User = get_user_model()
+    if password1 != password2:
+        return 400, {"detail": "Passwords do not match."}
 
-        try:
-            uid = force_str(urlsafe_base64_decode(uidb64))
-            user = User.objects.get(pk=uid)
-        except (TypeError, ValueError, OverflowError, User.DoesNotExist):
-            user = None
+    if not is_valid_username(username):
+        return 400, {"detail": "Invalid username."}
 
-        if user is not None and account_activation_token.check_token(user, token):
-            user.is_active = True
-            user.save()
+    if not is_valid_email(email):
+        return 400, {"detail": "Invalid email."}
 
-            return HttpResponse('Account activated successfully!', status=600)
-        else:
-            return HttpResponse('Activation link is invalid!', status=604)
+    if not is_valid_password(password1):
+        return 400, {"detail": "Invalid or insecure password."}
+
+    if CustomUser.objects.filter(email=email).exists():
+        return 400, {"detail": "User already exists."}
+
+    user = CustomUser.objects.create_user(
+        username=username, email=email, password=password1, is_active=False
+    )
+
+    _send_verification_email(user)
+
+    return 201, {"detail": "Please check your email to verify your account."}
 
 
-class LoginView(APIView):
+@router.post("login/", response={200: JwtTokensResponse, 400: Message, 404: Message})
+def login(request, data: UserLoginRequest):
+    email = data.email
+    password = data.password
 
-    def post(self, request):
-        body = request.data
-        email = body.get('email')
-        password = body.get('password')
+    if email is None or password is None or email == "" or password == "":
+        return 400, {"detail": "Email and password are required."}
 
-        user = CustomUser.objects.get(email=email)
+    if not is_valid_email(email):
+        return 400, {"detail": "Invalid email."}
 
-        if user is not None and user.check_password(password):
-            user.last_login = timezone.now()
-            refresh = RefreshToken.for_user(user)
-            return success_response(
-                {
-                    'accessToken': str(refresh.access_token),
-                    'refreshToken': str(refresh),
-                }, 200)
+    if not CustomUser.objects.filter(email=email).exists():
+        return 404, {"detail": "User not found."}
 
-        return error_response('Invalid credentials.', 401)  #
+    user = CustomUser.objects.get(email=email)
 
-class CheckAuthView(APIView):
-    authentication_classes = [JWTAuthentication]
+    if not user.is_active:
+        return 400, {"detail": "Account is not activated."}
 
-    def get(self, request):
-        return success_response({'message': 'You are authenticated!'}, 200)
+    if user.check_password(password):
+        user.last_login = timezone.now()
+        user.save(update_fields=["last_login"])
 
-class DataView(APIView):
-    authentication_classes = [JWTAuthentication]
+        refresh = RefreshToken.for_user(user)
+        return 200, {
+            "accessToken": str(refresh.access_token),
+            "refreshToken": str(refresh),
+        }
 
-    def get(self, request):
-        serializer = CustomUserSerializer(request.user)
-        return success_response(serializer.data, 200)
-    
+    return 400, {"detail": "Invalid credentials."}
+
+
+@router.get("/profile", response={200: UserProfileResponse}, auth=JWTAuth())
+def get_user_profile(request):
+    user = request.user
+    profile = {
+        "username": user.username,
+        "email": user.email,
+        "is_active": user.is_active,
+        "is_staff": user.is_staff,
+        "is_superuser": user.is_superuser,
+        "groups": [group.name for group in user.groups.all()],
+        "user_permissions": [
+            permission.codename for permission in user.user_permissions.all()
+        ],
+        "date_joined": user.date_joined,
+        "last_login": user.last_login,
+    }
+
+    return 200, profile

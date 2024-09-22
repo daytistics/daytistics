@@ -5,28 +5,28 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-	dependencies = [
-		('daytistics', '0002_daytistic_created_at_daytistic_updated_at'),
-	]
+    dependencies = [
+        ("daytistics", "0002_daytistic_created_at_daytistic_updated_at"),
+    ]
 
-	operations = [
-		migrations.RemoveField(
-			model_name='activityentry',
-			name='user',
-		),
-		migrations.RemoveField(
-			model_name='daytistic',
-			name='activities',
-		),
-		migrations.AddField(
-			model_name='activityentry',
-			name='daytistic',
-			field=models.ForeignKey(
-				default=1,
-				on_delete=django.db.models.deletion.CASCADE,
-				related_name='activities',
-				to='daytistics.daytistic',
-			),
-			preserve_default=False,
-		),
-	]
+    operations = [
+        migrations.RemoveField(
+            model_name="activityentry",
+            name="user",
+        ),
+        migrations.RemoveField(
+            model_name="daytistic",
+            name="activities",
+        ),
+        migrations.AddField(
+            model_name="activityentry",
+            name="daytistic",
+            field=models.ForeignKey(
+                default=1,
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="activities",
+                to="daytistics.daytistic",
+            ),
+            preserve_default=False,
+        ),
+    ]

@@ -26,11 +26,8 @@
             <div class="col-span-2">
               <label for="type" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">What activity did
                 you do that day?</label>
-              <select id="type"
+              <select id="text" required
                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">
-                <option value="0" selected>Activity 1</option>
-                <option value="1">Activity 2</option>
-                <option value="2">Activity 3</option>
               </select>
             </div>
             <div>
@@ -70,7 +67,7 @@
           </div>
 
           <div class="flex justify-end md:justify-start">
-            <button type="submit" class="inline-flex button items-center">
+            <button type="submit" class="inline-flex button bg-secondary hover:bg-secondary-dark items-center">
               <svg class="me-1 -ms-1 w-5 h-5" fill="currentColor" viewBox="0 0 20 20"
                 xmlns="http://www.w3.org/2000/svg">
                 <path fill-rule="evenodd"
@@ -87,7 +84,11 @@
 </template>
 
 <script lang="ts" setup>
+import { initModals } from 'flowbite';
 
+onMounted(() => {
+  initModals();
+});
 </script>
 
 <style></style>

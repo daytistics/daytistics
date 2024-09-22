@@ -27,6 +27,23 @@ This document outlines the conventions used in this project. Following these con
 - Use **4 spaces** per indentation level in Python.
 - Use **2 spaces** per indentation level in JavaScript.
 
+### Declarative Functions vs Arrow Function
+
+
+### Order in Vue's Composition API
+
+```vue
+<script lang="ts" setup>
+// Imports
+// Props
+// Emits
+// Reactive data & functions using reactive data (grouped by element)
+// Non-reactive data & functions (grouped by element)
+// Watch functions 
+// Lifecycle hooks
+</script>
+```
+
 ## Commit Messages
 
 - **Format**: Use the following format for commit messages: <br>
@@ -82,7 +99,7 @@ This document outlines the conventions used in this project. Following these con
 
 ```json
 {
-  "message": "Invalid username",
+  "detail": "Invalid username",
   "location": "app.users.models.RegisterUserView"
 }
 ```

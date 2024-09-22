@@ -45,14 +45,16 @@
                       d="M20 4a2 2 0 0 0-2-2h-2V1a1 1 0 0 0-2 0v1h-3V1a1 1 0 0 0-2 0v1H6V1a1 1 0 0 0-2 0v1H2a2 2 0 0 0-2 2v2h20V4ZM0 18a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8H0v10Zm5-8h10a1 1 0 0 1 0 2H5a1 1 0 0 1 0-2Z" />
                   </svg>
                 </div>
-                <input datepicker id="default-datepicker" type="text"
+                <input datepicker id="create-daytistic-datepicker" type="text" datepicker-autohide
+                  :datepicker-max-date="todayMMDDYYYY" :value="todayMMDDYYYY" :datepicker-min-date="fourWeeksAgo"
                   class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                   placeholder="Select date" required>
               </div>
             </div>
           </div>
-          <button type="submit" class="inline-flex button bg-secondary hover:bg-secondary-dark items-center"
-            v-show="creationType != ''">
+          <p id="error" class="text-red-500 mb-3">{{ errorMessage }}</p>
+          <button type="button" class="inline-flex button bg-secondary hover:bg-secondary-dark items-center"
+            v-show="creationType != ''" @click="handleSubmit">
             <svg class="me-1 -ms-1 w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
               <path fill-rule="evenodd"
                 d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z"
@@ -67,45 +69,113 @@
 </template>
 
 <script lang="ts" setup>
-import { initDatepickers, initModals, Modal } from 'flowbite';
+import { Datepicker, initDatepickers, initModals, Modal } from 'flowbite';
+
+const utils = useUtils();
+const user = useUser();
+
+// ERROR MESSAGE
+const errorMessage = ref<string>('');
 
 
+// CREATION TYPE(NAME)
+const creationType = ref<string>('');
+const creationTypeName = ref<string>('');
+
+
+// MODAL FUNCTIONS
 function closeModal() {
   const modal = new Modal(document.getElementById('creation-modal'));
   modal.hide();
 }
 
-const props = defineProps({
-  type: {
-    type: Number,
-    required: false,
+
+// DATEPICKER FUNCTIONS
+const today = new Date();
+const todayMMDDYYYY = `${today.getMonth() + 1}/${today.getDate()}/${today.getFullYear()}`;
+
+const fourWeeksAgo = function () {
+  const date = new Date();
+  date.setDate(date.getDate() - 28);
+  const month = (date.getMonth() + 1).toString().padStart(2, '0');
+  const day = date.getDate().toString().padStart(2, '0');
+  const year = date.getFullYear();
+  return `${month}/${day}/${year}`;
+}();
+
+
+// SUBMIT FUNCTION
+async function handleSubmit() {
+  const el = document.getElementById('create-daytistic-datepicker');
+  const daytisticDatepicker = new Datepicker(el);
+  const dateString = daytisticDatepicker.getDate();
+
+  try {
+    const date = utils.convertDateStringToMMDDYYYY(dateString.toString());
+    await sendCreateDaytisticRequest(date);
+  } catch (error: any) {
+    if (error instanceof TypeError) {
+      errorMessage.value = 'Please select a date';
+    }
+    return;
   }
-})
+}
 
-onMounted(() => {
-  initDatepickers();
-  initModals();
-})
+async function sendCreateDaytisticRequest(dateString: string): Promise<void> {
 
-const creationType = ref<string>('')
-const creationTypeName = ref<string>('')
+
+  try {
+    await user.checkAndRenewToken();
+  } catch (error: any) {
+    closeModal();
+  }
+
+  await $fetch('/api/daytistics/create/', {
+    server: false,
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-CSRFToken': useCsrf().getToken(),
+      Authorization: `Bearer ${useCookie('access_token').value}`,
+    },
+    body: {
+      date: dateString,
+    },
+
+    onResponse: ({ request, response, options }) => {
+      if (response.status === 201) {
+        console.log("Success");
+        closeModal();
+        useRouter().push(`/dashboard/daytistics/${response._data.id}`);
+      }
+    },
+    onResponseError: ({ request, response, options }) => {
+      errorMessage.value = response._data.detail;
+    },
+  });
+}
 
 watch(creationType, (val) => {
   switch (val) {
     case '0':
-      creationTypeName.value = 'Daytistic'
-      break
+      creationTypeName.value = 'Daytistic';
+      break;
     case '1':
-      creationTypeName.value = 'Diary entry'
-      break
+      creationTypeName.value = 'Diary entry';
+      break;
     case '2':
-      creationTypeName.value = 'AI model'
-      break
+      creationTypeName.value = 'AI model';
+      break;
     default:
-      creationTypeName.value = '...'
-      break
+      creationTypeName.value = '...';
+      break;
   }
-})
+});
+
+onMounted(() => {
+  initDatepickers();
+  initModals();
+});
 
 </script>
 

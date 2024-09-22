@@ -4,5 +4,5 @@ from . import views
 
 
 urlpatterns = [
-	path('csrf-token/', views.CsrfToken.as_view(), name='csrf-token'),
+    path("csrf-token/", views.CsrfToken.as_view(), name="csrf-token"),
 ]

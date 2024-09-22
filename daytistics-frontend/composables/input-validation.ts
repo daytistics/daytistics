@@ -7,11 +7,11 @@ export const useInputValidation = () => {
     };
 
     const isValidEmail = (email: string) => {
-        return email.match(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/);
+        return email.match(/^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/);
     };
 
     const isValidUsername = (username: string) => {
-        return username.match(/^[a-zA-Z0-9]{5,}$/);
+        return username.match(/^[a-zA-Z0-9_]{5,}$/);
     };
 
     return {
