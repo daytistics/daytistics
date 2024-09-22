@@ -1,7 +1,7 @@
 name: Splitting services for deployment
 
 on:
-  pull_request:
+  push:
     branches:
       - dev
       - rest-with-spa
