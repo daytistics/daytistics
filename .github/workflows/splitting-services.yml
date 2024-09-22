@@ -1,9 +1,10 @@
 name: Splitting services for deployment
 
 on:
-  pull_request:
+  push:
     branches:
       - dev
+      - rest-with-spa
 
 jobs:
   splitting-services:
@@ -27,7 +28,7 @@ jobs:
           git push origin deploy-core
           cd ..
 
-        - name: Copy frontend to deploy-frontend branch
+      - name: Copy frontend to deploy-frontend branch
         run: |
           cd daytistics-frontend
           git checkout -m deploy-frontend
