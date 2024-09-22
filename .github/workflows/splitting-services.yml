@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout Repository (Core)
+      - name: Checkout Repository
         uses: actions/checkout@v3
 
       - name: Configure Git
@@ -22,17 +22,17 @@ jobs:
       - name: Copy core to deploy-core branch
         run: |
           cd daytistics-core
-          git checkout -b deploy-core
+          git fetch origin deploy-core || git checkout -b deploy-core
           git add .
-          git commit -m "Copy core to deploy-core branch"
+          git commit -m "Copy core to deploy-core branch" || echo "No changes to commit"
           git push origin deploy-core
           cd ..
 
       - name: Copy frontend to deploy-frontend branch
         run: |
           cd daytistics-frontend
-          git checkout -b deploy-frontend
+          git fetch origin deploy-frontend || git checkout -b deploy-frontend
           git add .
-          git commit -m "Copy frontend to deploy-frontend branch"
+          git commit -m "Copy frontend to deploy-frontend branch" || echo "No changes to commit"
           git push origin deploy-frontend
           cd ..
