@@ -19,7 +19,7 @@ You can find a full list of our features on [this page](./general/features.md).
 
 Contributions are welcome! If you want to contribute to the project you can take a look into the **Contributer Guide** section. There you can find guidelines and useful tips to get started.
 
-If you are not a programmer, you can still contribute financially. Financial contributions help me prioritize work on this project over others and show me that there is a real need for project development.
+If you are not a programmer, you can still contribute financially. Financial contributions help us prioritize our work on this project over others and show us that there is a real need for project development. You can donate to us via [Polar.sh](https://polar.sh/daytistics/).
 
 ## Communication
 
@@ -27,4 +27,4 @@ Consider joining our [discord](https://discord.gg/GTV7XnPb) to stay up-to-date o
 
 ## License
 
- <p xmlns:cc="http://creativecommons.org/ns#" xmlns:dct="http://purl.org/dc/terms/"><a property="dct:title" rel="cc:attributionURL" href="https://daytistics.com">Daytistics</a> &copy; 2024 by <a rel="cc:attributionURL dct:creator" property="cc:attributionName" href="https://hopeware.de">Leo Gall</a> and the contributers of the Daytistics project is licensed under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/?ref=chooser-v1" target="_blank" rel="license noopener noreferrer" style="display:inline-block;">CC BY-NC-SA 4.0</a>.</p>
+[Daytistics](https://daytistics.com/) &copy; 2024 by [Leo Gall](https://hopeware.de/) and the contributers of the Daytistics project is licensed under [MIT](https://en.wikipedia.org/wiki/MIT_License).

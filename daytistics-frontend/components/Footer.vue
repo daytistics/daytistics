@@ -5,10 +5,10 @@
         <span>© 2024 by Leo Gall and the contributers of the Daytistics project </span>
       </div>
       <div class="md:mr-9 flex flex-row justify-center align-middle items-center gap-4">
-        <a href="">Licenses</a>
-        <a href="">Privacy</a>
-        <a href="">Terms of use</a>
-        <a href="">Imprint</a>
+        <NuxtLink to="/licenses.txt" external>Licenses</NuxtLink>
+        <span class="hover:cursor-not-allowed">Privacy</span>
+        <span class="hover:cursor-not-allowed">Terms of use</span>
+        <NuxtLink to="/legal/imprint">Imprint</NuxtLink>
       </div>
     </div>
   </footer>

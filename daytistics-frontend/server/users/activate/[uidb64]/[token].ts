@@ -9,7 +9,7 @@ export default defineEventHandler(async (event) => {
 
     if (response && response.success) {
         // Redirect to login page
-        useRouter().push('/login');
+        useRouter().push('/auth/login');
     } else {
         // Redirect to error page
         useRouter().push('/error');

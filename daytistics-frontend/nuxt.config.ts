@@ -5,6 +5,7 @@ export default defineNuxtConfig({
     devtools: { enabled: true },
     components: [
         { path: '~/components/daytistic', prefix: 'Daytistic' },
+        { path: '~/components/dashboard', prefix: 'Dashboard' },
         '~/components',
     ],
 
@@ -13,6 +14,7 @@ export default defineNuxtConfig({
         '@nuxtjs/tailwindcss',
         '@nuxt/test-utils/module',
         '@pinia/nuxt',
+        'nuxt-aos',
     ],
 
     nitro: {

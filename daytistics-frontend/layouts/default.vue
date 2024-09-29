@@ -22,11 +22,15 @@
 </template>
 
 <script lang="ts" setup>
+
 import { initDismisses } from 'flowbite';
 
+
 onMounted(() => {
+  useAuth().isAuthenticated();
   initDismisses();
 });
+
 </script>
 
 <style></style>

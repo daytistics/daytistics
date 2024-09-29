@@ -1,5 +1,5 @@
 <template>
-  <DaytisticAddActivityModal />
+  <DaytisticAddActivityModal @submit="fetchDaytistic" />
 
   <div class="min-h-screen bg-gray-100 py-8 px-4 sm:px-6 lg:px-8">
     <div class="max-w-3xl mx-auto bg-white shadow-lg rounded-lg overflow-hidden">
@@ -45,7 +45,7 @@
               <component :is="isEditingDiary ? X : Edit2" class="w-5 h-5 mr-1" />
               <span class="text-sm font-medium">{{
                 isEditingDiary ? 'Cancel' : 'Edit'
-              }}</span>
+                }}</span>
             </button>
           </div>
           <div class="bg-gray-50 p-6 rounded-lg shadow-sm">
@@ -138,45 +138,44 @@ const isEditingDiary = ref(false);
 const editedDiaryEntry = ref(daytistic.value?.diary.entry);
 const editedMomentOfHappiness = ref(daytistic.value?.diary.moment_of_happiness);
 const selectedActivity = ref(null);
-
-
+const auth = useAuth();
 
 interface Daytistic {
-  id: number,
-  date: string,
-  average_wellbeing: number,
-  total_activities: number,
-  total_duration: number,
+  id: number;
+  date: string;
+  average_wellbeing: number;
+  total_activities: number;
+  total_duration: number;
   user: {
-    username: string,
-    email: string,
-    is_active: boolean,
-    is_staff: boolean,
-    is_superuser: boolean,
-    groups: string[],
-    user_permissions: string[],
-    date_joined: string,
-    last_login: string,
-  },
+    username: string;
+    email: string;
+    is_active: boolean;
+    is_staff: boolean;
+    is_superuser: boolean;
+    groups: string[];
+    user_permissions: string[];
+    date_joined: string;
+    last_login: string;
+  };
   wellbeing: [
     {
-      id: 0,
-      name: string,
-      rating: number,
-    }
-  ],
+      id: 0;
+      name: string;
+      rating: number;
+    },
+  ];
   activities: [
     {
-      id: number,
-      name: string,
-      duration: number,
-      start_time: number,
+      id: number;
+      name: string;
+      duration: number;
+      start_time: number;
       end_time: number;
-    }
-  ],
+    },
+  ];
   diary: {
-    entry: string,
-    moment_of_happiness: string,
+    entry: string;
+    moment_of_happiness: string;
   };
 }
 
@@ -184,7 +183,7 @@ async function fetchDaytistic() {
   const id = useRoute().params.id;
 
   try {
-    const response = await $fetch(`/api/daytistics/${id}`, {
+    const response: any = await $fetch(`/api/daytistics/${id}`, {
       server: false,
       method: 'GET',
       headers: {
@@ -195,12 +194,14 @@ async function fetchDaytistic() {
     });
 
     daytistic.value = response as Daytistic;
+
     console.log('Daytistic:', response);
   } catch (error) {
     console.error('Error fetching daytistic:', error);
     useRouter().push('/dashboard/');
   }
 }
+
 
 const formatTime = (time: number) => {
   const hours = Math.floor(time / 60);
@@ -236,7 +237,12 @@ const viewActivityDetails = (activity) => {
   selectedActivity.value = activity;
 };
 
-onBeforeMount(() => {
+onBeforeMount(async () => {
+
+  if (!auth.isAuthenticated()) {
+    useRouter().push('/auth/login');
+  }
+
   initModals();
   fetchDaytistic();
 });

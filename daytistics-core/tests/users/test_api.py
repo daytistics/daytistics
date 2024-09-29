@@ -5,8 +5,9 @@ from django.shortcuts import get_object_or_404
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
 
-from app.users.tokens import account_activation_token
-from app.users.models import CustomUser
+from daytistics.users.tokens import account_activation_token
+from daytistics.users.models import CustomUser
+from daytistics.activities.models import ActivityType
 from tests.factories import CustomUserFactory
 
 
@@ -98,6 +99,7 @@ class TestRegisterView:
         password2,
         expected_json,
         expected_status,
+        default_activities,
     ):
         from django.core import mail
 
@@ -115,7 +117,15 @@ class TestRegisterView:
         assert response.json() == expected_json
         assert response.status_code == expected_status
 
-        # TODO: Check if user was created
+        assert CustomUser.objects.filter(email=email).exists() == (
+            expected_status == 201
+            or expected_json == {"detail": "User already exists."}
+        )
+        user = CustomUser.objects.filter(email=email).first()
+
+        if expected_status == 201:
+            for activity_type, _ in default_activities:
+                assert activity_type in user.activities.all()
 
         if expected_status == 201:
             assert len(mail.outbox) == 1
@@ -257,6 +267,8 @@ class TestGetUserProfile:
             "is_superuser": user.is_superuser,
             "groups": [],
             "user_permissions": [],
+            "timezone": user.timezone,
+            "timeformat": user.timeformat,
         }:
             assert item in response.json()
 

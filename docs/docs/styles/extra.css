@@ -1,0 +1,19 @@
+.construction-site {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+
+  & > p {
+    font-size: 1.3rem;
+    margin-bottom: 1rem;
+    text-transform: uppercase;
+    font-weight: 600;
+  }
+
+  & > img {
+    width: 100%;
+    max-width: 400px;
+  }
+}

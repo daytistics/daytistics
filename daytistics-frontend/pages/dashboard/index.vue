@@ -1,17 +1,18 @@
 <template>
 
-  <CreationModal />
+  <DashboardCreationModal />
 
   <div class="flex flex-col min-h-screen bg-gray-100">
 
     <main class="flex-1 py-6">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <h1 class="text-3xl font-bold text-gray-900">Dashboard</h1>
-        <p class="mt-1 text-sm text-gray-500">Good evening, @{{ username }}</p>
+        <p class="mt-1 text-sm text-gray-500">Good evening, @{{ userStore.username }}</p>
 
         <div class="mt-6 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
           <div v-for="(card, index) in cards" :key="index" @click="handleCardClick(index)"
-            class="bg-white overflow-hidden shadow rounded-lg cursor-pointer hover:shadow-md transition-shadow duration-300">
+            class="bg-white overflow-hidden shadow rounded-lg hover:shadow-md transition-shadow duration-300"
+            :class="{ 'cursor-not-allowed': !card.implemented, 'cursor-pointer': card.implemented }">
             <div class="p-5">
               <div class="flex items-center">
                 <div class="flex-shrink-0">
@@ -157,17 +158,17 @@
 <script lang="ts" setup>
 import { initDials, initDrawers, initFlowbite, initModals, Modal } from 'flowbite';
 
-const greeting = ref<string>(useUtils().getGreeting());
-const username = ref<string>('User');
 const daytistics = ref<[]>([]);
+const userStore = useUserStore();
+const auth = useAuth();
 
-import { Layers, PlusCircle, AlertTriangle, BarChart2, Calendar, MessageCircle, Github, Brain, Server } from 'lucide-vue-next';
+import { Layers, PlusCircle, AlertTriangle, BarChart2, Calendar, MessageCircle, Github, Brain, Server, HelpingHandIcon } from 'lucide-vue-next';
 
 const cards = [
-  { title: 'Create', description: 'Create a new daytistic, diary entry or AI model', icon: PlusCircle },
-  { title: 'Issues', description: 'Report a bug or submit a feature request', icon: AlertTriangle },
-  { title: 'Self-Hosting', description: 'Host your own Daytistics on your own server.', icon: Server },
-  { title: 'Stats', description: 'See what you have achieved so far on Daytistic', icon: BarChart2 },
+  { title: 'Create', description: 'Create a new daytistic, diary entry or AI model.', icon: PlusCircle, implemented: true },
+  { title: 'Issues', description: 'Report a bug or submit a feature request.', icon: AlertTriangle, implemented: false },
+  { title: 'Personal Analysis', description: 'Let our professionals analyze your data and train models on it.', icon: HelpingHandIcon, implemented: false },
+  { title: 'Self-Hosting', description: 'Host your own Daytistics on your own server.', icon: Server, implemented: false },
 ];
 
 async function listDaytisticsRequest(page: number): Promise<any> {
@@ -218,24 +219,18 @@ const handleModelClick = (model) => {
 };
 
 onBeforeMount(async () => {
-  if (!await useUser().isAuthenticated()) {
-    useRouter().push('/login');
+  if (!await auth.isAuthenticated()) {
+    useRouter().push('/auth/login');
   }
 });
 
 onMounted(async () => {
-
-  getModel();
+  requireAuth(userStore.fetchUser);
   initDaytisticsList(currentPage.value);
   initDrawers();
   initModals();
 });
 
-async function getModel() {
-  const profile: any = await useUser().getProfile();
-  console.log(profile);
-  username.value = profile.username;
-}
 
 </script>
 

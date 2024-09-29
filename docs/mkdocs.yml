@@ -1,4 +1,7 @@
 site_name: Daytistics
+repo_name: daytistics/daytistics
+repo_url: https://github.com/daytistics/daytistics
+
 theme:
   name: material
   favicon: "assets/logo.png"
@@ -7,7 +10,7 @@ theme:
   palette:
     - scheme: default
       primary: green
-      accent: green
+      accent: purple
       toggle:
         icon: material/weather-sunny
         name: Switch to dark mode
@@ -15,7 +18,7 @@ theme:
     # Dark mode
     - scheme: slate
       primary: green
-      accent: green
+      accent: purple
       toggle:
         icon: material/weather-night
         name: Switch to light mode
@@ -27,30 +30,27 @@ theme:
 nav:
   - Home: "index.md"
   - General:
+      - Our Mission: "general/mission.md"
       - Features: "general/features.md"
-      - Technologies: "general/technologies.md"
-      - Contributers: "general/contributers.md"
-  #- User Guide:
-  #- Introduction: "tutorials/introduction.md"
-  #- Advanced Topics: "tutorials/advanced.md"
-  - Contributer Guide:
-      - Overview: "contributers_guide/overview.md"
-      - Conventions: "contributers_guide/conventions.md"
-      - Code of Conduct: "contributers_guide/code_of_conduct.md"
-      - Installation: "contributers_guide/install.md"
-      - App Docs:
-          - Config: "contributers_guide/apps/config.md"
+  - Contributers Guide:
+      - Overview: "contributers/overview.md"
+      - Zen of Daytistics: "contributers/zen-of-daytistics.md"
+      - Code of Conduct: "contributers/code-of-conduct.md"
+      - Installation: "contributers/installation.md"
+      - Services:
           - Core:
-              - Daytistics: "contributers_guide/apps/core/daytistics.md"
-              - Wellbeing: "contributers_guide/apps/core/wellbeing.md"
-              - Activities: "contributers_guide/apps/core/activities.md"
-              - Diary: "contributers_guide/apps/core/diary.md"
-          - Plots: "contributers_guide/apps/plots.md"
-          - Models:
-              - Predictor: "contributers_guide/apps/models/predictor.md"
-              - Suggestor: "contributers_guide/apps/models/suggestor.md"
-          - Account: "contributers_guide/apps/account.md"
-          - Tools: "contributers_guide/apps/tools.md"
+              - Overview: "contributers/services/core/overview.md"
+              - API: "contributers/services/core/api.md"
+              - Database: "contributers/services/core/database.md"
+          - Modeler:
+              - Overview: "contributers/services/modeler/overview.md"
+              - API: "contributers/services/modeler/api.md"
+          - Frontend:
+              - Overview: "contributers/services/frontend/overview.md"
+              - UI/UX: "contributers/services/frontend/ui-ux.md"
+  - SaaS:
+      - Overview: "saas/overview.md"
+      - Hosting: "saas/hosting.md"
 
   # - Meeting Minutes:
   #    - Overview: "minutes/overview.md"

@@ -7,7 +7,7 @@
         </NuxtLink>
         <ul v-if="!currentUrl.includes('/dashboard')"
           class="hidden md:flex flex-row justify-around align-middle items-center gap-5 pl-0 p-5">
-          <li v-for="link in navbarLinksLoggedOut">
+          <li v-for="link in navbarLinksLoggedOut" :key="currentUrl">
             <NuxtLink :to="link.href" class="flex justify-center align-middle items-center flex-row gap-1">
               <component :is="link.icon" width="15px" stroke="currentColor" />
               <span>{{ link.name }}</span>
@@ -15,7 +15,7 @@
           </li>
         </ul>
         <ul v-else class="hidden md:flex flex-row justify-around align-middle items-center gap-5 pl-0 p-5">
-          <li v-for="link in navbarLinksLoggedIn">
+          <li v-for="link in navbarLinksLoggedIn" :key="currentUrl">
             <NuxtLink :to="link.href" class="flex justify-center align-middle items-center flex-row gap-2">
               <component :is="link.icon" stroke="currentColor" width="15px" />
               <span>{{ link.name }}</span>
@@ -44,7 +44,7 @@
 
           <div class="py-4 overflow-y-auto">
             <ul v-if="currentUrl.includes('/dashboard')" class="space-y-2 font-medium">
-              <li v-for="link in navbarLinksLoggedIn">
+              <li v-for="link in navbarLinksLoggedIn" :key="currentUrl">
                 <NuxtLink :to="link.href"
                   class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
                   <component :is="link.icon" stroke="currentColor" width="15px" />
@@ -61,7 +61,7 @@
               </li>
             </ul>
             <ul v-else class="space-y-2 font-medium">
-              <li v-for="link in navbarLinksLoggedOut">
+              <li v-for="link in navbarLinksLoggedOut" :key="currentUrl">
                 <NuxtLink :to="link.href"
                   class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
                   <component :is="link.icon" stroke="currentColor" width="15px" />
@@ -71,14 +71,14 @@
 
               <hr />
               <li>
-                <NuxtLink to="/login"
+                <NuxtLink to="/auth/login" :key="currentUrl"
                   class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
                   <LogIn stroke="currentColor" width="15px" />
                   <span class="flex-1 ms-3 whitespace-nowrap">Sign In</span>
                 </NuxtLink>
               </li>
               <li>
-                <NuxtLink to="/register"
+                <NuxtLink to="/auth/register" :key="currentUrl"
                   class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
                   <FilePen stroke="currentColor" width="15px" />
                   <span class="flex-1 ms-3 whitespace-nowrap">Sign Up</span>
@@ -89,31 +89,31 @@
         </div>
 
         <ul class="hidden md:flex flex-row justify-around align-middle items-center gap-3 p-5">
-          <li v-if="!isAuthenticated">
-            <NuxtLink to="/register">
-              <Button class="button bg-primary hover:bg-primary-dark">
+          <li v-if="!isAuthenticated" :key="currentUrl">
+            <NuxtLink to="/auth/register">
+              <button class="button bg-primary hover:bg-primary-dark">
                 Sign Up
-              </Button>
+              </button>
             </NuxtLink>
           </li>
-          <li v-if="!isAuthenticated">
-            <NuxtLink to="/login">
-              <Button class="button bg-primary hover:bg-primary-dark">
+          <li v-if="!isAuthenticated" :key="currentUrl">
+            <NuxtLink to="/auth/login">
+              <button class="button bg-primary hover:bg-primary-dark">
                 Log In
-              </Button>
+              </button>
             </NuxtLink>
           </li>
-          <li v-if="isAuthenticated && !currentUrl.includes('/dashboard')">
+          <li v-if="isAuthenticated && !currentUrl.includes('/dashboard')" :key="currentUrl">
             <NuxtLink to="/dashboard">
-              <Button class="button bg-primary hover:bg-primary-dark">
+              <button class="button bg-primary hover:bg-primary-dark">
                 Dashboard
-              </Button>
+              </button>
             </NuxtLink>
           </li>
-          <li v-else-if="isAuthenticated && currentUrl.includes('/dashboard')">
-            <Button class="button bg-primary hover:bg-primary-dark" @click="logout">
+          <li v-else-if="isAuthenticated && currentUrl.includes('/dashboard')" :key="currentUrl + 'logout'">
+            <button class="button bg-primary hover:bg-primary-dark" @click="logout">
               Log Out
-            </Button>
+            </button>
           </li>
         </ul>
       </div>
@@ -123,14 +123,13 @@
 
 <script lang="ts" setup>
 import { initDrawers, initDropdowns } from 'flowbite';
-import { X, FilePen, ChartNoAxesColumn, House, Brain, Settings, Telescope, BadgeDollarSignIcon, Server, Users2, Paperclip, LogIn } from 'lucide-vue-next';
+import { LogOut, X, FilePen, ChartNoAxesColumn, House, Brain, Settings, Telescope, BadgeDollarSignIcon, Server, Users2, Paperclip, LogIn } from 'lucide-vue-next';
 
-const open = ref(false);
-const userMenuOpen = ref(false);
-const currentUrl = ref('');
+const currentUrl = computed(() => useRoute().path);
 const navbarKey = ref<number>(0);
-const logout = useUser().logout;
-var isAuthenticated = ref(false);
+const logout = () => 3;
+const isAuthenticated = ref<boolean>(false);
+const auth = useAuth();
 
 const navbarLinksLoggedIn = [
   {
@@ -162,7 +161,7 @@ const navbarLinksLoggedOut = [
     icon: Telescope,
   },
   {
-    name: 'Relationships',
+    name: 'Pricing',
     href: '/#pricing',
     icon: BadgeDollarSignIcon,
   },
@@ -184,14 +183,8 @@ const navbarLinksLoggedOut = [
 ];
 
 onMounted(async () => {
-  isAuthenticated.value = await useUser().isAuthenticated();
-  currentUrl.value = useRouter().currentRoute.value.path;
+  isAuthenticated.value = await auth.isAuthenticated();
   initDrawers();
-  useEventBusStore().on('user-login', () => {
-    console.log('user-login');
-    navbarKey.value = Date.now();
-    console.log(navbarKey.value);
-  });
 });
 </script>
 

@@ -21,13 +21,17 @@
         </div>
 
         <!-- Modal body -->
-        <form class="p-4 md:p-5 ">
+        <form class="p-4 md:p-5" @submit.prevent="handleSubmit">
           <div class="grid gap-4 mb-4 grid-cols-2">
             <div class="col-span-2">
               <label for="type" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">What activity did
                 you do that day?</label>
-              <select id="text" required
+              <select id="activity-type" v-model="activityType" required
                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">
+                <option value="" disabled selected>Select an activity</option>
+                <option v-for="activity in activities" :key="activity.id" :value="activity.id">
+                  {{ activity.name }}
+                </option>
               </select>
             </div>
             <div>
@@ -42,9 +46,9 @@
                       clip-rule="evenodd" />
                   </svg>
                 </div>
-                <input type="time" id="start-time"
+                <input type="time" id="start-time" v-model="startTime"
                   class="bg-gray-50 border leading-none border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-green-500 dark:focus:border-green-500"
-                  min="09:00" max="18:00" value="00:00" required />
+                  min="00:00" max="23:59" required />
               </div>
             </div>
             <div>
@@ -59,13 +63,13 @@
                       clip-rule="evenodd" />
                   </svg>
                 </div>
-                <input type="time" id="end-time"
+                <input type="time" id="end-time" v-model="endTime"
                   class="bg-gray-50 border leading-none border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-green-500 dark:focus:border-green-500"
-                  min="09:00" max="18:00" value="00:00" required />
+                  :min="startTime" max="23:59" value="00:00" required />
               </div>
             </div>
           </div>
-
+          <p id="activity-error" class="text-red-500 text-sm mb-4">{{ errorMessage }}</p>
           <div class="flex justify-end md:justify-start">
             <button type="submit" class="inline-flex button bg-secondary hover:bg-secondary-dark items-center">
               <svg class="me-1 -ms-1 w-5 h-5" fill="currentColor" viewBox="0 0 20 20"
@@ -84,10 +88,99 @@
 </template>
 
 <script lang="ts" setup>
-import { initModals } from 'flowbite';
+import { initModals, Modal } from 'flowbite';
+import { PersonStandingIcon } from 'lucide-vue-next';
+import { parse } from 'vue/compiler-sfc';
+
+const activities = ref<ActivityType[]>([]);
+const activityType = ref<number>(0);
+const startTime = ref<string>('00:00');
+const endTime = ref<string>('00:00');
+const errorMessage = ref<string>('');
+const modalElement = document.getElementById('add-activity-modal');
+
+const emit = defineEmits(['submit']);
+
+interface ActivityType {
+  id: number;
+  name: string;
+  category: string;
+  available: boolean;
+  active: boolean;
+}
+
+interface ActivityEntry {
+  id: number;
+  name: string;
+  duration: number;
+  start_time: number;
+  end_time: number;
+}
+
+async function fetchActivities() {
+  try {
+    const response = await $fetch(`/api/activities/`, {
+      server: false,
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRFToken': useCsrf().getToken(),
+        Authorization: `Bearer ${useCookie('access_token').value}`,
+      },
+
+      onResponseError: ({ request, response, options }) => {
+        console.error('Error fetching activities:', response);
+      }
+    });
+
+    activities.value = response as ActivityType[];
+  } catch (error) {
+    console.error('Error fetching activities:', error);
+  }
+}
+
+async function handleSubmit() {
+  await createActivityEntry();
+}
+
+async function createActivityEntry() {
+  const id = useRoute().params.id;
+  try {
+    debugger;
+    requireAuth(
+      await $fetch(`/api/daytistics/${id}/add-activity/`, {
+        server: false,
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': useCsrf().getToken(),
+          Authorization: `Bearer ${useCookie('access_token').value}`,
+        },
+        body: {
+          id: activityType.value,
+          start_time: convertHHMMToMinutesSinceMidnight(startTime.value),
+          end_time: convertHHMMToMinutesSinceMidnight(endTime.value),
+        },
+        onResponseError: ({ request, response, options }) => {
+          errorMessage.value = response._data.detail;
+        },
+      })
+    );
+    debugger;
+
+  } catch (error) {
+    console.error('Error creating activity:', error);
+  }
+}
+
+function closeModal() {
+  const modal = new Modal(modalElement);
+  modal.hide();
+}
 
 onMounted(() => {
   initModals();
+  fetchActivities();
 });
 </script>
 

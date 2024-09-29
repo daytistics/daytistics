@@ -5,17 +5,6 @@ export function useCsrf() {
         await $fetch('/api/csrf/', {
             server: false,
             method: 'GET',
-
-            onResponse({ request, response, options }) {
-                if (response.ok && response._data.csrfToken) {
-                    csrfToken.value = response._data.csrfToken;
-
-                    const csrfCookie = useCookie('csrf-token');
-                    csrfCookie.value = csrfToken.value;
-                } else {
-                    console.error('Failed to generate CSRF token:', response);
-                }
-            },
         }).catch((error) => {
             console.error('Error generating CSRF token:', error);
         });
@@ -24,7 +13,7 @@ export function useCsrf() {
     const getToken = () => {
         if (!csrfToken.value) {
             // Versuchen, den Token aus dem Cookie zu laden
-            const csrfCookie = useCookie('csrf-token');
+            const csrfCookie = useCookie('csrftoken');
             csrfToken.value = csrfCookie.value || '';
 
             // Wenn kein Token im Cookie, generieren Sie einen neuen

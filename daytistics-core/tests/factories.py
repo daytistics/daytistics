@@ -3,20 +3,28 @@ from datetime import timedelta
 from faker import Faker
 from factory.django import DjangoModelFactory
 from django.utils import timezone
-from app.users.models import CustomUser
-from app.daytistics.models import Daytistic
-from app.diary.models import DiaryEntry
-from app.wellbeing.models import WellbeingEntry, WellbeingType
-from app.activities.models import ActivityType, ActivityEntry
+from daytistics.users.models import CustomUser
+from daytistics.daytistics.models import Daytistic
+from daytistics.diary.models import DiaryEntry
+from daytistics.wellbeing.models import WellbeingEntry, WellbeingType
+from daytistics.activities.models import ActivityType, ActivityEntry, ActivityCategory
 
 fake = Faker()
 
+class ActivityCategoryFactory(DjangoModelFactory):
+    class Meta:
+        model = ActivityCategory
+
+    name = factory.LazyFunction(lambda: fake.word())
 
 class ActivityTypeFactory(DjangoModelFactory):
     class Meta:
         model = ActivityType
 
     name = factory.LazyFunction(lambda: fake.word())
+    category = factory.SubFactory(ActivityCategoryFactory)
+    active = True
+
 
 
 class CustomUserFactory(DjangoModelFactory):
@@ -77,7 +85,6 @@ class ActivityEntryFactory(DjangoModelFactory):
     class Meta:
         model = ActivityEntry
 
-    daytistic = factory.SubFactory(DaytisticFactory)
     type = factory.SubFactory(ActivityTypeFactory)
     start_time = factory.LazyFunction(lambda: timezone.now() - timedelta(hours=2))
     end_time = factory.LazyFunction(lambda: timezone.now())

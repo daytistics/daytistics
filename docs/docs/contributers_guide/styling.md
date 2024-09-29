@@ -1,3 +1,0 @@
-# Styling
-
-## Color Palette
