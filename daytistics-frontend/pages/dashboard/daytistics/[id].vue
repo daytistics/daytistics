@@ -1,9 +1,9 @@
 <template>
-  <DaytisticAddActivityModal @submit="fetchDaytistic" />
+  <DaytisticAddActivityModal @submit="fetchDaytistic" :date="daytistic?.date" />
 
   <div class="min-h-screen bg-gray-100 py-8 px-4 sm:px-6 lg:px-8">
     <div class="max-w-3xl mx-auto bg-white shadow-lg rounded-lg overflow-hidden">
-      <div class="px-6 py-8 bg-primary">
+      <div class="px-6 py-8 bg-gradient-to-tr from-primary to-secondary">
         <h1 class="text-3xl font-bold text-white">Daytistic Detail</h1>
         <p class="mt-2 text-lg text-indigo-100">
           {{ daytistic?.date }}
@@ -45,7 +45,7 @@
               <component :is="isEditingDiary ? X : Edit2" class="w-5 h-5 mr-1" />
               <span class="text-sm font-medium">{{
                 isEditingDiary ? 'Cancel' : 'Edit'
-                }}</span>
+              }}</span>
             </button>
           </div>
           <div class="bg-gray-50 p-6 rounded-lg shadow-sm">
@@ -132,6 +132,7 @@
 <script lang="ts" setup>
 import { ref } from 'vue';
 import { Star, Edit2, ChevronRight, X, Plus } from 'lucide-vue-next';
+import type { Daytistic } from '~/interfaces/daytistics';
 
 const daytistic = ref<Daytistic | null>(null);
 const isEditingDiary = ref(false);
@@ -140,50 +141,14 @@ const editedMomentOfHappiness = ref(daytistic.value?.diary.moment_of_happiness);
 const selectedActivity = ref(null);
 const auth = useAuth();
 
-interface Daytistic {
-  id: number;
-  date: string;
-  average_wellbeing: number;
-  total_activities: number;
-  total_duration: number;
-  user: {
-    username: string;
-    email: string;
-    is_active: boolean;
-    is_staff: boolean;
-    is_superuser: boolean;
-    groups: string[];
-    user_permissions: string[];
-    date_joined: string;
-    last_login: string;
-  };
-  wellbeing: [
-    {
-      id: 0;
-      name: string;
-      rating: number;
-    },
-  ];
-  activities: [
-    {
-      id: number;
-      name: string;
-      duration: number;
-      start_time: number;
-      end_time: number;
-    },
-  ];
-  diary: {
-    entry: string;
-    moment_of_happiness: string;
-  };
-}
+
 
 async function fetchDaytistic() {
   const id = useRoute().params.id;
+  const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
   try {
-    const response: any = await $fetch(`/api/daytistics/${id}`, {
+    const response: any = await $fetch(`/api/daytistics/${id}?timezone=${timezone}`, {
       server: false,
       method: 'GET',
       headers: {
@@ -193,7 +158,10 @@ async function fetchDaytistic() {
       },
     });
 
+
+
     daytistic.value = response as Daytistic;
+    console.log(daytistic.value.date);
 
     console.log('Daytistic:', response);
   } catch (error) {
@@ -203,14 +171,16 @@ async function fetchDaytistic() {
 }
 
 
-const formatTime = (time: number) => {
-  const hours = Math.floor(time / 60);
-  const minutes = time % 60;
-  return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
-};
-
-const formatTimeWindow = (start, end) => {
-  return `${formatTime(start)} - ${formatTime(end)}`;
+const formatTimeWindow = (startIso: string, endIso: string) => {
+  const startTime = new Date(startIso).toLocaleTimeString([], {
+    hour: '2-digit',
+    minute: '2-digit',
+  });
+  const endTime = new Date(endIso).toLocaleTimeString([], {
+    hour: '2-digit',
+    minute: '2-digit',
+  });
+  return `${startTime} - ${endTime}`;
 };
 
 const formatDuration = (minutes) => {

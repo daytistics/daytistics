@@ -36,6 +36,7 @@
 #         return success_response(serializer.data, 200)
 
 from django.core.mail import EmailMessage
+from django.http import HttpRequest
 from django.template.loader import render_to_string
 from django.contrib.sites.shortcuts import get_current_site
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
@@ -180,8 +181,7 @@ def get_user_profile(request):
         ],
         "date_joined": user.date_joined,
         "last_login": user.last_login,
-        "timezone": user.timezone,
-        "timeformat": user.timeformat,
+        "date_format": user.date_format,
     }
 
     return 200, profile

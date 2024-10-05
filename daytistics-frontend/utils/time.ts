@@ -31,8 +31,51 @@ function convertHHMMToMinutesSinceMidnight(hhmm: string): number {
     return hh * 60 + mm;
 }
 
+function getCurrentTimezone(): string {
+    return Intl.DateTimeFormat().resolvedOptions().timeZone;
+}
+
+/**
+ * @params ISO format date string in any timezone
+ * @returns ISO format date string in UTC timezone
+ */
+function convertToUUTC(dateString: string): string {
+    const date = new Date(dateString);
+    const utcDate = new Date(
+        date.getUTCFullYear(),
+        date.getUTCMonth(),
+        date.getUTCDate(),
+        date.getUTCHours(),
+        date.getUTCMinutes(),
+        date.getUTCSeconds()
+    );
+    return utcDate.toISOString();
+}
+
+/**
+ * @params ISO format date string in UTC timezone
+ * @returns ISO format date string in local timezone
+ */
+function convertToLocal(dateString: string): string {
+    const date = new Date(dateString);
+    const localDate = new Date(
+        Date.UTC(
+            date.getFullYear(),
+            date.getMonth(),
+            date.getDate(),
+            date.getHours(),
+            date.getMinutes(),
+            date.getSeconds()
+        )
+    );
+    return localDate.toISOString();
+}
+
 export {
     convertDateStringToIso,
     getTimezoneOffset,
     convertHHMMToMinutesSinceMidnight,
+    getCurrentTimezone,
+    convertToUTC,
+    convertToLocal,
 };

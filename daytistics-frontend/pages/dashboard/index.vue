@@ -1,6 +1,6 @@
 <template>
 
-  <DashboardCreationModal />
+  <DashboardAddDaytisticModal @close="initModals" />
 
   <div class="flex flex-col min-h-screen bg-gray-100">
 
@@ -9,60 +9,49 @@
         <h1 class="text-3xl font-bold text-gray-900">Dashboard</h1>
         <p class="mt-1 text-sm text-gray-500">Good evening, @{{ userStore.username }}</p>
 
-        <div class="mt-6 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
-          <div v-for="(card, index) in cards" :key="index" @click="handleCardClick(index)"
-            class="bg-white overflow-hidden shadow rounded-lg hover:shadow-md transition-shadow duration-300"
-            :class="{ 'cursor-not-allowed': !card.implemented, 'cursor-pointer': card.implemented }">
-            <div class="p-5">
-              <div class="flex items-center">
-                <div class="flex-shrink-0">
-                  <component :is="card.icon" class="h-6 w-6 text-gray-400" />
-                </div>
-                <div class="ml-5 w-0 flex-1">
-                  <dl>
-                    <dt class="text-sm font-medium text-gray-500 truncate">
-                      {{ card.title }}
-                    </dt>
-                    <dd class="mt-1 text-sm text-gray-900">
-                      {{ card.description }}
-                    </dd>
-                  </dl>
-                </div>
-              </div>
+        <div class="grid grid-rows-1 grid-cols-5 gap-3">
+          <div class="col-span-3 w-full max-w-4xl bg-white rounded-lg shadow-md p-6 mb-8">
+            <h2 class="text-xl font-semibold mb-4">Activity Chart</h2>
+            <div class="flex space-x-4 mb-4 border-t border-gray-200 pt-4">
+              <select v-model="factor1" class="border rounded p-2">
+                <option value="sleep">Sleep</option>
+                <option value="exercise">Exercise</option>
+                <option value="diet">Diet</option>
+              </select>
+              <select v-model="factor2" class="border rounded p-2">
+                <option value="productivity">Productivity</option>
+                <option value="mood">Mood</option>
+                <option value="energy">Energy</option>
+              </select>
             </div>
+            <canvas ref="chartCanvas"></canvas>
           </div>
-        </div>
 
-        <div class="mt-8 grid gap-5 sm:grid-cols-2">
-          <div class="bg-white overflow-hidden shadow rounded-lg">
-            <div class="p-5">
-              <h3 class="text-lg leading-6 font-medium text-gray-900">Join our community!</h3>
-              <div class="mt-5">
-                <NuxtLink to="https://discord.gg/ccud6VkTv8" target="_blank"
-                  class="w-full inline-flex justify-center items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700">
-                  <MessageCircle class="mr-2 h-5 w-5" />
-                  Join Discord
-                </NuxtLink>
+          <div class="col-span-2 w-full max-w-4xl bg-white rounded-lg shadow-md p-6 mb-8">
+            <h2 class="text-xl font-semibold mb-4">Activity Recommendations</h2>
+            <div class="flex flex-col space-y-4 border-t border-gray-200 pt-4">
+              <div v-for=" activity in activities" :key="activity" class="flex">
+                <div class="bg-blue-100 rounded-lg p-3 max-w-xs">
+                  <p>{{ activity }}</p>
+                </div>
               </div>
-            </div>
-          </div>
-          <div class="bg-white overflow-hidden shadow rounded-lg">
-            <div class="p-5">
-              <h3 class="text-lg leading-6 font-medium text-gray-900">Contribute to our project!</h3>
-              <div class="mt-5">
-                <NuxtLink to="https://github.com/daytistics" target="_blank"
-                  class="w-full inline-flex justify-center items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-gray-800 hover:bg-gray-900">
-                  <Github class="mr-2 h-5 w-5" />
-                  Contribute on GitHub
-                </NuxtLink>
+              <div class="flex justify-end">
+                <div class="bg-green-100 rounded-lg p-3 max-w-xs">
+                  <p>Which activity would you like a recommendation for?</p>
+                </div>
               </div>
             </div>
           </div>
         </div>
 
         <div class="mt-8 bg-white shadow overflow-hidden sm:rounded-lg">
-          <div class="px-4 py-5 sm:px-6">
+          <div class="px-4 py-5 sm:px-6 flex flex-row gap-3">
             <h3 class="text-lg leading-6 font-medium text-gray-900">Your Daytistics</h3>
+            <button data-modal-target="add-daytistic-modal" data-modal-show="add-daytistic-modal"
+              class="text-indigo-600 hover:text-indigo-800 flex items-center transition duration-150 ease-in-out">
+              <Plus class="w-5 h-5 mr-1" />
+              <span class="text-sm font-medium">Add New</span>
+            </button>
           </div>
           <div class="border-t border-gray-200">
             <div class="px-4 py-5 sm:p-6">
@@ -81,7 +70,7 @@
                       <Calendar class="h-6 w-6 text-gray-400" />
                       <div class="flex-1 min-w-0">
                         <p class="text-sm font-medium text-gray-900 truncate">
-                          {{ daytistic.date }}
+                          {{ convertIsoDateWithTimezoneToHumanReadable(daytistic.date) }}
                         </p>
                         <p class="text-sm text-gray-500 truncate">
                           {{ daytistic.total_activities }} Activities / {{ daytistic.total_duration }}
@@ -108,48 +97,6 @@
           </div>
         </div>
 
-        <div class="mt-8 bg-white shadow overflow-hidden sm:rounded-lg">
-          <div class="px-4 py-5 sm:px-6">
-            <h3 class="text-lg leading-6 font-medium text-gray-900">Trained AI Models</h3>
-            <p class="mt-1 max-w-2xl text-sm text-gray-500">AI models trained on your Daytistics data</p>
-          </div>
-          <div class="border-t border-gray-200">
-            <ul class="divide-y divide-gray-200">
-              <li v-for="(model, index) in aiModels" :key="index"
-                class="px-4 py-4 sm:px-6 hover:bg-gray-50 cursor-pointer" @click="handleModelClick(model)">
-                <div class="flex items-center justify-between">
-                  <div class="flex items-center">
-                    <div class="flex-shrink-0">
-                      <Brain class="h-6 w-6 text-indigo-600" />
-                    </div>
-                    <div class="ml-4">
-                      <h4 class="text-lg font-medium text-gray-900">{{ model.name }}</h4>
-                      <p class="text-sm text-gray-500">{{ model.description }}</p>
-                    </div>
-                  </div>
-                  <div class="ml-2 flex-shrink-0 flex">
-                    <p class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full"
-                      :class="model.status === 'Active' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'">
-                      {{ model.status }}
-                    </p>
-                  </div>
-                </div>
-                <div class="mt-2 sm:flex sm:justify-between">
-                  <div class="sm:flex">
-                    <p class="flex items-center text-sm text-gray-500">
-                      <Calendar class="flex-shrink-0 mr-1.5 h-5 w-5 text-gray-400" />
-                      Trained on: {{ model.trainedOn }}
-                    </p>
-                  </div>
-                  <div class="mt-2 flex items-center text-sm text-gray-500 sm:mt-0">
-                    <BarChart2 class="flex-shrink-0 mr-1.5 h-5 w-5 text-gray-400" />
-                    Accuracy: {{ model.accuracy }}
-                  </div>
-                </div>
-              </li>
-            </ul>
-          </div>
-        </div>
       </div>
     </main>
   </div>
@@ -162,7 +109,7 @@ const daytistics = ref<[]>([]);
 const userStore = useUserStore();
 const auth = useAuth();
 
-import { Layers, PlusCircle, AlertTriangle, BarChart2, Calendar, MessageCircle, Github, Brain, Server, HelpingHandIcon } from 'lucide-vue-next';
+import { Plus, PlusCircle, AlertTriangle, BarChart2, Calendar, MessageCircle, Github, Brain, Server, HelpingHandIcon } from 'lucide-vue-next';
 
 const cards = [
   { title: 'Create', description: 'Create a new daytistic, diary entry or AI model.', icon: PlusCircle, implemented: true },
@@ -172,7 +119,10 @@ const cards = [
 ];
 
 async function listDaytisticsRequest(page: number): Promise<any> {
-  return $fetch(`/api/daytistics/?page=${page}`, {
+  // Timezone in fomrat: Europe/Berlin
+  const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+  return $fetch(`/api/daytistics/list?page=${page}&timezone=${timezone}`, {
     server: false,
     method: 'GET',
     headers: {
@@ -183,16 +133,16 @@ async function listDaytisticsRequest(page: number): Promise<any> {
   });
 }
 
+function convertIsoDateWithTimezoneToHumanReadable(isoDate: string): string {
+  let date = new Date(isoDate);
+  return date.getDate().toString().padStart(2, '0') + '/' + (date.getMonth() + 1).toString().padStart(2, '0') + '/' + date.getFullYear();
+}
+
 async function initDaytisticsList(page: number) {
   const response = await listDaytisticsRequest(page);
   daytistics.value = response.items;
   totalPages.value = Math.ceil(response.count / 5);
 }
-
-const aiModels = [
-  { name: 'Predictor', description: 'Predicts your well-being on a hypothetical day', status: 'Active', trainedOn: '2023-05-15', accuracy: '89%' },
-  { name: 'Suggestor', description: 'Suggests optimal schedules for maximum productivity', status: 'Training', trainedOn: '2023-06-01', accuracy: '78%' },
-];
 
 const currentPage = ref(1);
 const totalPages = ref(1);
@@ -201,22 +151,6 @@ watch(currentPage, async (newPage) => {
   await initDaytisticsList(newPage);
 });
 
-const handleCardClick = (title: number) => {
-  switch (title) {
-    case 0:
-      const modal = new Modal(document.getElementById('creation-modal'));
-      modal.show();
-      break;
-
-    default:
-      break;
-  }
-};
-
-const handleModelClick = (model) => {
-  console.log(`Clicked on AI model: ${model.name}`);
-  // Add your logic here for handling AI model clicks
-};
 
 onBeforeMount(async () => {
   if (!await auth.isAuthenticated()) {
@@ -232,6 +166,71 @@ onMounted(async () => {
 });
 
 
+
+
+import { ref, onMounted, watch } from 'vue';
+import Chart from 'chart.js/auto';
+
+const factor1 = ref('sleep');
+const factor2 = ref('productivity');
+const chartCanvas = ref(null);
+let chart = null;
+
+const activities = ref(['Exercise', 'Meditation', 'Reading', 'Cooking']);
+
+onMounted(() => {
+  createChart();
+});
+
+watch([factor1, factor2], () => {
+  if (chart) {
+    chart.destroy();
+  }
+  createChart();
+});
+
+function createChart() {
+  const ctx = chartCanvas.value.getContext('2d');
+  chart = new Chart(ctx, {
+    type: 'scatter',
+    data: {
+      datasets: [{
+        label: `${factor1.value} vs ${factor2.value}`,
+        data: generateRandomData(),
+        backgroundColor: 'rgba(75, 192, 192, 0.6)'
+      }]
+    },
+    options: {
+      responsive: true,
+      scales: {
+        x: {
+          title: {
+            display: true,
+            text: factor1.value
+          }
+        },
+        y: {
+          title: {
+            display: true,
+            text: factor2.value
+          }
+        }
+      }
+    }
+  });
+}
+
+function generateRandomData() {
+  return Array.from({ length: 20 }, () => ({
+    x: Math.random() * 10,
+    y: Math.random() * 10
+  }));
+}
+
+function joinDiscord() {
+  // Implement Discord join functionality
+  console.log('Joining Discord...');
+}
 </script>
 
 <style></style>

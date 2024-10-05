@@ -2,7 +2,7 @@
   <footer class="w-full border-t border-gray-200">
     <div class="flex flex-col justify-between p-9 md:flex-row text-center items-center align-middle">
       <div class="md:mr-9 flex flex-col justify-center align-middle items-center">
-        <span>© 2024 by Leo Gall and the contributers of the Daytistics project </span>
+        <span>Made with ☕ and ❤️ by Leo Gall </span>
       </div>
       <div class="md:mr-9 flex flex-row justify-center align-middle items-center gap-4">
         <NuxtLink to="/licenses.txt" external>Licenses</NuxtLink>

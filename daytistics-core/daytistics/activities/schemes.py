@@ -5,8 +5,8 @@ class ActivityEntryResponse(Schema):
     id: int
     name: str
     duration: int
-    start_time: int
-    end_time: int
+    start_time: str
+    end_time: str
 
 
 class ActivityTypeResponse(Schema):

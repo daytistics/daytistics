@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Optional
 
 from ninja import Schema
 
@@ -23,16 +23,20 @@ class DaytisticResponse(Schema):
     total_activities: int
     total_duration: int
     user: UserProfileResponse
-    wellbeing: List[WellbeingResponse]
-    activities: List[ActivityEntryResponse]
+    wellbeing: List[Optional[WellbeingResponse]]
+    activities: List[Optional[ActivityEntryResponse]]
     diary: DiaryResponse
 
 
-class CreateActivityEntryRequest(Schema):
+class DaytisticsListResponse(Schema):
+    daytistics: List[DaytisticResponse]
+
+
+class AddActivityEntryRequest(Schema):
     id: int
     start_time: str
     end_time: str
 
 
-class CreateActivityEntryResponse(Schema):
+class AddActivityEntryResponse(Schema):
     activities: List[ActivityEntryResponse]

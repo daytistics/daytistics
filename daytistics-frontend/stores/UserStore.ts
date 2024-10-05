@@ -21,6 +21,10 @@ export const useUserStore = defineStore({
         timeformat: '',
     }),
     actions: {
+        initUser(): void {
+            useCookie('timezone').value = getCurrentTimezone();
+        },
+
         async fetchUser(): Promise<void> {
             this.lastFetched = new Date();
 

@@ -89,8 +89,9 @@
 
 <script lang="ts" setup>
 import { initModals, Modal } from 'flowbite';
-import { PersonStandingIcon } from 'lucide-vue-next';
-import { parse } from 'vue/compiler-sfc';
+import type { ActivityType, ActivityEntry } from '~/interfaces/activities';
+import { convertToUTC } from '~/utils/time';
+
 
 const activities = ref<ActivityType[]>([]);
 const activityType = ref<number>(0);
@@ -99,80 +100,51 @@ const endTime = ref<string>('00:00');
 const errorMessage = ref<string>('');
 const modalElement = document.getElementById('add-activity-modal');
 
-const emit = defineEmits(['submit']);
+// Receiving props
+const props = defineProps(['date']);
 
-interface ActivityType {
-  id: number;
-  name: string;
-  category: string;
-  available: boolean;
-  active: boolean;
-}
+/**
+ * Converts time into the according time of the date including timezone
+ * @param time Time in HH:MM format
+ * @param date Date in ISO format
+ * @example convertTimeToIsoString('12:00', '2008-01-21T00:00:00+01:00') => '2008-01-21T12:00:00+01:00'
+ */
+function convertTimeToIsoString(time: string, date: string): string {
+  // Extract hours and minutes from the time string
+  const [hours, minutes] = time.split(':').map(Number);
 
-interface ActivityEntry {
-  id: number;
-  name: string;
-  duration: number;
-  start_time: number;
-  end_time: number;
-}
+  // Create a new Date object based on the ISO date
+  const isoDate = new Date(date);
 
-async function fetchActivities() {
-  try {
-    const response = await $fetch(`/api/activities/`, {
-      server: false,
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        'X-CSRFToken': useCsrf().getToken(),
-        Authorization: `Bearer ${useCookie('access_token').value}`,
-      },
+  // Adjust the date's hours and minutes while considering the timezone
+  const timezoneOffset = isoDate.getTimezoneOffset();
 
-      onResponseError: ({ request, response, options }) => {
-        console.error('Error fetching activities:', response);
-      }
-    });
+  // Set the hours and minutes
+  isoDate.setUTCHours(hours + timezoneOffset / 60);
+  isoDate.setUTCMinutes(minutes);
 
-    activities.value = response as ActivityType[];
-  } catch (error) {
-    console.error('Error fetching activities:', error);
-  }
+  // Return the ISO string in the required format
+  return isoDate.toISOString().replace('Z', date.slice(-6));
 }
 
 async function handleSubmit() {
-  await createActivityEntry();
+  startTime.value = convertTimeToIsoString(startTime.value, props.date);
+  endTime.value = convertTimeToIsoString(endTime.value, props.date);
+
+  await addActivity();
 }
 
-async function createActivityEntry() {
-  const id = useRoute().params.id;
-  try {
-    debugger;
-    requireAuth(
-      await $fetch(`/api/daytistics/${id}/add-activity/`, {
-        server: false,
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-CSRFToken': useCsrf().getToken(),
-          Authorization: `Bearer ${useCookie('access_token').value}`,
-        },
-        body: {
-          id: activityType.value,
-          start_time: convertHHMMToMinutesSinceMidnight(startTime.value),
-          end_time: convertHHMMToMinutesSinceMidnight(endTime.value),
-        },
-        onResponseError: ({ request, response, options }) => {
-          errorMessage.value = response._data.detail;
-        },
-      })
-    );
-    debugger;
 
-  } catch (error) {
-    console.error('Error creating activity:', error);
-  }
-}
+// Activity fetching specific
+const { fetch: fetchActivities } = useActivities();
 
+
+// Activity adding specific
+const emit = defineEmits(['submit']);
+const { addNew: addActivity } = useActivities();
+
+
+// Modal specific
 function closeModal() {
   const modal = new Modal(modalElement);
   modal.hide();
@@ -182,6 +154,64 @@ onMounted(() => {
   initModals();
   fetchActivities();
 });
+
+// Reusable composables
+function useActivities() {
+  {
+    const addNew = async () => {
+      const id = useRoute().params.id;
+      try {
+        requireAuth(
+          await $fetch(`/api/daytistics/${id}/add-activity/`, {
+            server: false,
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'X-CSRFToken': useCsrf().getToken(),
+              Authorization: `Bearer ${useCookie('access_token').value}`,
+            },
+            body: {
+              id: activityType.value,
+              start_time: convertToUTC(startTime.value),
+              end_time: convertToUTC(endTime.value),
+            },
+            onResponseError: ({ request, response, options }) => {
+              errorMessage.value = response._data.detail;
+            },
+          })
+        );
+
+      } catch (error) {
+        console.error('Error creating activity:', error);
+      }
+    };
+
+    const fetch = async () => {
+      try {
+        const response = await $fetch(`/api/activities/`, {
+          server: false,
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': useCsrf().getToken(),
+            Authorization: `Bearer ${useCookie('access_token').value}`,
+          },
+
+          onResponseError: ({ request, response, options }) => {
+            console.error('Error fetching activities:', response);
+          }
+        });
+
+        activities.value = response as ActivityType[];
+        console.log('Activities fetched:', response);
+      } catch (error) {
+        console.error('Error fetching activities:', error);
+      }
+    };
+
+    return { addNew, fetch };
+  }
+}
 </script>
 
 <style></style>

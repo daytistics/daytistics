@@ -1,5 +1,5 @@
 <template>
-  <div id="creation-modal" tabindex="-1" aria-hidden="true"
+  <div id="add-daytistic-modal" tabindex="-1" aria-hidden="true"
     class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
     <div class="relative p-4 w-full max-w-md max-h-full">
       <!-- Modal content -->
@@ -7,7 +7,7 @@
         <!-- Modal header -->
         <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
           <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
-            Create New {{ creationTypeName }}
+            Add New Daytistic
           </h3>
           <button type="button" @click="closeModal"
             class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white">
@@ -23,18 +23,6 @@
         <form class="p-4 md:p-5">
           <div class="grid gap-4 mb-4 grid-cols-2">
             <div class="col-span-2">
-              <label for="type" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">What do you want to
-                create?</label>
-              <select v-model="creationType" id="type"
-                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">
-                <option value="0" selected>Daytistic</option>
-                <option value="1">Diary entry</option>
-                <option value="2">AI model</option>
-              </select>
-            </div>
-          </div>
-          <div class="grid gap-4 mb-4 grid-cols-2">
-            <div v-show="creationType == '0'" class="col-span-2">
               <label for="type" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">What day are we
                 talking about here?</label>
               <div class="relative max-w-sm">
@@ -54,13 +42,13 @@
           </div>
           <p id="error" class="text-red-500 mb-3">{{ errorMessage }}</p>
           <button type="button" class="inline-flex button bg-secondary hover:bg-secondary-dark items-center"
-            v-show="creationType != ''" @click="handleSubmit">
+            @click="handleSubmit">
             <svg class="me-1 -ms-1 w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
               <path fill-rule="evenodd"
                 d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z"
                 clip-rule="evenodd"></path>
             </svg>
-            <span>Create new {{ creationTypeName }}</span>
+            <span>Add</span>
           </button>
         </form>
       </div>
@@ -70,22 +58,22 @@
 
 <script lang="ts" setup>
 import { Datepicker, initDatepickers, initModals, Modal } from 'flowbite';
+import { convertToUTC } from '~/utils/time';
 
 const utils = useUtils();
+
+const emits = defineEmits(['close']);
 
 // ERROR MESSAGE
 const errorMessage = ref<string>('');
 
 
-// CREATION TYPE(NAME)
-const creationType = ref<string>('');
-const creationTypeName = ref<string>('');
-
 
 // MODAL FUNCTIONS
 function closeModal() {
-  const modal = new Modal(document.getElementById('creation-modal'));
+  const modal = new Modal(document.getElementById('add-daytistic-modal'));
   modal.hide();
+  emits('close');
 }
 
 
@@ -133,7 +121,7 @@ async function sendCreateDaytisticRequest(dateString: string): Promise<void> {
         Authorization: `Bearer ${useCookie('access_token').value}`,
       },
       body: {
-        date: convertDateStringToIso(dateString),
+        date: convertToUTC(convertDateStringToIso(dateString)),
       },
 
       onResponse: ({ request, response, options }) => {
@@ -150,22 +138,6 @@ async function sendCreateDaytisticRequest(dateString: string): Promise<void> {
   );
 }
 
-watch(creationType, (val) => {
-  switch (val) {
-    case '0':
-      creationTypeName.value = 'Daytistic';
-      break;
-    case '1':
-      creationTypeName.value = 'Diary entry';
-      break;
-    case '2':
-      creationTypeName.value = 'AI model';
-      break;
-    default:
-      creationTypeName.value = '...';
-      break;
-  }
-});
 
 onMounted(() => {
   initDatepickers();

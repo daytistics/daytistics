@@ -1,4 +1,5 @@
 from datetime import datetime
+from typing import Union
 
 from ninja import Schema
 
@@ -29,6 +30,5 @@ class UserProfileResponse(Schema):
     groups: list[str]
     user_permissions: list[str]
     date_joined: datetime
-    last_login: datetime
-    timezone: str
-    timeformat: str
+    last_login: Union[datetime, str]
+    date_format: str

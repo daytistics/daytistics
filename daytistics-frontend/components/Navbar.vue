@@ -138,20 +138,15 @@ const navbarLinksLoggedIn = [
     icon: House,
   },
   {
-    name: 'Relationships',
-    href: '/dashboard/relationships',
-    icon: ChartNoAxesColumn,
-  },
-  {
-    name: 'Models',
-    href: '/dashboard/models',
-    icon: Brain,
-  },
-  {
     name: 'Settings',
     href: '/dashboard/settings',
     icon: Settings,
   },
+  {
+    name: 'Feedback',
+    href: '/dashboard/feedback',
+    icon: Telescope,
+  }
 ];
 
 const navbarLinksLoggedOut = [

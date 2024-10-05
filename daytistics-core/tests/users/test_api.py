@@ -267,8 +267,7 @@ class TestGetUserProfile:
             "is_superuser": user.is_superuser,
             "groups": [],
             "user_permissions": [],
-            "timezone": user.timezone,
-            "timeformat": user.timeformat,
+            "date_format": user.date_format,
         }:
             assert item in response.json()
 

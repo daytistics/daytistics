@@ -1,15 +1,13 @@
-from calendar import Day
-from faker import Faker
-
-
+from datetime import tzinfo
+import datetime
 from .models import Daytistic
 from ..users.models import CustomUser
 from ..activities.models import ActivityEntry
 
 
-def build_daytistic_response(daytistic: Daytistic) -> dict:
+def build_daytistic_response(daytistic: Daytistic, timezone: tzinfo) -> dict:
 
-    user = CustomUser.objects.get(id=daytistic.user_id)
+    user = CustomUser.objects.get(id=daytistic.user.pk)
 
     last_login = (
         user.last_login.strftime("%Y-%m-%dT%H:%M:%S") if user.last_login else "Never"
@@ -27,8 +25,7 @@ def build_daytistic_response(daytistic: Daytistic) -> dict:
         ],
         "date_joined": user.date_joined.strftime("%Y-%m-%dT%H:%M:%S"),
         "last_login": last_login,
-        "timezone": user.timezone,
-        "timeformat": user.timeformat,
+        "date_format": user.date_format,
     }
 
     diary_schema = {
@@ -39,20 +36,23 @@ def build_daytistic_response(daytistic: Daytistic) -> dict:
     wellbeing_schema_list = [
         {
             "id": i,
-            "name": "a" * i,
-            "rating": i,
+            "name": f"Well-being #{i}",
+            "rating": i - 1,
         }
-        for i in range(5)
+        for i in range(1, 7)
     ]
 
     activity_schema_list = [
-        build_activity_response(activity)
+        build_activity_response(activity, timezone)
         for activity in daytistic.activities.all().order_by("start_time")
     ]
 
+    # Converts the date to a datetime object
+    daytistic_datetime = datetime.datetime.combine(daytistic.date, datetime.time.min)
+
     return {
-        "id": daytistic.id,
-        "date": daytistic.date.strftime("%m/%d/%Y"),
+        "id": daytistic.pk,
+        "date": daytistic_datetime.astimezone(timezone).isoformat(),
         "average_wellbeing": 5.0,
         "total_activities": daytistic.activities.count(),
         "total_duration": daytistic.total_duration,
@@ -63,11 +63,13 @@ def build_daytistic_response(daytistic: Daytistic) -> dict:
     }
 
 
-def build_activity_response(activity: ActivityEntry) -> dict:
+def build_activity_response(activity: ActivityEntry, timezone: tzinfo) -> dict:
+    local_start_time = activity.start_time.astimezone(timezone).isoformat()
+    local_end_time = activity.end_time.astimezone(timezone).isoformat()
     return {
         "id": activity.pk,
         "name": activity.type.name,
         "duration": activity.duration,
-        "start_time": activity.start_time.hour * 60 + activity.start_time.minute,
-        "end_time": activity.end_time.hour * 60 + activity.end_time.minute,
+        "start_time": local_start_time,
+        "end_time": local_end_time,
     }

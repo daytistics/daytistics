@@ -17,7 +17,8 @@ fake = Faker()
 def users_client():
     from daytistics.config.api import users_router
 
-    return TestClient(users_router)
+    client = TestClient(users_router)
+    return client
 
 
 @pytest.fixture()
@@ -32,6 +33,11 @@ def activities_client():
     from daytistics.config.api import activities_router
 
     return TestClient(activities_router)
+
+
+@pytest.fixture()
+def timezone():
+    return "Europe/Athens"
 
 
 @pytest.fixture()

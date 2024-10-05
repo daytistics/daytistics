@@ -15,5 +15,4 @@ class CustomUser(AbstractUser):
     activities = models.ManyToManyField(
         "activities.ActivityType", related_name="users", blank=True
     )
-    timezone = models.CharField(max_length=50, default="UTC")
-    timeformat = models.CharField(max_length=50, default="24h")
+    date_format = models.CharField(max_length=10, default="%Y-%m-%d")
