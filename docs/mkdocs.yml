@@ -5,6 +5,8 @@ repo_url: https://github.com/daytistics/daytistics
 theme:
   name: material
   favicon: "assets/logo.png"
+  logo: "assets/logo.svg"
+  language: en
   font:
     code: Roboto markdown_extensions
   palette:
@@ -29,36 +31,19 @@ theme:
 
 nav:
   - Home: "index.md"
-  - General:
-      - Our Mission: "general/mission.md"
-      - Features: "general/features.md"
-  - Contributers Guide:
-      - Overview: "contributers/overview.md"
-      - Zen of Daytistics: "contributers/zen-of-daytistics.md"
-      - Code of Conduct: "contributers/code-of-conduct.md"
-      - Installation: "contributers/installation.md"
-      - Services:
-          - Core:
-              - Overview: "contributers/services/core/overview.md"
-              - API: "contributers/services/core/api.md"
-              - Database: "contributers/services/core/database.md"
-          - Modeler:
-              - Overview: "contributers/services/modeler/overview.md"
-              - API: "contributers/services/modeler/api.md"
-          - Frontend:
-              - Overview: "contributers/services/frontend/overview.md"
-              - UI/UX: "contributers/services/frontend/ui-ux.md"
-  - SaaS:
-      - Overview: "saas/overview.md"
-      - Hosting: "saas/hosting.md"
 
-  # - Meeting Minutes:
-  #    - Overview: "minutes/overview.md"
+  - For Developers:
+      - Code of Conduct: "developers/code-of-conduct.md"
+      - Technology Stack: "developers/technology-stack.md"
+      - Become a Contributor: "developers/become-a-contributor.md"
 
 plugins:
   - search
+  - social
 
 markdown_extensions:
+  - pymdownx.tasklist:
+      custom_checkbox: true
   - toc:
       permalink: true
   - admonition
