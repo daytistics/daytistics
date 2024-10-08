@@ -3,7 +3,8 @@ name: Deploy MkDocs to GitHub Pages
 on:
   push:
     branches:
-      - dev
+      - main
+      - rest-with-spa
 
 permissions:
   contents: write
