@@ -1,83 +1,77 @@
-type Callback = (...args: any[]) => void;
-
-export async function requireAuth(
-    callback: Callback,
-    ...params: any[]
-): Promise<boolean> {
-    const auth = useAuth();
-
-    if (!auth.isAuthenticated()) {
-        return false;
-    }
-
-    const tokenRefreshedSuccessfully = await auth.refresh();
-
-    if (!tokenRefreshedSuccessfully) {
-        return false;
-    }
-
-    try {
-        await callback(...params);
-    } catch (error) {
-        return false;
-    }
-
-    return true;
-}
-
 export const useAuth = () => {
-    const isAuthenticated = async (): Promise<boolean> => {
-        let isTokenValid = false;
+    async function verifyAuth() {
+        const accessTokenCookie = useCookie('access_token');
 
-        await useFetch('/api/token/verify', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRFToken': useCsrf().getToken(),
-            },
-            body: JSON.stringify({ token: useCookie('access_token').value }),
+        if (!accessTokenCookie || typeof accessTokenCookie.value !== 'string') {
+            return false;
+        }
 
-            onResponse: async ({ request, response, options }) => {
-                if (response.status === 200) {
-                    isTokenValid = true;
-                }
-            },
-        });
+        try {
+            const response = await useFetch('/api/token/verify', {
+                server: true,
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': useCsrf().getToken(),
+                },
+                body: {
+                    token: accessTokenCookie.value,
+                },
+            });
+        } catch (error) {
+            console.error('Failed to verify access token', error);
+            return false;
+        }
 
-        return isTokenValid;
-    };
+        return true;
+    }
 
-    const refresh = async () => {
+    async function renewAuth() {
         const refreshTokenCookie = useCookie('refresh_token');
 
-        let success = false;
+        if (
+            !refreshTokenCookie ||
+            typeof refreshTokenCookie.value !== 'string'
+        ) {
+            return false;
+        }
 
-        await $fetch('api/token/refresh', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRFToken': useCsrf().getToken(),
-            },
-            body: JSON.stringify({ refresh: refreshTokenCookie.value }),
+        try {
+            const response = await useFetch('/api/token/refresh', {
+                server: true,
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': useCsrf().getToken(),
+                },
+                body: JSON.stringify({ refresh: refreshTokenCookie.value }),
 
-            onResponse: ({ request, response, options }) => {
-                if (response.status === 200) {
-                    const data = response._data;
+                onResponse: ({ response }) => {
+                    if (response.status === 200) {
+                        const { access, refresh } = response._data;
+                        useCookie('access_token').value = access;
+                        refreshTokenCookie.value = refresh;
+                    }
+                },
+            });
+        } catch (error) {
+            console.error('Failed to renew access token', error);
+            return false;
+        }
 
-                    const accessTokenCookie = useCookie('access_token');
-                    refreshTokenCookie.value = data.refresh;
-                    accessTokenCookie.value = data.access;
-                    success = true;
-                } else {
-                    success = false;
-                }
-            },
-        });
+        return true;
+    }
 
-        return success;
-    };
+    function removeAuth() {
+        useCookie('access_token').value = null;
+        useCookie('refresh_token').value = null;
+
+        useRouter().push('/');
+    }
+
     return {
-        isAuthenticated,
-        refresh,
+        verifyAuth,
+        renewAuth,
+        removeAuth,
     };
 };

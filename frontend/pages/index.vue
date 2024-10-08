@@ -31,7 +31,7 @@
     <!-- Pricing Section -->
     <section id="pricing" data-aos="fade-up" class="py-20 bg-gray-50">
       <div class="container mx-auto px-4">
-        <h2 class="text-3xl font-bold text-center text-gray-900 mb-12">Pricing Plans</h2>
+        <h2 class="text-3xl font-bold text-center text-gray-900 mb-12">Pricing</h2>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
           <div v-for="[index, plan] in pricingPlans.entries()" :key="plan.title"
             class="bg-white rounded-lg shadow-md overflow-hidden">
@@ -242,7 +242,4 @@ const selfHostingBenefits = [
   'Easy deployment using Docker or Kubernetes',
 ];
 
-onMounted(() => {
-  requireAuth(console.log, "Called using requireAuth");
-});
 </script>

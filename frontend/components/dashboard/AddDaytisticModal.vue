@@ -58,7 +58,7 @@
 
 <script lang="ts" setup>
 import { Datepicker, initDatepickers, initModals, Modal } from 'flowbite';
-import { convertToUTC } from '~/utils/time';
+const { $api } = useNuxtApp();
 
 const utils = useUtils();
 
@@ -95,7 +95,7 @@ const fourWeeksAgo = function () {
 async function handleSubmit() {
   const el = document.getElementById('create-daytistic-datepicker');
   const daytisticDatepicker = new Datepicker(el);
-  const dateString = daytisticDatepicker.getDate();
+  const dateString = new Date(daytisticDatepicker.getDate()).toISOString();
 
   try {
     await sendCreateDaytisticRequest(dateString.toString());
@@ -109,33 +109,24 @@ async function handleSubmit() {
 
 async function sendCreateDaytisticRequest(dateString: string): Promise<void> {
 
-  console.log("Sending request with" + convertDateStringToIso(dateString));
+  await $api('/api/daytistics/create/', {
+    server: false,
+    method: 'POST',
+    body: {
+      date: dateString,
+    },
 
-  requireAuth(
-    await $fetch('/api/daytistics/create/', {
-      server: false,
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'X-CSRFToken': useCsrf().getToken(),
-        Authorization: `Bearer ${useCookie('access_token').value}`,
-      },
-      body: {
-        date: convertToUTC(convertDateStringToIso(dateString)),
-      },
-
-      onResponse: ({ request, response, options }) => {
-        if (response.status === 201) {
-          console.log("Success");
-          closeModal();
-          useRouter().push(`/dashboard/daytistics/${response._data.id}`);
-        }
-      },
-      onResponseError: ({ request, response, options }) => {
-        errorMessage.value = response._data.detail;
-      },
-    })
-  );
+    onResponse: ({ request, response, options }) => {
+      if (response.status === 201) {
+        console.log("Success");
+        closeModal();
+        useRouter().push(`/dashboard/daytistics/${response._data.id}`);
+      }
+    },
+    onResponseError: ({ request, response, options }) => {
+      errorMessage.value = response._data.detail;
+    },
+  });
 }
 
 

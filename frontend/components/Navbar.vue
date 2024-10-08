@@ -127,9 +127,8 @@ import { LogOut, X, FilePen, ChartNoAxesColumn, House, Brain, Settings, Telescop
 
 const currentUrl = computed(() => useRoute().path);
 const navbarKey = ref<number>(0);
-const logout = () => 3;
 const isAuthenticated = ref<boolean>(false);
-const auth = useAuth();
+const { verifyAuth, removeAuth } = useAuth();
 
 const navbarLinksLoggedIn = [
   {
@@ -177,8 +176,13 @@ const navbarLinksLoggedOut = [
   },
 ];
 
+function logout() {
+  removeAuth();
+  isAuthenticated.value = false;
+}
+
 onMounted(async () => {
-  isAuthenticated.value = await auth.isAuthenticated();
+  isAuthenticated.value = await verifyAuth();
   initDrawers();
 });
 </script>

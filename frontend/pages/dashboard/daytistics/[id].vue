@@ -6,7 +6,8 @@
       <div class="px-6 py-8 bg-gradient-to-tr from-primary to-secondary">
         <h1 class="text-3xl font-bold text-white">Daytistic Detail</h1>
         <p class="mt-2 text-lg text-indigo-100">
-          {{ daytistic?.date }}
+          <!-- {{ readableDateFromUTC(daytistic?.date) }} -->
+          {{ new Date(daytistic?.date as string).toLocaleDateString() }}
         </p>
       </div>
 
@@ -45,7 +46,7 @@
               <component :is="isEditingDiary ? X : Edit2" class="w-5 h-5 mr-1" />
               <span class="text-sm font-medium">{{
                 isEditingDiary ? 'Cancel' : 'Edit'
-              }}</span>
+                }}</span>
             </button>
           </div>
           <div class="bg-gray-50 p-6 rounded-lg shadow-sm">
@@ -130,9 +131,9 @@
 </template>
 
 <script lang="ts" setup>
-import { ref } from 'vue';
 import { Star, Edit2, ChevronRight, X, Plus } from 'lucide-vue-next';
 import type { Daytistic } from '~/interfaces/daytistics';
+import { initModals } from 'flowbite';
 
 const daytistic = ref<Daytistic | null>(null);
 const isEditingDiary = ref(false);
@@ -140,30 +141,19 @@ const editedDiaryEntry = ref(daytistic.value?.diary.entry);
 const editedMomentOfHappiness = ref(daytistic.value?.diary.moment_of_happiness);
 const selectedActivity = ref(null);
 const auth = useAuth();
+const { $api } = useNuxtApp();
 
-
-
-async function fetchDaytistic() {
+async function fetchDaytistic(): Promise<Daytistic | any> {
   const id = useRoute().params.id;
-  const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
   try {
-    const response: any = await $fetch(`/api/daytistics/${id}?timezone=${timezone}`, {
+    return await $api(`/api/daytistics/${id}`, {
       server: false,
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
-        'X-CSRFToken': useCsrf().getToken(),
-        Authorization: `Bearer ${useCookie('access_token').value}`,
       },
-    });
-
-
-
-    daytistic.value = response as Daytistic;
-    console.log(daytistic.value.date);
-
-    console.log('Daytistic:', response);
+    }) as Daytistic;
   } catch (error) {
     console.error('Error fetching daytistic:', error);
     useRouter().push('/dashboard/');
@@ -209,11 +199,11 @@ const viewActivityDetails = (activity) => {
 
 onBeforeMount(async () => {
 
-  if (!auth.isAuthenticated()) {
-    useRouter().push('/auth/login');
-  }
 
   initModals();
-  fetchDaytistic();
+  const response: Daytistic = await fetchDaytistic();
+  console.debug("Daytistic", response);
+  daytistic.value = response;
+  console.debug("Daytistic", daytistic.value);
 });
 </script>

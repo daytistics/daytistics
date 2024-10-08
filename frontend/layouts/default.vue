@@ -1,4 +1,5 @@
 <template>
+
   <div class="flex flex-col min-h-screen">
     <Navbar />
 
@@ -27,10 +28,10 @@ import { initDismisses } from 'flowbite';
 
 
 onMounted(() => {
-  useAuth().isAuthenticated();
   useUserStore().initUser();
   initDismisses();
 });
+
 
 </script>
 

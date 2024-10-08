@@ -86,10 +86,13 @@ const inputValidation = useInputValidation();
 const errorMessage = document.getElementById('error');
 const auth = useAuth();
 
+const { $api } = useNuxtApp();
+
+
 onMounted(async () => {
   csrfToken.value = useCsrf().getToken();
 
-  if (await auth.isAuthenticated()) {
+  if (await auth.verifyAuth()) {
     useRouter().push('/dashboard');
   }
 });
@@ -117,7 +120,7 @@ async function registerUser() {
 
   validateInput();
 
-  await $fetch('/api/users/auth/register/', {
+  await $api('/api/users/auth/register/', {
     server: false,
     method: 'POST',
     headers: {

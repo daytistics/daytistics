@@ -1,8 +1,9 @@
 export function useCsrf() {
     const csrfToken = ref('');
+    const { $api } = useNuxtApp();
 
     const generateToken = async () => {
-        await $fetch('/api/csrf/', {
+        await $api('/api/csrf/', {
             server: false,
             method: 'GET',
         }).catch((error) => {

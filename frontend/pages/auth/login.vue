@@ -107,17 +107,20 @@ const loginError = ref<string>('');
 const csrfToken = ref('');
 const auth = useAuth();
 
+const { $api } = useNuxtApp();
+
+
 onMounted(async () => {
   csrfToken.value = useCsrf().getToken();
 
-  if (await auth.isAuthenticated()) {
+  if (await auth.verifyAuth()) {
     useRouter().push('/dashboard');
   }
 });
 
 async function handleSubmit() {
 
-  await $fetch('/api/users/login/', {
+  await $api('/api/users/login/', {
     server: false,
     method: 'POST',
     headers: {

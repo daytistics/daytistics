@@ -92,6 +92,7 @@ import { initModals, Modal } from 'flowbite';
 import type { ActivityType, ActivityEntry } from '~/interfaces/activities';
 import { convertToUTC } from '~/utils/time';
 
+const { $api } = useNuxtApp();
 
 const activities = ref<ActivityType[]>([]);
 const activityType = ref<number>(0);
@@ -161,25 +162,18 @@ function useActivities() {
     const addNew = async () => {
       const id = useRoute().params.id;
       try {
-        requireAuth(
-          await $fetch(`/api/daytistics/${id}/add-activity/`, {
-            server: false,
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'X-CSRFToken': useCsrf().getToken(),
-              Authorization: `Bearer ${useCookie('access_token').value}`,
-            },
-            body: {
-              id: activityType.value,
-              start_time: convertToUTC(startTime.value),
-              end_time: convertToUTC(endTime.value),
-            },
-            onResponseError: ({ request, response, options }) => {
-              errorMessage.value = response._data.detail;
-            },
-          })
-        );
+        await $api(`/api/daytistics/${id}/add-activity/`, {
+          server: false,
+          method: 'POST',
+          body: {
+            id: activityType.value,
+            start_time: convertToUTC(startTime.value),
+            end_time: convertToUTC(endTime.value),
+          },
+          onResponseError: ({ request, response, options }) => {
+            errorMessage.value = response._data.detail;
+          },
+        });
 
       } catch (error) {
         console.error('Error creating activity:', error);
@@ -188,14 +182,9 @@ function useActivities() {
 
     const fetch = async () => {
       try {
-        const response = await $fetch(`/api/activities/`, {
+        const response = await $api(`/api/activities/`, {
           server: false,
           method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            'X-CSRFToken': useCsrf().getToken(),
-            Authorization: `Bearer ${useCookie('access_token').value}`,
-          },
 
           onResponseError: ({ request, response, options }) => {
             console.error('Error fetching activities:', response);
