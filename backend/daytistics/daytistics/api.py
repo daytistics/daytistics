@@ -125,7 +125,6 @@ def add_activity_to_daytistic(
 
     if daytistic.date != start_time.date():
         print("Activity date must match daytistic date")
-        breakpoint()
         return 422, {"detail": "Activity date must match daytistic date"}
 
     if not ActivityType.objects.filter(pk=activity_id).exists():
