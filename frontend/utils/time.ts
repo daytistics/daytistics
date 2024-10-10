@@ -1,16 +1,3 @@
-const pad = (n) => `${Math.floor(Math.abs(n))}`.padStart(2, '0');
-// Get timezone offset in ISO format (+hh:mm or -hh:mm)
-const getTimezoneOffset = (date) => {
-    const tzOffset = -date.getTimezoneOffset();
-    const diff = tzOffset >= 0 ? '+' : '-';
-    return diff + pad(tzOffset / 60) + ':' + pad(tzOffset % 60);
-};
-
-function convertHHMMToMinutesSinceMidnight(hhmm: string): number {
-    const [hh, mm] = hhmm.split(':').map(Number);
-    return hh * 60 + mm;
-}
-
 function getCurrentTimezone(): string {
     return Intl.DateTimeFormat().resolvedOptions().timeZone;
 }
@@ -34,22 +21,61 @@ function convertToUTC(isoString: string): string {
     return utcDate.toISOString();
 }
 
+function convertTimeToIsoString(
+    timeString: string,
+    dateString: string,
+    preserveTimezone = false
+): string {
+    const [hours, minutes] = timeString
+        .split(':')
+        .map((str) => parseInt(str, 10));
+
+    const date = new Date(dateString);
+    date.setHours(hours, minutes);
+
+    debugger;
+
+    if (preserveTimezone) {
+        return date.toISOString();
+    } else {
+        // Convert to UTC ISO string with setting of timezone offset
+        const utc = Date.UTC(
+            date.getUTCFullYear(),
+            date.getUTCMonth(),
+            date.getUTCDate(),
+            date.getUTCHours(),
+            date.getUTCMinutes(),
+            date.getUTCSeconds(),
+            date.getUTCMilliseconds()
+        );
+
+        return new Date(utc).toISOString();
+    }
+}
+
+function convertToIsoDate(date: Date): string {
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const year = date.getFullYear();
+
+    return `${year}-${month}-${day}`;
+}
+
 /**
+ * Converts 24 hour time string (HH:mm) to minutes since midnight
  * @params ISO format date string in UTC timezone
  * @returns ISO format date string in local timezone
  */
-function convertToLocal(dateString: string): string {
-    const date = new Date(dateString);
-    const offset = date.getTimezoneOffset();
-    const localDate = new Date(date.getTime() - offset * 60 * 1000);
-    return localDate.toISOString();
+function convert24toMinutes(time: string): number {
+    const [hours, minutes] = time.split(':').map((str) => parseInt(str, 10));
+    return hours * 60 + minutes;
 }
 
 export {
-    getTimezoneOffset,
-    convertHHMMToMinutesSinceMidnight,
+    convertToIsoDate,
     getCurrentTimezone,
     convertToUTC,
     convertToLocal,
-    readableDateFromUTC,
+    convertTimeToIsoString,
+    convert24toMinutes,
 };

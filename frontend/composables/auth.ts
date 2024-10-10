@@ -1,3 +1,5 @@
+import { parse } from 'vue/compiler-sfc';
+
 export const useAuth = () => {
     async function verifyAuth() {
         const accessTokenCookie = useCookie('access_token');
@@ -69,9 +71,20 @@ export const useAuth = () => {
         useRouter().push('/');
     }
 
+    function isTokenExpired(token: string): boolean {
+        try {
+            const arrayToken = token.split('.');
+            const tokenPayload = JSON.parse(atob(arrayToken[1]));
+            return Math.floor(new Date().getTime() / 1000) >= tokenPayload?.sub;
+        } catch (error) {
+            return true;
+        }
+    }
+
     return {
         verifyAuth,
         renewAuth,
         removeAuth,
+        isTokenExpired,
     };
 };

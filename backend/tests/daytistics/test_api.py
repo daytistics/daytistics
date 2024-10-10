@@ -1,4 +1,5 @@
 import datetime
+from operator import le
 from zoneinfo import ZoneInfo
 
 import pytest
@@ -7,37 +8,13 @@ from ninja.testing import TestClient
 
 from daytistics.daytistics.models import Daytistic
 from daytistics.activities.models import ActivityEntry, ActivityType
-from daytistics.daytistics.helpers import (
-    build_daytistic_response,
-)
-from daytistics.utils.time import minutes_today_as_iso
+from daytistics.daytistics.helpers import build_daytistic_response
 from ..factories import (
     ActivityEntryFactory,
     CustomUserFactory,
     DaytisticFactory,
     ActivityTypeFactory,
 )
-
-
-def generate_date_yesterday():
-    date = datetime.date.today() - datetime.timedelta(days=1)
-    return date.isoformat()
-
-
-def generate_date_two_weeks_ago():
-    date = datetime.date.today() - datetime.timedelta(weeks=2)
-    return date.isoformat()
-
-
-def generate_date_five_weeks_ago():
-    date = datetime.date.today() - datetime.timedelta(weeks=5)
-    return date.isoformat()
-
-
-def generate_date_tommorow():
-    # In Format 2023-03-01
-    date = datetime.date.today() + datetime.timedelta(days=1)
-    return date.isoformat()
 
 
 @pytest.mark.django_db
@@ -48,7 +25,7 @@ class TestCreateDaytistic:
         )
         daytistics_client.headers.update({"Authorization": f"Bearer {access_token}"})
 
-        date = (datetime.date.today() - datetime.timedelta(days=1)).isoformat()
+        date = datetime.datetime.now().date().isoformat()
 
         response = daytistics_client.post(
             "create/",
@@ -71,7 +48,7 @@ class TestCreateDaytistic:
         )
         assert response.status_code == 422
         assert response.json() == {
-            "detail": "Invalid date format. Must be in ISO format"
+            "detail": "Invalid date format. Must be in ISO format (YYYY-MM-DD)"
         }
 
     def test_auth_success_and_already_exists(self, daytistics_client):
@@ -81,9 +58,11 @@ class TestCreateDaytistic:
         access_token = AccessToken.for_user(user)
         daytistics_client.headers.update({"Authorization": f"Bearer {access_token}"})
 
+        date = datetime.datetime.now().date().isoformat()
+
         response = daytistics_client.post(
             "create/",
-            json={"date": daytistic.date.isoformat()},
+            json={"date": date},
         )
         assert response.status_code == 409
         assert response.json() == {"detail": "Daytistic already exists"}
@@ -92,9 +71,15 @@ class TestCreateDaytistic:
         access_token = AccessToken.for_user(CustomUserFactory.create(is_active=True))
         daytistics_client.headers.update({"Authorization": f"Bearer {access_token}"})
 
+        date = (
+            (datetime.datetime.now() - datetime.timedelta(weeks=5)).date().isoformat()
+        )
+
         response = daytistics_client.post(
             "create/",
-            json={"date": generate_date_five_weeks_ago()},
+            json={
+                "date": date,
+            },
         )
         assert response.status_code == 400
         assert response.json() == {"detail": "Date must be within the last 4 weeks"}
@@ -103,9 +88,13 @@ class TestCreateDaytistic:
         access_token = AccessToken.for_user(CustomUserFactory.create(is_active=True))
         daytistics_client.headers.update({"Authorization": f"Bearer {access_token}"})
 
+        date = (datetime.datetime.now() + datetime.timedelta(days=2)).date().isoformat()
+
         response = daytistics_client.post(
             "create/",
-            json={"date": generate_date_tommorow()},
+            json={
+                "date": date,
+            },
         )
         assert response.status_code == 400
         assert response.json() == {"detail": "Date is in the future"}
@@ -113,7 +102,11 @@ class TestCreateDaytistic:
     def test_auth_failure(self, daytistics_client):
         response = daytistics_client.post(
             "create/",
-            json={"date": generate_date_yesterday()},
+            json={
+                "date": (datetime.datetime.now() + datetime.timedelta(days=1))
+                .astimezone(ZoneInfo("UTC"))
+                .isoformat()
+            },
         )
         assert response.status_code == 401
         assert response.json() == {"detail": "Unauthorized"}
@@ -125,20 +118,17 @@ class TestGetDaytistic:
     def test_auth_success_and_daytistic_found(self, daytistics_client):
         user = CustomUserFactory.create(is_active=True)
 
-        # today 4 am in Berlin
-        date = datetime.datetime(2023, 3, 1, 4, 0, tzinfo=ZoneInfo("Europe/Berlin"))
+        date = datetime.datetime(2023, 3, 1, 4, 0)
 
         daytistic = DaytisticFactory.create(user=user, date=date)
 
         access_token = AccessToken.for_user(user)
 
         daytistics_client.headers.update({"Authorization": f"Bearer {access_token}"})
-        response = daytistics_client.get(f"{daytistic.id}?timezone=Europe/Athens")
+        response = daytistics_client.get(f"{daytistic.id}")
 
         assert response.status_code == 200
-        assert response.json() == build_daytistic_response(
-            daytistic, ZoneInfo("Europe/Athens")
-        )
+        assert response.json() == build_daytistic_response(daytistic)
 
     def test_auth_success_and_daytistic_not_found(self, daytistics_client):
         user = CustomUserFactory.create(is_active=True)
@@ -146,25 +136,10 @@ class TestGetDaytistic:
         access_token = AccessToken.for_user(user)
         daytistics_client.headers.update({"Authorization": f"Bearer {access_token}"})
 
-        response = daytistics_client.get("1?timezone=Europe/Athens")
+        response = daytistics_client.get("1")
 
         assert response.status_code == 404
         assert response.json() == {"detail": "Daytistic not found"}
-
-    def test_auth_success_and_no_timezone_provided(
-        self, daytistics_client, users_client
-    ):
-        user = CustomUserFactory.create(is_active=True)
-        daytistic = DaytisticFactory.create(user=user)
-
-        response = users_client.post(
-            "/login/", json={"email": user.email, "password": "password123"}
-        )
-        access_token = response.json()["accessToken"]
-
-        daytistics_client.headers.update({"Authorization": f"Bearer {access_token}"})
-        response = daytistics_client.get(f"{daytistic.id}")
-        assert response.status_code == 422
 
     def test_auth_failure(self, daytistics_client):
         response = daytistics_client.get("1")
@@ -175,39 +150,59 @@ class TestGetDaytistic:
 @pytest.mark.django_db
 class TestListDaytistics:
 
-    def test_auth_success_and_timezone_is_valid(self, daytistics_client, users_client):
+    def test_auth_success_and_no_page_given(self, daytistics_client, users_client):
         user = CustomUserFactory.create(is_active=True)
         second_user = CustomUserFactory.create(is_active=True)
 
-        daytistics = DaytisticFactory.create_batch(5, user=user)
+        dates = [
+            datetime.datetime.now().replace(
+                hour=0, minute=0, second=0, microsecond=0, day=i
+            )
+            for i in range(1, 6)
+        ]
+        daytistics = [DaytisticFactory.create(user=user, date=date) for date in dates]
         second_users_daytistic = DaytisticFactory.create(user=second_user)
 
         access_token = AccessToken.for_user(user)
         daytistics_client.headers.update({"Authorization": f"Bearer {access_token}"})
 
-        response = daytistics_client.get("list?timezone=Europe/Athens")
+        response = daytistics_client.get("list")
         assert response.status_code == 200
-        assert response.json() == {
-            "count": len(daytistics),
-            "items": [
-                build_daytistic_response(daytistic, ZoneInfo("Europe/Athens"))
-                for daytistic in daytistics
-            ],
-        }
-        assert len(response.json()["items"]) == 5
+        assert response.json()["items"] == [
+            build_daytistic_response(daytistic) for daytistic in daytistics[::-1]
+        ]
+
+        assert len(response.json()["items"]) == len(daytistics)
         assert (
-            build_daytistic_response(second_users_daytistic, ZoneInfo("Europe/Athens"))
+            build_daytistic_response(second_users_daytistic)
             not in response.json()["items"]
         )
 
-    def test_auth_success_and_invalid_timezone(self, daytistics_client):
+    def test_auth_success_and_page_given(self, daytistics_client, users_client):
         user = CustomUserFactory.create(is_active=True)
+
+        dates = [
+            datetime.datetime.now().replace(
+                hour=0, minute=0, second=0, microsecond=0, day=i
+            )
+            for i in range(1, 11)
+        ]
+        daytistics = [DaytisticFactory.create(user=user, date=date) for date in dates]
+
         access_token = AccessToken.for_user(user)
         daytistics_client.headers.update({"Authorization": f"Bearer {access_token}"})
 
-        response = daytistics_client.get("list?timezone=Invalid/Timezone")
-        assert response.status_code == 400
-        assert response.json() == {"detail": "Invalid timezone"}
+        response = daytistics_client.get("list", params={"page": 1})
+        assert response.status_code == 200
+        assert response.json()["items"] == [
+            build_daytistic_response(daytistic) for daytistic in daytistics[::-1][:5]
+        ]
+
+        response = daytistics_client.get("list?page=2")
+        assert response.status_code == 200
+        assert response.json()["items"] == [
+            build_daytistic_response(daytistic) for daytistic in daytistics[::-1][5:]
+        ]
 
     def test_auth_failure(self, daytistics_client):
         response = daytistics_client.get("list")
@@ -228,18 +223,8 @@ class TestAddActivityToDaytistic:
         access_token = AccessToken.for_user(user)
         daytistics_client.headers.update({"Authorization": f"Bearer {access_token}"})
 
-        date = datetime.datetime.fromisoformat(daytistic.date.isoformat())
-        start_time = (
-            date.astimezone(ZoneInfo("Europe/Athens"))
-            .replace(hour=0, minute=0, second=0, microsecond=0)
-            .isoformat()
-        )
-
-        end_time = (
-            date.astimezone(ZoneInfo("Europe/Athens"))
-            .replace(hour=1, minute=0, second=0, microsecond=0)
-            .isoformat()
-        )
+        start_time = 10
+        end_time = 70
 
         response = daytistics_client.post(
             f"{daytistic.pk}/add-activity/",
@@ -266,37 +251,22 @@ class TestAddActivityToDaytistic:
     def test_auth_success_and_no_errors_and_returning_list(
         self, daytistics_client, users_client
     ):
-        date = datetime.datetime.now().replace(
-            hour=0, minute=0, second=0, microsecond=0
-        )
+        date = datetime.datetime.now().date()
 
         user = CustomUserFactory.create(is_active=True)
-        daytistic: Daytistic = DaytisticFactory.create(user=user, date=date.date())
+        daytistic: Daytistic = DaytisticFactory.create(user=user, date=date)
+        activity_type: ActivityType = ActivityTypeFactory.create()
 
         other_activity_entry: ActivityEntry = ActivityEntryFactory.create(
-            start_time=date.astimezone(ZoneInfo("Europe/Athens"))
-            + datetime.timedelta(minutes=80),
-            end_time=date.astimezone(ZoneInfo("Europe/Athens"))
-            + datetime.timedelta(minutes=200),
+            start_time=500, end_time=600
         )
-
         daytistic.activities.add(other_activity_entry)
-        activity_type: ActivityType = ActivityTypeFactory.create()
 
         access_token = AccessToken.for_user(user)
         daytistics_client.headers.update({"Authorization": f"Bearer {access_token}"})
 
-        start_time = (
-            date.astimezone(ZoneInfo("Europe/Athens"))
-            .replace(hour=0, minute=0, second=0, microsecond=0)
-            .isoformat()
-        )
-
-        end_time = (
-            date.astimezone(ZoneInfo("Europe/Athens"))
-            .replace(hour=1, minute=0, second=0, microsecond=0)
-            .isoformat()
-        )
+        start_time = 0
+        end_time = 60
 
         response = daytistics_client.post(
             f"{daytistic.pk}/add-activity/",
@@ -313,12 +283,12 @@ class TestAddActivityToDaytistic:
                 {
                     "id": other_activity_entry.pk,
                     "name": other_activity_entry.type.name,
-                    "duration": 120,
-                    "start_time": other_activity_entry.start_time.isoformat(),
-                    "end_time": other_activity_entry.end_time.isoformat(),
+                    "duration": 100,
+                    "start_time": other_activity_entry.start_time,
+                    "end_time": other_activity_entry.end_time,
                 },
                 {
-                    "id": activity_type.pk,
+                    "id": 2,
                     "name": activity_type.name,
                     "duration": 60,
                     "start_time": start_time,
@@ -334,8 +304,8 @@ class TestAddActivityToDaytistic:
         access_token = AccessToken.for_user(user)
         daytistics_client.headers.update({"Authorization": f"Bearer {access_token}"})
 
-        start_time = minutes_today_as_iso(datetime.datetime.now(), 0, "+02:00")
-        end_time = minutes_today_as_iso(datetime.datetime.now(), 60, "+02:00")
+        start_time = 20
+        end_time = 40
 
         response = daytistics_client.post(
             f"{daytistic.pk}/add-activity/",
@@ -349,9 +319,18 @@ class TestAddActivityToDaytistic:
         assert response.status_code == 404
         assert response.json() == {"detail": "Activity not found"}
 
-    # **Aktualisierte Tests**
-
-    def test_invalid_date_format(self, daytistics_client):
+    @pytest.mark.parametrize(
+        "start_time, end_time",
+        (
+            (-10, 60),
+            (2000, 60),
+            (0, 1441),
+            (0, -1),
+        ),
+    )
+    def test_auth_success_and_times_out_of_bounds(
+        self, daytistics_client, start_time, end_time
+    ):
         user = CustomUserFactory.create(is_active=True)
         daytistic = DaytisticFactory.create(user=user)
 
@@ -361,95 +340,26 @@ class TestAddActivityToDaytistic:
         response = daytistics_client.post(
             f"{daytistic.pk}/add-activity/",
             json={
-                "id": 1,
-                "start_time": "invalid-date-format",
-                "end_time": "2024-10-03T10:00:00+02:00",
-            },
-        )
-
-        assert response.status_code == 422
-        assert response.json() == {
-            "detail": "Invalid date format. Must be in ISO format"
-        }
-
-    def test_missing_timezone(self, daytistics_client):
-        user = CustomUserFactory.create(is_active=True)
-        daytistic = DaytisticFactory.create(user=user)
-
-        access_token = AccessToken.for_user(user)
-        daytistics_client.headers.update({"Authorization": f"Bearer {access_token}"})
-
-        start_time = "2024-10-03T09:00:00"
-        end_time = "2024-10-03T10:00:00+02:00"
-
-        response = daytistics_client.post(
-            f"{daytistic.pk}/add-activity/",
-            json={
-                "id": 1,
+                "id": ActivityEntryFactory.create().type.pk,
                 "start_time": start_time,
                 "end_time": end_time,
             },
         )
 
         assert response.status_code == 422
-        assert response.json() == {"detail": "Timezone is required"}
 
-    def test_different_timezones(self, daytistics_client):
+    def test_start_time_after_end_time(self, daytistics_client):
         user = CustomUserFactory.create(is_active=True)
-        daytistic = DaytisticFactory.create(user=user)
-
-        access_token = AccessToken.for_user(user)
-        daytistics_client.headers.update({"Authorization": f"Bearer {access_token}"})
-
-        start_time = "2024-10-03T09:00:00+01:00"
-        end_time = "2024-10-03T10:00:00+02:00"
-
-        response = daytistics_client.post(
-            f"{daytistic.pk}/add-activity/",
-            json={
-                "id": 1,
-                "start_time": start_time,
-                "end_time": end_time,
-            },
+        daytistic = DaytisticFactory.create(
+            user=user, date=datetime.datetime.now().date()
         )
-
-        assert response.status_code == 422
-        assert response.json() == {
-            "detail": "Start time and end time must have the same timezone"
-        }
-
-    def test_activity_date_mismatch(self, daytistics_client):
-        user = CustomUserFactory.create(is_active=True)
-        daytistic = DaytisticFactory.create(user=user, date=datetime.date(2024, 10, 3))
-
-        access_token = AccessToken.for_user(user)
-        daytistics_client.headers.update({"Authorization": f"Bearer {access_token}"})
-
-        start_time = "2024-10-04T09:00:00+02:00"
-        end_time = "2024-10-04T10:00:00+02:00"
-
-        response = daytistics_client.post(
-            f"{daytistic.pk}/add-activity/",
-            json={
-                "id": 1,
-                "start_time": start_time,
-                "end_time": end_time,
-            },
-        )
-
-        assert response.status_code == 422
-        assert response.json() == {"detail": "Activity date must match daytistic date"}
-
-    def test_start_time_after_end_time_corrected(self, daytistics_client):
-        user = CustomUserFactory.create(is_active=True)
-        daytistic = DaytisticFactory.create(user=user, date=datetime.date(2024, 10, 3))
         activity_type = ActivityTypeFactory.create()
 
         access_token = AccessToken.for_user(user)
         daytistics_client.headers.update({"Authorization": f"Bearer {access_token}"})
 
-        start_time = "2024-10-03T11:00:00+02:00"
-        end_time = "2024-10-03T10:00:00+02:00"
+        start_time = 60
+        end_time = 30
 
         response = daytistics_client.post(
             f"{daytistic.pk}/add-activity/",
@@ -462,63 +372,6 @@ class TestAddActivityToDaytistic:
 
         assert response.status_code == 422
         assert response.json() == {"detail": "Start time must be before end time"}
-
-    def test_overlapping_activity_corrected(self, daytistics_client):
-        user = CustomUserFactory.create(is_active=True)
-        daytistic = DaytisticFactory.create(user=user, date=datetime.date(2024, 10, 3))
-        activity_type = ActivityTypeFactory.create()
-
-        existing_activity = ActivityEntryFactory.create(
-            type=activity_type,
-            start_time=datetime.datetime(
-                2024, 10, 3, 9, 0, tzinfo=ZoneInfo("Europe/Athens")
-            ),
-            end_time=datetime.datetime(
-                2024, 10, 3, 10, 0, tzinfo=ZoneInfo("Europe/Athens")
-            ),
-        )
-        daytistic.activities.add(existing_activity)
-        daytistic.save()
-
-        access_token = AccessToken.for_user(user)
-        daytistics_client.headers.update({"Authorization": f"Bearer {access_token}"})
-
-        response = daytistics_client.post(
-            f"{daytistic.pk}/add-activity/",
-            json={
-                "id": activity_type.pk,
-                "start_time": existing_activity.start_time.isoformat(),
-                "end_time": existing_activity.end_time.isoformat(),
-            },
-        )
-
-        assert response.status_code == 422
-        assert response.json() == {"detail": "Activity overlaps with existing activity"}
-
-    def test_start_and_end_time_on_different_dates(self, daytistics_client):
-        user = CustomUserFactory.create(is_active=True)
-        daytistic = DaytisticFactory.create(user=user, date=datetime.date(2024, 10, 3))
-        activity_type = ActivityTypeFactory.create()
-
-        access_token = AccessToken.for_user(user)
-        daytistics_client.headers.update({"Authorization": f"Bearer {access_token}"})
-
-        start_time = "2024-10-03T23:00:00+02:00"
-        end_time = "2024-10-04T01:00:00+02:00"
-
-        response = daytistics_client.post(
-            f"{daytistic.pk}/add-activity/",
-            json={
-                "id": activity_type.pk,
-                "start_time": start_time,
-                "end_time": end_time,
-            },
-        )
-
-        assert response.status_code == 422
-        assert response.json() == {
-            "detail": "Start time and end time must be on the same date"
-        }
 
     def test_auth_failure(self, daytistics_client):
 

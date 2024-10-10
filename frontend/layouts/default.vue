@@ -1,5 +1,7 @@
 <template>
 
+  <button @click="checkIfTokenExpired">Check if token expired</button>
+
   <div class="flex flex-col min-h-screen">
     <Navbar />
 
@@ -26,6 +28,9 @@
 
 import { initDismisses } from 'flowbite';
 
+function checkIfTokenExpired() {
+  console.log(useAuth().isTokenExpired(useCookie("access_token").value as string));
+}
 
 onMounted(() => {
   useUserStore().initUser();

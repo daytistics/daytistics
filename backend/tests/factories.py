@@ -1,4 +1,7 @@
+import time
+from tracemalloc import start
 import factory
+import random
 from datetime import timedelta
 from faker import Faker
 from factory.django import DjangoModelFactory
@@ -11,11 +14,13 @@ from daytistics.activities.models import ActivityType, ActivityEntry, ActivityCa
 
 fake = Faker()
 
+
 class ActivityCategoryFactory(DjangoModelFactory):
     class Meta:
         model = ActivityCategory
 
     name = factory.LazyFunction(lambda: fake.word())
+
 
 class ActivityTypeFactory(DjangoModelFactory):
     class Meta:
@@ -24,7 +29,6 @@ class ActivityTypeFactory(DjangoModelFactory):
     name = factory.LazyFunction(lambda: fake.word())
     category = factory.SubFactory(ActivityCategoryFactory)
     active = True
-
 
 
 class CustomUserFactory(DjangoModelFactory):
@@ -60,7 +64,7 @@ class DaytisticFactory(DjangoModelFactory):
         model = Daytistic
 
     user = factory.SubFactory(CustomUserFactory)
-    date = factory.LazyFunction(timezone.now)
+    date = timezone.now().replace(hour=0, minute=0, second=0, microsecond=0)
 
     @factory.post_generation
     def activities(self, create, extracted, **kwargs):
@@ -86,8 +90,9 @@ class ActivityEntryFactory(DjangoModelFactory):
         model = ActivityEntry
 
     type = factory.SubFactory(ActivityTypeFactory)
-    start_time = factory.LazyFunction(lambda: timezone.now() - timedelta(hours=2))
-    end_time = factory.LazyFunction(lambda: timezone.now())
+
+    start_time = random.randint(0, 500)
+    end_time = random.randint(start_time, 1440)
 
 
 class WellbeingEntryFactory(DjangoModelFactory):

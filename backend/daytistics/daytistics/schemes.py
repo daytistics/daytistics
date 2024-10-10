@@ -1,4 +1,4 @@
-from typing import List, Optional
+from typing import List, Optional, NewType
 
 from ninja import Schema
 
@@ -34,8 +34,8 @@ class DaytisticsListResponse(Schema):
 
 class AddActivityEntryRequest(Schema):
     id: int
-    start_time: str
-    end_time: str
+    start_time: int
+    end_time: int
 
 
 class AddActivityEntryResponse(Schema):

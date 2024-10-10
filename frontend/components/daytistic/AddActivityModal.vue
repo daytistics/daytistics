@@ -99,40 +99,16 @@ const activityType = ref<number>(0);
 const startTime = ref<string>('00:00');
 const endTime = ref<string>('00:00');
 const errorMessage = ref<string>('');
-const modalElement = document.getElementById('add-activity-modal');
 
 // Receiving props
 const props = defineProps(['date']);
 
-/**
- * Converts time into the according time of the date including timezone
- * @param time Time in HH:MM format
- * @param date Date in ISO format
- * @example convertTimeToIsoString('12:00', '2008-01-21T00:00:00+01:00') => '2008-01-21T12:00:00+01:00'
- */
-function convertTimeToIsoString(time: string, date: string): string {
-  // Extract hours and minutes from the time string
-  const [hours, minutes] = time.split(':').map(Number);
-
-  // Create a new Date object based on the ISO date
-  const isoDate = new Date(date);
-
-  // Adjust the date's hours and minutes while considering the timezone
-  const timezoneOffset = isoDate.getTimezoneOffset();
-
-  // Set the hours and minutes
-  isoDate.setUTCHours(hours + timezoneOffset / 60);
-  isoDate.setUTCMinutes(minutes);
-
-  // Return the ISO string in the required format
-  return isoDate.toISOString().replace('Z', date.slice(-6));
-}
-
 async function handleSubmit() {
-  startTime.value = convertTimeToIsoString(startTime.value, props.date);
-  endTime.value = convertTimeToIsoString(endTime.value, props.date);
 
-  await addActivity();
+  const startTimeString = convert24toMinutes(startTime.value);
+  const endTimeString = convert24toMinutes(endTime.value);
+
+  await addActivity(startTimeString, endTimeString);
 }
 
 
@@ -147,6 +123,7 @@ const { addNew: addActivity } = useActivities();
 
 // Modal specific
 function closeModal() {
+  const modalElement = document.getElementById('add-activity-modal');
   const modal = new Modal(modalElement);
   modal.hide();
 }
@@ -159,7 +136,7 @@ onMounted(() => {
 // Reusable composables
 function useActivities() {
   {
-    const addNew = async () => {
+    const addNew = async (startTime: number, endTime: number) => {
       const id = useRoute().params.id;
       try {
         await $api(`/api/daytistics/${id}/add-activity/`, {
@@ -167,8 +144,14 @@ function useActivities() {
           method: 'POST',
           body: {
             id: activityType.value,
-            start_time: convertToUTC(startTime.value),
-            end_time: convertToUTC(endTime.value),
+            start_time: startTime,
+            end_time: endTime,
+          },
+          onResponse: ({ request, response, options }) => {
+            if (response.status === 201) {
+              emit('submit');
+              closeModal();
+            }
           },
           onResponseError: ({ request, response, options }) => {
             errorMessage.value = response._data.detail;

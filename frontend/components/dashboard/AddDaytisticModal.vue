@@ -95,7 +95,10 @@ const fourWeeksAgo = function () {
 async function handleSubmit() {
   const el = document.getElementById('create-daytistic-datepicker');
   const daytisticDatepicker = new Datepicker(el);
-  const dateString = new Date(daytisticDatepicker.getDate()).toISOString();
+
+
+  debugger;
+  const dateString = convertToIsoDate(daytisticDatepicker.getDate());
 
   try {
     await sendCreateDaytisticRequest(dateString.toString());

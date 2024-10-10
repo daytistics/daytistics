@@ -4,7 +4,10 @@ on:
   push:
     branches:
       - main
+<<<<<<< Updated upstream
       - rest-with-spa
+=======
+>>>>>>> Stashed changes
 
 permissions:
   contents: write

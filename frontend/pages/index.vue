@@ -28,32 +28,46 @@
       </div>
     </section>
 
+
+
     <!-- Pricing Section -->
     <section id="pricing" data-aos="fade-up" class="py-20 bg-gray-50">
       <div class="container mx-auto px-4">
-        <h2 class="text-3xl font-bold text-center text-gray-900 mb-12">Pricing</h2>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-          <div v-for="[index, plan] in pricingPlans.entries()" :key="plan.title"
-            class="bg-white rounded-lg shadow-md overflow-hidden">
-            <div class="p-6">
-              <h3 class="text-2xl font-semibold text-gray-900 mb-4">{{ plan.title }}</h3>
-              <p class="text-4xl font-bold text-gray-900 mb-6"><span>${{ plan.price }}</span><span
-                  class="text-lg font-normal text-gray-600">/mo</span></p>
-              <ul class="mb-6">
-                <li v-for="feature in plan.features" :key="feature" class="flex items-center mb-2">
-                  <CheckIcon v-if="feature.available" class="h-5 w-5 text-green-500 mr-2" />
-                  <X v-else class="h-5 w-5 text-red-500 mr-2" />
-                  <span class="text-gray-600">{{ feature.name }}</span>
-                </li>
-              </ul>
-            </div>
-            <div class="bg-gray-50 p-6">
-              <button type="button" @click="openPlanModal(index)" :disabled="!plan.available"
-                :class="{ 'cursor-not-allowed bg-secondary/60 hover:bg-secondary/60': !plan.available }"
-                class="block w-full text-center bg-secondary text-white px-4 py-2 rounded-full font-semibold hover:bg-secondary-dark transition duration-300 ease-in-out">
-                Choose
-                Plan</button>
-            </div>
+        <div class="flex flex-col md:flex-row items-center">
+          <div class="md:w-1/2 mb-8 md:mb-0">
+            <NuxtLink to="https://polar.sh/daytistics/donate">
+              <div
+                class="bg-gray-50 rounded-lg p-6 shadow-md hover:shadow-xl transition duration-300 ease-in-out flex flex-row items-center gap-4">
+                <Heart class="h-64 w-64 text-red-500" />
+                <div class="text-gray-900">
+                  <h3 class="text-2xl font-semibold mb-2">Donate to Us</h3>
+                  <p class="text-gray-900">
+                  <div class="flex flex-col gap-3">
+                    <span class="text-gray-900">Thanks to every donation, we can continue to improve Daytistics and
+                      provide better services to our users. Our current goal is to...
+                    </span>
+
+                    <h4 class="text-xl font-semibold text-gray-900">Cover the Expenses</h4>
+                    <div class="w-full text-gray-900 rounded-full dark:bg-gray-700">
+                      <div
+                        class="bg-red-600 text-xs font-medium text-blue-100 text-center p-0.5 leading-none rounded-full"
+                        style="width: 45%"> 45%</div>
+                    </div>
+                  </div>
+                  </p>
+                </div>
+              </div>
+            </NuxtLink>
+          </div>
+          <div class="md:w-1/2 md:pl-12">
+            <h2 class="text-3xl font-bold text-gray-900 mb-4">Pricing</h2>
+            <p class="text-gray-600 mb-6">At Daytistics, we're dedicated to helping individuals gain better insights
+              into their lives through self-reflection. By tracking daily activities and well-being, users can identify
+              patterns that lead to more informed decisions and improved well-being.</p>
+            <p class="text-gray-600 mb-6">Founded in 2024, we're still at the beginning of our journey. However, our
+              commitment to transparency, privacy, and open-source development ensures that every user has full control
+              over their data while we grow with the community.</p>
+
           </div>
         </div>
       </div>
@@ -101,16 +115,6 @@
                   founded Daytistics after creating a prototype CLI tool for personal use, realizing it could benefit
                   others as well.</p>
               </li>
-              <!-- <li class="mb-10 ms-4">
-                <div
-                  class="absolute w-3 h-3 bg-gray-200 rounded-full mt-1.5 -start-1.5 border border-white dark:border-gray-900 dark:bg-gray-700">
-                </div>
-                <time class="mb-1 text-sm font-normal leading-none text-gray-400 dark:text-gray-500">March 2022</time>
-                <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Marketing UI design in Figma</h3>
-                <p class="text-base font-normal text-gray-500 dark:text-gray-400">All of the pages and components are
-                  first designed in Figma and we keep a parity between the two versions even as we update the project.
-                </p>
-              </li> -->
               <li class="ms-4">
                 <div
                   class="absolute w-3 h-3 bg-gray-200 rounded-full mt-1.5 -start-1.5 border border-white dark:border-gray-900 dark:bg-gray-700">
@@ -143,7 +147,7 @@
 
 <script lang="ts" setup>
 import { ref } from 'vue';
-import { MenuIcon, XIcon, CheckIcon, Brain, ShieldIcon, UsersIcon, ActivitySquareIcon, Book, ChartColumnIcon, Server, X } from 'lucide-vue-next';
+import { MenuIcon, Heart, CheckIcon, Brain, ShieldIcon, UsersIcon, ActivitySquareIcon, Book, ChartColumnIcon, Server, X } from 'lucide-vue-next';
 
 const mobileMenuOpen = ref(false);
 const newsletterEmail = ref('');

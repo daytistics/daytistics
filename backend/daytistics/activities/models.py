@@ -5,15 +5,15 @@ class ActivityEntry(models.Model):
     type = models.ForeignKey(
         "ActivityType", on_delete=models.CASCADE, related_name="type"
     )
-    start_time = models.DateTimeField()
-    end_time = models.DateTimeField()
+    start_time = models.IntegerField()  # Time in minutes
+    end_time = models.IntegerField()  # Time in minutes
 
     @property
     def duration(self) -> int:
         """
         Returns the duration of the activity in minutes.
         """
-        return int((self.end_time - self.start_time).seconds / 60)
+        return self.end_time - self.start_time
 
 
 class ActivityCategory(models.Model):

@@ -29,13 +29,14 @@ router = Router()
     auth=JWTAuth(),
 )
 def create_daytistic(request, payload: CreateDaytisticRequest):
-    date_str = payload.date
 
     try:
-        date = datetime.fromisoformat(date_str)
-        now = datetime.now(date.tzinfo)
+        date = datetime.fromisoformat(payload.date)
+        now = datetime.now()
     except ValueError:
-        return 422, {"detail": "Invalid date format. Must be in ISO format"}
+        return 422, {
+            "detail": "Invalid date format. Must be in ISO format (YYYY-MM-DD)"
+        }
 
     if Daytistic.objects.filter(user=request.user, date=date).exists():
         return 409, {"detail": "Daytistic already exists"}
@@ -57,19 +58,11 @@ def create_daytistic(request, payload: CreateDaytisticRequest):
     auth=JWTAuth(),
 )
 @paginate(PageNumberPagination, page_size=5)
-def list_daytistics(
-    request,
-    timezone: str,
-):
+def list_daytistics(request):
     user = request.user
 
-    if timezone not in available_timezones():
-        return 400, {"detail": "Invalid timezone"}
-
-    zone_info = ZoneInfo(timezone)
-
     return [
-        build_daytistic_response(daytistic, zone_info)
+        build_daytistic_response(daytistic)
         for daytistic in Daytistic.objects.filter(user=user).order_by("-date")
     ]
 
@@ -77,19 +70,14 @@ def list_daytistics(
 @router.get(
     "{daytistic_id}", response={200: DaytisticResponse, 404: Message}, auth=JWTAuth()
 )
-def get_daytistic(request, daytistic_id: int, timezone: str):
-
-    try:
-        zone_info = ZoneInfo(str(timezone))
-    except ZoneInfoNotFoundError:
-        return 400, {"detail": "Invalid timezone"}
+def get_daytistic(request, daytistic_id: int):
 
     if not Daytistic.objects.filter(user=request.user, id=daytistic_id).exists():
         return 404, {"detail": "Daytistic not found"}
 
     daytistic = Daytistic.objects.get(id=daytistic_id)
 
-    return 200, build_daytistic_response(daytistic, zone_info)
+    return 200, build_daytistic_response(daytistic)
 
 
 @router.post(
@@ -101,42 +89,26 @@ def add_activity_to_daytistic(
     request, daytistic_id: int, payload: AddActivityEntryRequest
 ):
     activity_id = payload.id
-    try:
-        start_time = datetime.fromisoformat(payload.start_time)
-        end_time = datetime.fromisoformat(payload.end_time)
-        start_time_timezone = start_time.tzinfo
-        end_time_timezone = end_time.tzinfo
-    except ValueError:
-        print("Invalid date format. Must be in ISO format")
-        return 422, {"detail": "Invalid date format. Must be in ISO format"}
-
-    if start_time_timezone is None or end_time_timezone is None:
-        print("Timezone is required")
-        return 422, {"detail": "Timezone is required"}
-
-    if start_time_timezone != end_time_timezone:
-        print("Start time and end time must have the same timezone")
-        return 422, {"detail": "Start time and end time must have the same timezone"}
+    start_time = payload.start_time
+    end_time = payload.end_time
 
     if not Daytistic.objects.filter(user=request.user, id=daytistic_id).exists():
         return 404, {"detail": "Daytistic not found"}
 
     daytistic = Daytistic.objects.get(id=daytistic_id)
 
-    if daytistic.date != start_time.date():
-        print("Activity date must match daytistic date")
-        return 422, {"detail": "Activity date must match daytistic date"}
-
     if not ActivityType.objects.filter(pk=activity_id).exists():
         return 404, {"detail": "Activity not found"}
 
     activity_type = ActivityType.objects.get(id=activity_id)
 
-    if start_time.date() != end_time.date():
-        print("Start time and end time must be on the same date")
-        return 422, {"detail": "Start time and end time must be on the same date"}
+    if start_time < 0 or start_time > 1440:
+        return 422, {"detail": "Invalid start time"}
 
-    if start_time.timestamp() >= end_time.timestamp():
+    if end_time < 0 or end_time > 1440:
+        return 422, {"detail": "Invalid end time"}
+
+    if start_time >= end_time:
         print("Start time must be before end time")
         return 422, {"detail": "Start time must be before end time"}
 
@@ -146,11 +118,9 @@ def add_activity_to_daytistic(
         print("Activity overlaps with existing activity")
         return 422, {"detail": "Activity overlaps with existing activity"}
 
-    # Überprüfung auf Überlappung mit anderen Aktivitäten
-    overlapping = ActivityEntry.objects.filter(
+    if ActivityEntry.objects.filter(
         daytistics=daytistic, start_time__lt=end_time, end_time__gt=start_time
-    ).exists()
-    if overlapping:
+    ).exists():
         print("Activity overlaps with existing activity")
         return 422, {"detail": "Activity overlaps with existing activity"}
 
@@ -164,7 +134,6 @@ def add_activity_to_daytistic(
 
     return 201, {
         "activities": [
-            build_activity_response(activity, start_time_timezone)
-            for activity in daytistic.activities.all()
+            build_activity_response(activity) for activity in daytistic.activities.all()
         ]
     }

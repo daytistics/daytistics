@@ -2,30 +2,23 @@
 
 ## 🎨 Frontend
 
-Our frontend is built with TypeScript and Nuxt. We use Tailwind CSS and it's plugin Flowbite for styling. For the visualization of the data, we use Chart.js. Our JavaScript runtime is Bun.
+Our frontend is built with [TypeScript](https://typescriptlang.org) and [Nuxt](https://nuxt.com). We use [Tailwind CSS](https://tailwindcss.com/) and it's plugin [Flowbite](https://flowbite.com/) for styling. For the visualization of the data, we use [Chart.js](https://www.chartjs.org/). Our JavaScript runtime is [Bun](https://bun.sh/).
 
 ## 💻 Backend
 
-Our backend is built in Python with the Django framework. To provide a powerful REST API we use Django Ninja. The database is managed by PostgreSQL. We will use a large language model from a cloud provider but we are still in the process of deciding which one to use. Our Python packages are managed by Poetry.
+Our backend is built in [Python](https://www.python.org/) with the [Django framework](https://www.djangoproject.com/). To provide a powerful REST API we use [Django Ninja](https://django-ninja.dev/). While developing we use [SQLite](https://www.sqlite.org/) as our database. In production, we use [PostgreSQL](https://www.postgresql.org/). Our suggestions are based on a fine-tuned [Anthropic](https://www.anthropic.com/) [Claude](https://claude.ai) model. Our Python packages are managed by Poetry.
 
 ## 📄 Documentation
 
-Our documentation is written in Markdown and hosted on GitHub Pages. We use MkDocs to generate the documentation. 
+Our documentation is written in Markdown and hosted on GitHub Pages. We use [MkDocs](https://www.mkdocs.org/) to generate the documentation. 
 
 ## 🚀 Deployment
 
-Our deployment process is managed by GitHub Actions. We use Docker to containerize our application (we use Lando during development). Our application is hosted on a kernel-based virtual machine from AitchSystems.
+Our deployment process is managed by GitHub Actions. We use [Docker](https://www.docker.com/) to containerize our application. 
 
 ## 🖨️ Infrastructure
 
-The majority of our infrastructure is hosted on a kernel-based virtual machine from AitchSystems. As a cheap alternative to Heroku, we use a self-hosted Coolify instance to host our services. Our Llama 3 8B LLM model is hosted on a separate server from Groq. Our domain and email are also managed by AitchSystems.
+Our services, databases, webspace and domain are hosted on [AitchSystems](https://aitch.systems). We use a self-hosted [Coolify](https://coolify.io) instance as an easy-to-use and cheap PaaS. 
 
-### 💸 Expenses
 
-| Service                      | Costs       |
-| ---------------------------- | ----------- |
-| Kernel-based Virtual Machine | ≈25/month   |
-| Webspace                     | ≈2€/month   |
-| Domain                       | ≈2€/month   |
-| LLM                          | ≈100€/month |
-| **Total**                    | ≈130€/month |
+

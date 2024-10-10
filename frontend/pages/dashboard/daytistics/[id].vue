@@ -46,7 +46,7 @@
               <component :is="isEditingDiary ? X : Edit2" class="w-5 h-5 mr-1" />
               <span class="text-sm font-medium">{{
                 isEditingDiary ? 'Cancel' : 'Edit'
-                }}</span>
+              }}</span>
             </button>
           </div>
           <div class="bg-gray-50 p-6 rounded-lg shadow-sm">
@@ -143,17 +143,19 @@ const selectedActivity = ref(null);
 const auth = useAuth();
 const { $api } = useNuxtApp();
 
-async function fetchDaytistic(): Promise<Daytistic | any> {
+async function fetchDaytistic(): Promise<void> {
   const id = useRoute().params.id;
 
   try {
-    return await $api(`/api/daytistics/${id}`, {
+    const response = await $api(`/api/daytistics/${id}`, {
       server: false,
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
       },
     }) as Daytistic;
+
+    daytistic.value = response;
   } catch (error) {
     console.error('Error fetching daytistic:', error);
     useRouter().push('/dashboard/');
@@ -161,17 +163,21 @@ async function fetchDaytistic(): Promise<Daytistic | any> {
 }
 
 
-const formatTimeWindow = (startIso: string, endIso: string) => {
-  const startTime = new Date(startIso).toLocaleTimeString([], {
-    hour: '2-digit',
-    minute: '2-digit',
-  });
-  const endTime = new Date(endIso).toLocaleTimeString([], {
-    hour: '2-digit',
-    minute: '2-digit',
-  });
-  return `${startTime} - ${endTime}`;
-};
+/**
+ * 
+ * @param startTime a number between 0 and 1440
+ * @param endTime a number between 0 and 1440
+ * @returns a string in the format "HH:MM - HH:MM"
+ */
+function formatTimeWindow(startTime: number, endTime: number): string {
+  const startHours = Math.floor(startTime / 60);
+  const startMinutes = startTime % 60;
+  const endHours = Math.floor(endTime / 60);
+  const endMinutes = endTime % 60;
+  return `${startHours.toString().padStart(2, '0')}:${startMinutes.toString().padStart(2, '0')} - ${endHours
+    .toString()
+    .padStart(2, '0')}:${endMinutes.toString().padStart(2, '0')}`;
+}
 
 const formatDuration = (minutes) => {
   const hours = Math.floor(minutes / 60);
@@ -201,9 +207,6 @@ onBeforeMount(async () => {
 
 
   initModals();
-  const response: Daytistic = await fetchDaytistic();
-  console.debug("Daytistic", response);
-  daytistic.value = response;
-  console.debug("Daytistic", daytistic.value);
+  await fetchDaytistic();
 });
 </script>
