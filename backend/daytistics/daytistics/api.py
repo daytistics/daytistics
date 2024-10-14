@@ -1,6 +1,5 @@
-from datetime import datetime, timedelta
+from datetime import datetime
 from typing import List
-from zoneinfo import ZoneInfo, ZoneInfoNotFoundError, available_timezones
 
 from ninja import Router
 from ninja.pagination import paginate, PageNumberPagination
@@ -12,7 +11,6 @@ from .schemes import (
     DaytisticResponse,
     AddActivityEntryRequest,
     AddActivityEntryResponse,
-    DaytisticsListResponse,
 )
 from .models import Daytistic
 from .helpers import build_daytistic_response, build_activity_response
@@ -22,13 +20,27 @@ from ..activities.models import ActivityEntry, ActivityType
 router = Router()
 
 
-# TODO: Change from receiving date as string to ISO format UTC time
 @router.post(
-    "create/",
+    "create",
     response={201: CreateDaytisticResponse, 400: Message, 409: Message, 422: Message},
     auth=JWTAuth(),
 )
 def create_daytistic(request, payload: CreateDaytisticRequest):
+    """
+    POST-Endpoint to create a new Daytistic.
+
+    This endpoint creates a new Daytistic for the current user. It is protected by JWT authentication.
+
+    **Body:**
+        date: str - The date of the Daytistic in ISO format (YYYY-MM-DD)
+
+    **Response:**
+        201: CreateDaytisticResponse - The ID of the created Daytistic
+        400: Message - Date is in the future
+        409: Message - Daytistic already exists
+        422: Message - Invalid date format. Must be in ISO format (YYYY-MM-DD)
+        500: Message - Internal server error
+    """
 
     try:
         date = datetime.fromisoformat(payload.date)
@@ -40,9 +52,6 @@ def create_daytistic(request, payload: CreateDaytisticRequest):
 
     if Daytistic.objects.filter(user=request.user, date=date).exists():
         return 409, {"detail": "Daytistic already exists"}
-
-    if date < now - timedelta(weeks=4):
-        return 400, {"detail": "Date must be within the last 4 weeks"}
 
     if date > now:
         return 400, {"detail": "Date is in the future"}
@@ -59,6 +68,20 @@ def create_daytistic(request, payload: CreateDaytisticRequest):
 )
 @paginate(PageNumberPagination, page_size=5)
 def list_daytistics(request):
+    """
+    GET-Endpoint to list all Daytistics.
+
+    This endpoint lists all Daytistics for the current user. It is protected by JWT authentication. The Daytistics are paginated with a page size of 5.
+
+    **Query:**
+        - page: int - The page number to retrieve
+
+    **Response:**
+        200: List[DaytisticResponse] - A list of Daytistics
+        400: Message - Invalid page number
+        500: Message - Internal server error
+    """
+
     user = request.user
 
     return [
@@ -71,7 +94,15 @@ def list_daytistics(request):
     "{daytistic_id}", response={200: DaytisticResponse, 404: Message}, auth=JWTAuth()
 )
 def get_daytistic(request, daytistic_id: int):
+    """
+    GET-Endpoint to retrieve a single Daytistic.
 
+    This endpoint retrieves a single Daytistic for the current user by its ID. It is protected by JWT authentication.
+
+    **Response:**
+        DaytisticResponse - The Daytistic with the given ID
+
+    """
     if not Daytistic.objects.filter(user=request.user, id=daytistic_id).exists():
         return 404, {"detail": "Daytistic not found"}
 
@@ -81,7 +112,7 @@ def get_daytistic(request, daytistic_id: int):
 
 
 @router.post(
-    "{daytistic_id}/add-activity/",
+    "{daytistic_id}/add-activity",
     response={201: AddActivityEntryResponse, 404: Message, 422: Message},
     auth=JWTAuth(),
 )

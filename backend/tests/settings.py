@@ -1,4 +1,4 @@
-from daytistics.config.settings.prod import *
+from daytistics.core.settings.prod import *
 
 ALLOWED_HOSTS = ["*"]
 

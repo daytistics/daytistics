@@ -8,9 +8,9 @@ from ..daytistics.api import router as daytistics_router
 
 api = NinjaExtraAPI(
     csrf=True,
-    version="Pre-Release",
-    title="core-api",
-    description="API for interacting with the backend core of Daytistics",
+    version="0.1.0",
+    title="Backend API",
+    description="API for interacting with the Daytistics backend",
 )
 
 api.register_controllers(NinjaJWTDefaultController)
@@ -20,7 +20,19 @@ api.add_router("/daytistics/", daytistics_router)
 api.add_router("/activities/", activities_router)
 
 
-@api.get("csrf/", response={200: dict, 500: dict})
+@api.get("csrf", response={200: dict, 500: dict})
 def get_csrf_token(request):
+    """
+    GET-Endpoint to retrieve a CSRF token.
+
+    This endpoint generates and returns a CSRF token for the current session.
+    It responds with a JSON object containing the CSRF token.
+
+    **Response:**
+        JSON: A JSON object containing the CSRF token.
+               - 200: A json object containing the CSRF token.
+               - 500: Internal server error.
+    """
+
     csrf_token = get_token(request)
-    return 200, {"csrfToken": csrf_token}
+    return 200, {"csrf_token": csrf_token}

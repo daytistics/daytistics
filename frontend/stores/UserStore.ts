@@ -1,10 +1,9 @@
-import type { CookieRef } from '#app';
 import { defineStore } from 'pinia';
 
 export const useUserStore = defineStore({
     id: 'userStore',
     state: () => ({
-        loggedIn: false,
+        isLoggedIn: false,
         lastFetched: null as Date | null,
 
         // Values from the profile
@@ -21,7 +20,11 @@ export const useUserStore = defineStore({
         timeformat: '',
     }),
     actions: {
-        initUser(): void {},
+        update(): void {
+            this.isLoggedIn = !useAuth().isTokenExpired(
+                useCookie('access_token').value as string
+            );
+        },
 
         async fetchUser(): Promise<void> {
             this.lastFetched = new Date();
@@ -33,15 +36,12 @@ export const useUserStore = defineStore({
                         method: 'GET',
                         headers: {
                             'Content-Type': 'application/json',
-                            'X-CSRFToken': useCsrf().getToken(),
                             Authorization: `Bearer ${useCookie('access_token').value}`,
                         },
                     }
                 );
 
                 if (profileResponse.status === 200) {
-                    this.loggedIn = true;
-
                     const profileData = await profileResponse.json();
                     this.username = profileData.username;
                     this.email = profileData.email;

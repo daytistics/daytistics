@@ -28,7 +28,7 @@ class TestCreateDaytistic:
         date = datetime.datetime.now().date().isoformat()
 
         response = daytistics_client.post(
-            "create/",
+            "create",
             json={"date": date},
         )
         assert response.status_code == 201
@@ -43,7 +43,7 @@ class TestCreateDaytistic:
         daytistics_client.headers.update({"Authorization": f"Bearer {access_token}"})
 
         response = daytistics_client.post(
-            "create/",
+            "create",
             json={"date": "Lorem ipsum dolor sit amet"},
         )
         assert response.status_code == 422
@@ -61,28 +61,11 @@ class TestCreateDaytistic:
         date = datetime.datetime.now().date().isoformat()
 
         response = daytistics_client.post(
-            "create/",
+            "create",
             json={"date": date},
         )
         assert response.status_code == 409
         assert response.json() == {"detail": "Daytistic already exists"}
-
-    def test_auth_success_and_too_old_date(self, daytistics_client):
-        access_token = AccessToken.for_user(CustomUserFactory.create(is_active=True))
-        daytistics_client.headers.update({"Authorization": f"Bearer {access_token}"})
-
-        date = (
-            (datetime.datetime.now() - datetime.timedelta(weeks=5)).date().isoformat()
-        )
-
-        response = daytistics_client.post(
-            "create/",
-            json={
-                "date": date,
-            },
-        )
-        assert response.status_code == 400
-        assert response.json() == {"detail": "Date must be within the last 4 weeks"}
 
     def test_auth_success_and_date_in_future(self, daytistics_client):
         access_token = AccessToken.for_user(CustomUserFactory.create(is_active=True))
@@ -91,7 +74,7 @@ class TestCreateDaytistic:
         date = (datetime.datetime.now() + datetime.timedelta(days=2)).date().isoformat()
 
         response = daytistics_client.post(
-            "create/",
+            "create",
             json={
                 "date": date,
             },
@@ -101,7 +84,7 @@ class TestCreateDaytistic:
 
     def test_auth_failure(self, daytistics_client):
         response = daytistics_client.post(
-            "create/",
+            "create",
             json={
                 "date": (datetime.datetime.now() + datetime.timedelta(days=1))
                 .astimezone(ZoneInfo("UTC"))
@@ -227,7 +210,7 @@ class TestAddActivityToDaytistic:
         end_time = 70
 
         response = daytistics_client.post(
-            f"{daytistic.pk}/add-activity/",
+            f"{daytistic.pk}/add-activity",
             json={
                 "id": activity_type.pk,
                 "start_time": start_time,
@@ -269,7 +252,7 @@ class TestAddActivityToDaytistic:
         end_time = 60
 
         response = daytistics_client.post(
-            f"{daytistic.pk}/add-activity/",
+            f"{daytistic.pk}/add-activity",
             json={
                 "id": activity_type.pk,
                 "start_time": start_time,
@@ -308,7 +291,7 @@ class TestAddActivityToDaytistic:
         end_time = 40
 
         response = daytistics_client.post(
-            f"{daytistic.pk}/add-activity/",
+            f"{daytistic.pk}/add-activity",
             json={
                 "id": 9999,  # Non-existent activity ID
                 "start_time": start_time,
@@ -338,7 +321,7 @@ class TestAddActivityToDaytistic:
         daytistics_client.headers.update({"Authorization": f"Bearer {access_token}"})
 
         response = daytistics_client.post(
-            f"{daytistic.pk}/add-activity/",
+            f"{daytistic.pk}/add-activity",
             json={
                 "id": ActivityEntryFactory.create().type.pk,
                 "start_time": start_time,
@@ -362,7 +345,7 @@ class TestAddActivityToDaytistic:
         end_time = 30
 
         response = daytistics_client.post(
-            f"{daytistic.pk}/add-activity/",
+            f"{daytistic.pk}/add-activity",
             json={
                 "id": activity_type.pk,
                 "start_time": start_time,
@@ -378,7 +361,7 @@ class TestAddActivityToDaytistic:
         daytistic = DaytisticFactory.create()
 
         response = daytistics_client.post(
-            f"{daytistic.id}/add-activity/",
+            f"{daytistic.id}/add-activity",
             json={"id": 1, "start_time": 0, "end_time": 60},
         )
 

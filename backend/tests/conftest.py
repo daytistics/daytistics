@@ -15,7 +15,7 @@ fake = Faker()
 
 @pytest.fixture()
 def users_client():
-    from daytistics.config.api import users_router
+    from daytistics.core.api import users_router
 
     client = TestClient(users_router)
     return client
@@ -23,14 +23,14 @@ def users_client():
 
 @pytest.fixture()
 def daytistics_client():
-    from daytistics.config.api import daytistics_router
+    from daytistics.core.api import daytistics_router
 
     return TestClient(daytistics_router)
 
 
 @pytest.fixture()
 def activities_client():
-    from daytistics.config.api import activities_router
+    from daytistics.core.api import activities_router
 
     return TestClient(activities_router)
 

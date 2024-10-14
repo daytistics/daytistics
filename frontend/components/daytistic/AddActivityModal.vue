@@ -9,9 +9,8 @@
           <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
             Add New Activity
           </h3>
-          <button type="button"
-            class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
-            data-modal-toggle="add-activity-modal">
+          <button type="button" @click="useModal().closeModal"
+            class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white">
             <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
               <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                 d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
@@ -21,14 +20,13 @@
         </div>
 
         <!-- Modal body -->
-        <form class="p-4 md:p-5" @submit.prevent="handleSubmit">
+        <form class="p-4 md:p-5" @submit.prevent="form.submit">
           <div class="grid gap-4 mb-4 grid-cols-2">
             <div class="col-span-2">
               <label for="type" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">What activity did
                 you do that day?</label>
-              <select id="activity-type" v-model="activityType" required
+              <select id="activity-type" v-model="form.activityType.value" required
                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">
-                <option value="" disabled selected>Select an activity</option>
                 <option v-for="activity in activities" :key="activity.id" :value="activity.id">
                   {{ activity.name }}
                 </option>
@@ -46,7 +44,7 @@
                       clip-rule="evenodd" />
                   </svg>
                 </div>
-                <input type="time" id="start-time" v-model="startTime"
+                <input type="time" id="start-time" v-model="form.startTime.value"
                   class="bg-gray-50 border leading-none border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-green-500 dark:focus:border-green-500"
                   min="00:00" max="23:59" required />
               </div>
@@ -63,13 +61,13 @@
                       clip-rule="evenodd" />
                   </svg>
                 </div>
-                <input type="time" id="end-time" v-model="endTime"
+                <input type="time" id="end-time" v-model="form.endTime.value"
                   class="bg-gray-50 border leading-none border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-green-500 dark:focus:border-green-500"
-                  :min="startTime" max="23:59" value="00:00" required />
+                  :min="form.startTime as unknown as string" max="23:59" required />
               </div>
             </div>
           </div>
-          <p id="activity-error" class="text-red-500 text-sm mb-4">{{ errorMessage }}</p>
+          <p id="activity-error" class="text-red-500 text-sm mb-4">{{ form.errorMessage }}</p>
           <div class="flex justify-end md:justify-start">
             <button type="submit" class="inline-flex button bg-secondary hover:bg-secondary-dark items-center">
               <svg class="me-1 -ms-1 w-5 h-5" fill="currentColor" viewBox="0 0 20 20"
@@ -89,100 +87,107 @@
 
 <script lang="ts" setup>
 import { initModals, Modal } from 'flowbite';
-import type { ActivityType, ActivityEntry } from '~/interfaces/activities';
-import { convertToUTC } from '~/utils/time';
+import type { ActivityType } from '~/interfaces/activities';
 
-const { $api } = useNuxtApp();
-
-const activities = ref<ActivityType[]>([]);
-const activityType = ref<number>(0);
-const startTime = ref<string>('00:00');
-const endTime = ref<string>('00:00');
-const errorMessage = ref<string>('');
-
-// Receiving props
-const props = defineProps(['date']);
-
-async function handleSubmit() {
-
-  const startTimeString = convert24toMinutes(startTime.value);
-  const endTimeString = convert24toMinutes(endTime.value);
-
-  await addActivity(startTimeString, endTimeString);
-}
-
-
-// Activity fetching specific
-const { fetch: fetchActivities } = useActivities();
-
-
-// Activity adding specific
 const emit = defineEmits(['submit']);
-const { addNew: addActivity } = useActivities();
 
-
-// Modal specific
-function closeModal() {
-  const modalElement = document.getElementById('add-activity-modal');
-  const modal = new Modal(modalElement);
-  modal.hide();
-}
+const form = useForm();
+const { activities } = useActivitiesAPI();
 
 onMounted(() => {
   initModals();
-  fetchActivities();
 });
 
-// Reusable composables
-function useActivities() {
-  {
-    const addNew = async (startTime: number, endTime: number) => {
-      const id = useRoute().params.id;
-      try {
-        await $api(`/api/daytistics/${id}/add-activity/`, {
-          server: false,
-          method: 'POST',
-          body: {
-            id: activityType.value,
-            start_time: startTime,
-            end_time: endTime,
-          },
-          onResponse: ({ request, response, options }) => {
-            if (response.status === 201) {
-              emit('submit');
-              closeModal();
-            }
-          },
-          onResponseError: ({ request, response, options }) => {
-            errorMessage.value = response._data.detail;
-          },
-        });
+function useForm() {
 
-      } catch (error) {
-        console.error('Error creating activity:', error);
-      }
-    };
+  const { add } = useActivitiesAPI();
 
-    const fetch = async () => {
-      try {
-        const response = await $api(`/api/activities/`, {
-          server: false,
-          method: 'GET',
+  const activityType = ref<number>(0);
+  const startTime = ref<string>('00:00');
+  const endTime = ref<string>('00:00');
+  const errorMessage = ref<string>('');
 
-          onResponseError: ({ request, response, options }) => {
-            console.error('Error fetching activities:', response);
+  const submit = async () => {
+    const startTimeString = convert24toMinutes(startTime.value);
+    const endTimeString = convert24toMinutes(endTime.value);
+    await add(startTimeString, endTimeString);
+    useModal().closeModal();
+  };
+
+  const setError = (message: string) => {
+    errorMessage.value = message;
+  };
+
+  return { submit, setError, activityType, startTime, endTime, errorMessage };
+}
+
+function useModal() {
+  const modal = new Modal(document.getElementById('add-activity-modal'));
+
+  const closeModal = () => {
+    modal?.hide();
+  };
+
+  return { closeModal };
+}
+
+function useActivitiesAPI() {
+  const activities = ref<ActivityType[]>([]);
+  const { $api } = useNuxtApp();
+
+  const add = async (startTime: number, endTime: number) => {
+    const id = useRoute().params.id;
+    try {
+      await $api(`/api/daytistics/${id}/add-activity`, {
+        server: false,
+        method: 'POST',
+        body: {
+          id: form.activityType.value,
+          start_time: startTime,
+          end_time: endTime,
+        },
+        onResponse: ({ request, response, options }) => {
+          if (response.status === 201) {
+            emit('submit');
+            useModal().closeModal();
           }
-        });
+        },
+        onResponseError: ({ request, response, options }) => {
+          form.setError(response._data.detail);
+        },
+      });
 
-        activities.value = response as ActivityType[];
-        console.log('Activities fetched:', response);
-      } catch (error) {
-        console.error('Error fetching activities:', error);
-      }
-    };
+    } catch (error) {
+      console.error('Error creating activity:', error);
+    }
+  };
 
-    return { addNew, fetch };
-  }
+  const fetch = async () => {
+    try {
+      await $api(`/api/activities/`, {
+        server: false,
+        method: 'GET',
+
+        onResponse: async ({ request, response, options }) => {
+          activities.value = response._data;
+        },
+
+        onResponseError: ({ request, response, options }) => {
+          console.error('Error fetching activities:', response);
+        }
+      });
+
+    } catch (error) {
+      console.error('Error fetching activities:', error);
+    }
+  };
+
+  onMounted(async () => {
+    initModals();
+    await fetch();
+  });
+
+  return { add, fetch, activities };
 }
 </script>
 

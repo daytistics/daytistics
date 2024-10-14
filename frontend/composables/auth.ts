@@ -1,31 +1,41 @@
-import { parse } from 'vue/compiler-sfc';
+import { jwtDecode } from 'jwt-decode';
 
 export const useAuth = () => {
     async function verifyAuth() {
         const accessTokenCookie = useCookie('access_token');
+        let verified = false;
 
         if (!accessTokenCookie || typeof accessTokenCookie.value !== 'string') {
             return false;
         }
 
         try {
-            const response = await useFetch('/api/token/verify', {
+            await useFetch('/api/token/verify', {
                 server: true,
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'X-CSRFToken': useCsrf().getToken(),
+                    'X-CSRFToken': await obtainToken(),
                 },
                 body: {
                     token: accessTokenCookie.value,
                 },
+                onResponseError: ({ response }) => {
+                    if (response.status === 401) {
+                        verified = false;
+                    }
+                },
+                onResponse: ({ response }) => {
+                    if (response.status === 200) {
+                        verified = true;
+                    }
+                },
             });
         } catch (error) {
-            console.error('Failed to verify access token', error);
-            return false;
+            verified = false;
         }
 
-        return true;
+        return verified;
     }
 
     async function renewAuth() {
@@ -44,7 +54,7 @@ export const useAuth = () => {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'X-CSRFToken': useCsrf().getToken(),
+                    'X-CSRFToken': await obtainToken(),
                 },
                 body: JSON.stringify({ refresh: refreshTokenCookie.value }),
 
@@ -57,7 +67,6 @@ export const useAuth = () => {
                 },
             });
         } catch (error) {
-            console.error('Failed to renew access token', error);
             return false;
         }
 
@@ -73,9 +82,8 @@ export const useAuth = () => {
 
     function isTokenExpired(token: string): boolean {
         try {
-            const arrayToken = token.split('.');
-            const tokenPayload = JSON.parse(atob(arrayToken[1]));
-            return Math.floor(new Date().getTime() / 1000) >= tokenPayload?.sub;
+            const decoded = jwtDecode(token);
+            return (decoded.exp as number) < Date.now() / 1000;
         } catch (error) {
             return true;
         }

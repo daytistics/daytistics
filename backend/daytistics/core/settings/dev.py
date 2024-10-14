@@ -1,4 +1,4 @@
-from daytistics.config.settings.base import *
+from daytistics.core.settings.base import *
 
 # DJANGO SETTINGS
 

@@ -20,7 +20,7 @@
         </div>
 
         <!-- Modal body -->
-        <form class="p-4 md:p-5">
+        <form @submit.prevent="form.submit" class="p-4 md:p-5">
           <div class="grid gap-4 mb-4 grid-cols-2">
             <div class="col-span-2">
               <label for="type" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">What day are we
@@ -33,16 +33,14 @@
                       d="M20 4a2 2 0 0 0-2-2h-2V1a1 1 0 0 0-2 0v1h-3V1a1 1 0 0 0-2 0v1H6V1a1 1 0 0 0-2 0v1H2a2 2 0 0 0-2 2v2h20V4ZM0 18a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8H0v10Zm5-8h10a1 1 0 0 1 0 2H5a1 1 0 0 1 0-2Z" />
                   </svg>
                 </div>
-                <input datepicker id="create-daytistic-datepicker" type="text" datepicker-autohide
-                  :datepicker-max-date="todayMMDDYYYY" :value="todayMMDDYYYY" :datepicker-min-date="fourWeeksAgo"
-                  class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                  placeholder="Select date" required>
+                <ThirdpartyDatepicker />
               </div>
             </div>
           </div>
-          <p id="error" class="text-red-500 mb-3">{{ errorMessage }}</p>
-          <button type="button" class="inline-flex button bg-secondary hover:bg-secondary-dark items-center"
-            @click="handleSubmit">
+          <p id="error" class="text-red-500 mb-3">
+            {{ errorMessage }}
+          </p>
+          <button type="submit" class="inline-flex button bg-secondary hover:bg-secondary-dark items-center">
             <svg class="me-1 -ms-1 w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
               <path fill-rule="evenodd"
                 d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z"
@@ -57,87 +55,77 @@
 </template>
 
 <script lang="ts" setup>
-import { Datepicker, initDatepickers, initModals, Modal } from 'flowbite';
-const { $api } = useNuxtApp();
-
-const utils = useUtils();
+import { initModals, Modal } from 'flowbite';
 
 const emits = defineEmits(['close']);
 
-// ERROR MESSAGE
-const errorMessage = ref<string>('');
-
-
-
-// MODAL FUNCTIONS
-function closeModal() {
-  const modal = new Modal(document.getElementById('add-daytistic-modal'));
-  modal.hide();
-  emits('close');
-}
-
-
-// DATEPICKER FUNCTIONS
-const today = new Date();
-const todayMMDDYYYY = `${today.getMonth() + 1}/${today.getDate()}/${today.getFullYear()}`;
-
-const fourWeeksAgo = function () {
-  const date = new Date();
-  date.setDate(date.getDate() - 28);
-  const month = (date.getMonth() + 1).toString().padStart(2, '0');
-  const day = date.getDate().toString().padStart(2, '0');
-  const year = date.getFullYear();
-  return `${month}/${day}/${year}`;
-}();
-
-
-// SUBMIT FUNCTION
-async function handleSubmit() {
-  const el = document.getElementById('create-daytistic-datepicker');
-  const daytisticDatepicker = new Datepicker(el);
-
-
-  debugger;
-  const dateString = convertToIsoDate(daytisticDatepicker.getDate());
-
-  try {
-    await sendCreateDaytisticRequest(dateString.toString());
-  } catch (error: any) {
-    if (error instanceof TypeError) {
-      errorMessage.value = 'Please select a date';
-    }
-    return;
-  }
-}
-
-async function sendCreateDaytisticRequest(dateString: string): Promise<void> {
-
-  await $api('/api/daytistics/create/', {
-    server: false,
-    method: 'POST',
-    body: {
-      date: dateString,
-    },
-
-    onResponse: ({ request, response, options }) => {
-      if (response.status === 201) {
-        console.log("Success");
-        closeModal();
-        useRouter().push(`/dashboard/daytistics/${response._data.id}`);
-      }
-    },
-    onResponseError: ({ request, response, options }) => {
-      errorMessage.value = response._data.detail;
-    },
-  });
-}
-
+const { errorMessage, create: createDaytistic } = useDaytisticsCreationAPI();
+const form = useForm();
+const { closeModal } = useModal();
 
 onMounted(() => {
-  initDatepickers();
   initModals();
 });
 
-</script>
+function useForm() {
+  const date = useState<Date | null>('datepickerValue');
 
-<style></style>
+  const submit = async () => {
+
+    if (!date.value) {
+      errorMessage.value = 'Please select a date';
+      return;
+    }
+
+    await createDaytistic((date.value as Date).toISOString().split('T')[0]);
+  };
+
+  return { date, submit };
+}
+
+function useDaytisticsCreationAPI() {
+  const { $api } = useNuxtApp();
+  const errorMessage = ref<string>('');
+
+  const create = async (dateString: string) => {
+    await $api('/api/daytistics/create', {
+      server: false,
+      method: 'POST',
+      body: {
+        date: dateString,
+      },
+
+      onResponse: ({ request, response, options }) => {
+        if (response.status === 201) {
+          console.log('Success');
+          useRouter().push(
+            `/dashboard/daytistics/${response._data.id}`
+          );
+        }
+      },
+      onResponseError: ({ request, response, options }) => {
+        errorMessage.value = response._data.detail;
+      },
+    });
+  };
+
+  return { create, errorMessage };
+}
+function useModal() {
+  const modal = ref<Modal | null>(null);
+
+  const closeModal = () => {
+    if (modal.value) {
+      modal.value.hide();
+      emits('close');
+    }
+  };
+
+  onMounted(() => {
+    modal.value = new Modal(document.getElementById('add-daytistic-modal'));
+  });
+
+  return { modal, closeModal };
+}
+
+</script>

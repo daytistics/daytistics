@@ -89,28 +89,28 @@
         </div>
 
         <ul class="hidden md:flex flex-row justify-around align-middle items-center gap-3 p-5">
-          <li v-if="!isAuthenticated" :key="currentUrl">
+          <li v-if="!isLoggedIn" :key="currentUrl">
             <NuxtLink to="/auth/register">
               <button class="button bg-primary hover:bg-primary-dark">
                 Sign Up
               </button>
             </NuxtLink>
           </li>
-          <li v-if="!isAuthenticated" :key="currentUrl">
+          <li v-if="!isLoggedIn" :key="currentUrl">
             <NuxtLink to="/auth/login">
               <button class="button bg-primary hover:bg-primary-dark">
                 Log In
               </button>
             </NuxtLink>
           </li>
-          <li v-if="isAuthenticated && !currentUrl.includes('/dashboard')" :key="currentUrl">
+          <li v-if="isLoggedIn && !currentUrl.includes('/dashboard')" :key="currentUrl">
             <NuxtLink to="/dashboard">
               <button class="button bg-primary hover:bg-primary-dark">
                 Dashboard
               </button>
             </NuxtLink>
           </li>
-          <li v-else-if="isAuthenticated && currentUrl.includes('/dashboard')" :key="currentUrl + 'logout'">
+          <li v-else-if="isLoggedIn && currentUrl.includes('/dashboard')" :key="currentUrl + 'logout'">
             <button class="button bg-primary hover:bg-primary-dark" @click="logout">
               Log Out
             </button>
@@ -122,13 +122,13 @@
 </template>
 
 <script lang="ts" setup>
-import { initDrawers, initDropdowns } from 'flowbite';
-import { LogOut, X, FilePen, ChartNoAxesColumn, House, Brain, Settings, Telescope, BadgeDollarSignIcon, Server, Users2, Paperclip, LogIn } from 'lucide-vue-next';
+import { LogOut, X, FilePen, House, Settings, Telescope, Server, Users2, Paperclip, LogIn, Heart } from 'lucide-vue-next';
+
+const { removeAuth } = useAuth();
+const { isLoggedIn } = storeToRefs(useUserStore());
 
 const currentUrl = computed(() => useRoute().path);
 const navbarKey = ref<number>(0);
-const isAuthenticated = ref<boolean>(false);
-const { verifyAuth, removeAuth } = useAuth();
 
 const navbarLinksLoggedIn = [
   {
@@ -155,9 +155,9 @@ const navbarLinksLoggedOut = [
     icon: Telescope,
   },
   {
-    name: 'Pricing',
-    href: '/#pricing',
-    icon: BadgeDollarSignIcon,
+    name: 'Donate',
+    href: '/#donate',
+    icon: Heart,
   },
   {
     name: 'Self-Hosting',
@@ -178,13 +178,11 @@ const navbarLinksLoggedOut = [
 
 function logout() {
   removeAuth();
-  isAuthenticated.value = false;
+  const { update: updateUser } = useUserStore();
+  updateUser();
+  isLoggedIn.value = false;
 }
 
-onMounted(async () => {
-  isAuthenticated.value = await verifyAuth();
-  initDrawers();
-});
 </script>
 
 <style></style>

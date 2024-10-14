@@ -1,11 +1,13 @@
 <template>
 
-  <button @click="checkIfTokenExpired">Check if token expired</button>
+  <ErrorModal />
+  <InfoModal />
+
 
   <div class="flex flex-col min-h-screen">
     <Navbar />
 
-    <div id="early-stage" class="flex items-center p-4 text-green-800 rounded-lg bg-green-200" role="alert">
+    <!-- <div id="early-stage" class="flex items-center p-4 text-green-800 rounded-lg bg-green-200" role="alert">
       <svg class="flex-shrink-0 w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor"
         viewBox="0 0 20 20">
         <path
@@ -15,7 +17,7 @@
         Welcome to the proof of concept of Daytistics! Thank you for testing it out. We would love to hear your
         <NuxtLink to="/feedback" class="underline">feedback</NuxtLink>.
       </div>
-    </div>
+    </div> -->
 
     <div class="flex-1">
       <slot />
@@ -28,16 +30,40 @@
 
 import { initDismisses } from 'flowbite';
 
-function checkIfTokenExpired() {
-  console.log(useAuth().isTokenExpired(useCookie("access_token").value as string));
+const infoModalStore = useInfoModalStore();
+const { showInfoModal } = infoModalStore;
+
+function openInfoModal() {
+  const content = `
+    Hello! 👋 Welcome to Daytistics. <br>
+    We are really glad that you made it here. 
+    Unfortunately, you will not be able to log in or sign up as we are currently only online for development purposes.
+    <br>
+    We would love to meet you again on this page in a few months, if our project goes into production.
+    <br>
+    If you are interested in speeding up the process, you can contribute on <a target="_blank" href="https://github.com/daytistics/daytistics" class="text-primary">Github</a> or donate to our project.    
+    <br>
+    <br>
+    Thank you for your understanding and have a great day!
+    <br>
+    Yours, the Daytistics team.
+  `;
+  showInfoModal({
+    heading: 'Welcome to Daytistics!',
+    content,
+  });
 }
 
 onMounted(() => {
-  useUserStore().initUser();
+
+  if (useRoute().path === '/') {
+    openInfoModal();
+  }
+
+  const { update } = useUserStore();
+  update();
   initDismisses();
 });
 
 
 </script>
-
-<style></style>

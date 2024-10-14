@@ -1,9 +1,10 @@
+import type { build } from 'nuxt';
 import type { devtools } from 'vue';
 
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
-    ssr: false,
     compatibilityDate: '2024-04-03',
+    ssr: false,
     devtools: {
         enabled: true,
 
@@ -11,11 +12,22 @@ export default defineNuxtConfig({
             enabled: true,
         },
     },
+    build: {
+        transpile: ['@vuepic/vue-datepicker'],
+    },
     components: [
         { path: '~/components/daytistic', prefix: 'Daytistic' },
         { path: '~/components/dashboard', prefix: 'Dashboard' },
         '~/components',
     ],
+
+    runtimeConfig: {
+        public: {
+            imprintAddress: process.env.IMPRINT_ADDRESS,
+            imprintPublisher: process.env.IMPRINT_PUBLISHER,
+            imprintEmail: process.env.IMPRINT_EMAIL,
+        },
+    },
 
     modules: [
         '@nuxt/image',

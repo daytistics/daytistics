@@ -7,7 +7,6 @@ from django.utils.http import urlsafe_base64_encode
 
 from daytistics.users.tokens import account_activation_token
 from daytistics.users.models import CustomUser
-from daytistics.activities.models import ActivityType
 from tests.factories import CustomUserFactory
 
 
@@ -113,7 +112,7 @@ class TestRegisterView:
             "password1": password1,
             "password2": password2,
         }
-        response = users_client.post("register/", json=payload)
+        response = users_client.post("register", json=payload)
         assert response.json() == expected_json
         assert response.status_code == expected_status
 
@@ -192,7 +191,7 @@ class TestLoginView:
 
     def test_successful_login(self, users_client: TestClient, active_user):
         payload = {"email": active_user.email, "password": "password123"}
-        response = users_client.post("/login/", json=payload)
+        response = users_client.post("/login", json=payload)
 
         assert response.status_code == 200
         assert "accessToken" in response.json()
@@ -204,21 +203,21 @@ class TestLoginView:
 
     def test_login_with_incorrect_password(self, users_client: TestClient, active_user):
         payload = {"email": active_user.email, "password": "wrongpassword"}
-        response = users_client.post("/login/", json=payload)
+        response = users_client.post("/login", json=payload)
 
         assert response.status_code == 400
         assert response.json() == {"detail": "Invalid credentials."}
 
     def test_login_with_nonexistent_email(self, users_client: TestClient):
         payload = {"email": "nonexistent@example.com", "password": "password123"}
-        response = users_client.post("/login/", json=payload)
+        response = users_client.post("/login", json=payload)
 
         assert response.status_code == 404
         assert response.json() == {"detail": "User not found."}
 
     def test_login_with_inactive_user(self, users_client: TestClient, inactive_user):
         payload = {"email": inactive_user.email, "password": "password123"}
-        response = users_client.post("/login/", json=payload)
+        response = users_client.post("/login", json=payload)
 
         assert response.status_code == 400
         assert response.json() == {"detail": "Account is not activated."}
@@ -240,7 +239,7 @@ class TestLoginView:
         self, users_client: TestClient, email, password, expected_status, expected_json
     ):
         payload = {"email": email, "password": password}
-        response = users_client.post("/login/", json=payload)
+        response = users_client.post("/login", json=payload)
 
         assert response.status_code == expected_status
         assert response.json() == expected_json
@@ -252,7 +251,7 @@ class TestGetUserProfile:
     def test_auth_success(self, users_client: TestClient):
         user = CustomUserFactory.create(is_active=True)
         response = users_client.post(
-            "/login/", json={"email": user.email, "password": "password123"}
+            "/login", json={"email": user.email, "password": "password123"}
         )
         access_token = response.json()["accessToken"]
 

@@ -36,10 +36,13 @@ nav:
       - Code of Conduct: "developers/code-of-conduct.md"
       - Technology Stack: "developers/technology-stack.md"
       - Become a Contributor: "developers/become-a-contributor.md"
+      - Docs & Tutorials:
+          - Where are the Docs?: "developers/docs/where-are-the-docs.md"
 
 plugins:
   - search
   - social
+  - neoteroi.mkdocsoad
 
 markdown_extensions:
   - pymdownx.tasklist:
@@ -48,6 +51,11 @@ markdown_extensions:
       permalink: true
   - admonition
   - codehilite
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
 
 extra_css:
   - "styles/extra.css"

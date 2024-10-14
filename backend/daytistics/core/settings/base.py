@@ -1,7 +1,9 @@
 from pathlib import Path
 import os
 from dotenv import load_dotenv
-from daytistics.config.settings.constants import *
+from daytistics.core.settings.constants import *
+from datetime import timedelta
+
 
 load_dotenv()
 
@@ -13,9 +15,9 @@ SECRET_KEY = os.getenv("DJANGO_SECRET_KEY")
 
 ALLOWED_HOSTS = os.getenv("DJANGO_ALLOWED_HOSTS").split(", ")
 
-ROOT_URLCONF = "daytistics.config.urls"
+ROOT_URLCONF = "daytistics.core.urls"
 
-WSGI_APPLICATION = "daytistics.config.wsgi.application"
+WSGI_APPLICATION = "daytistics.core.wsgi.application"
 
 SITE_URL = "http://localhost:3000"
 
@@ -118,6 +120,10 @@ TEMPLATES = [
     },
 ]
 
+# JWT SETTINGS
+
+NINJA_JWT = {"ACCESS_TOKEN_LIFETIME": timedelta(seconds=20)}
+
 # STATIC FILES SETTINGS
 
 STATIC_URL = "static/"
@@ -134,6 +140,10 @@ INTERNAL_IPS = [
     "127.0.0.1",
 ]
 
+# LOADING ENVIRONMENT VARIABLES
+
+FRONTEND_URL = os.getenv("FRONTEND_URL")
+
 # INTERNATIONALIZATION SETTINGS
 
 LANGUAGE_CODE = "en-us"
@@ -149,3 +159,7 @@ USE_L10N = True
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 NPM_BIN_PATH = "/usr/bin/npm"
+
+CSRF_USE_SESSIONS = True
+
+CSRF_COOKIE_NAME = "csrf_token"

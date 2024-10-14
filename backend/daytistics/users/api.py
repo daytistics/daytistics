@@ -36,6 +36,7 @@
 #         return success_response(serializer.data, 200)
 
 from django.core.mail import EmailMessage
+from django.conf import settings
 from django.http import HttpRequest
 from django.template.loader import render_to_string
 from django.contrib.sites.shortcuts import get_current_site
@@ -85,7 +86,7 @@ def activate(request, uidb64: str, token: str):
         return 400, {"detail": "Activation link is invalid."}
 
 
-@router.post("register/", response={201: Message, 400: Message})
+@router.post("register", response={201: Message, 400: Message})
 def register(request, data: UserRegisterRequest):
     def _send_verification_email(user):
         mail_subject = "Activate your user account."
@@ -93,7 +94,7 @@ def register(request, data: UserRegisterRequest):
             "emails/account_activation.html",
             {
                 "username": user.username,
-                "domain": get_current_site(request).domain,
+                "domain": settings.FRONTEND_URL,
                 "uid": urlsafe_base64_encode(force_bytes(user.pk)),
                 "token": account_activation_token.make_token(user),
                 "protocol": "https" if request.is_secure() else "http",
@@ -107,20 +108,20 @@ def register(request, data: UserRegisterRequest):
     password1 = data.password1
     password2 = data.password2
 
-    if password1 != password2:
-        return 400, {"detail": "Passwords do not match."}
-
     if not is_valid_username(username):
         return 400, {"detail": "Invalid username."}
 
     if not is_valid_email(email):
         return 400, {"detail": "Invalid email."}
 
+    if CustomUser.objects.filter(email=email).exists():
+        return 400, {"detail": "User already exists."}
+
     if not is_valid_password(password1):
         return 400, {"detail": "Invalid or insecure password."}
 
-    if CustomUser.objects.filter(email=email).exists():
-        return 400, {"detail": "User already exists."}
+    if password1 != password2:
+        return 400, {"detail": "Passwords do not match."}
 
     user = CustomUser.objects.create_user(
         username=username, email=email, password=password1, is_active=False
@@ -134,7 +135,7 @@ def register(request, data: UserRegisterRequest):
     return 201, {"detail": "Please check your email to verify your account."}
 
 
-@router.post("login/", response={200: JwtTokensResponse, 400: Message, 404: Message})
+@router.post("login", response={200: JwtTokensResponse, 400: Message, 404: Message})
 def login(request, data: UserLoginRequest):
     email = data.email
     password = data.password

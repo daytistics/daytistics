@@ -15,22 +15,16 @@
             </h2>
             <ul class="text-lg space-y-4">
               <li>
-                <strong>Address</strong>
-                <p>Leo Gall<br />
-                  Föhrenweg 21<br />
-                  86926 Greifenberg<br />
-                  Germany</p>
+                <strong>Address<br /></strong>
+                <span v-for="item in imprintAddressItems">{{ item }}<br /></span>
               </li>
               <li>
                 <strong>Contact</strong>
-                <p>contact@daytistics.com</p>
+                <p>{{ imprintEmail }}</p>
               </li>
               <li>
-                <strong>Publisher</strong>
-                <p>Leo Gall<br />
-                  Föhrenweg 21<br />
-                  86926 Greifenberg<br />
-                  Germany</p>
+                <strong>Publisher<br /></strong>
+                <span v-for="item in imprintPublisherItems">{{ item }}<br /></span>
               </li>
             </ul>
           </div>
@@ -76,6 +70,9 @@
 </template>
 
 <script lang="ts" setup>
-</script>
+const config = useRuntimeConfig();
 
-<style></style>
+const imprintEmail = core.public.imprintEmail;
+const imprintPublisherItems = core.public.imprintPublisher.split(', ');
+const imprintAddressItems = core.public.imprintAddress.split(', ');
+</script>

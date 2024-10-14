@@ -27,8 +27,8 @@ export interface Daytistic {
             id: number;
             name: string;
             duration: number;
-            start_time: string;
-            end_time: string;
+            start_time: number;
+            end_time: number;
         },
     ];
     diary: {

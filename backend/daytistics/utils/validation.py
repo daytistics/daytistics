@@ -34,9 +34,5 @@ def is_valid_password(password: str) -> bool:
         bool: True if the password is valid, False otherwise.
     """
 
-    return bool(
-        re.match(
-            r"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$",
-            password,
-        )
-    )
+    password_regex = r"^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[#?!@$%^&*\-§]).{8,}$"
+    return bool(re.match(password_regex, password))

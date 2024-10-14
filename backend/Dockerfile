@@ -4,7 +4,7 @@ FROM python:3.12
 # Set environment variables
 ENV PYTHONUNBUFFERED=1 \
     PYTHONDONTWRITEBYTECODE=1 \
-    DJANGO_SETTINGS_MODULE=daytistics.config.settings.prod
+    DJANGO_SETTINGS_MODULE=daytistics.core.settings.prod
 
 # Set the working directory
 WORKDIR /app
@@ -34,12 +34,6 @@ RUN poetry install --no-dev --no-root
 # Copy the entire project
 COPY . /app/
 
-# Install Tailwind CSS (requires Node.js and npm)
-RUN python manage.py tailwind install --no-input;
-
-# Build Tailwind CSS
-RUN python manage.py tailwind build --no-input;
-
 # Collect static files
 RUN python manage.py collectstatic --no-input;
 
@@ -53,4 +47,4 @@ RUN python manage.py migrate --no-input;
 EXPOSE 8000
 
 # Start the application with Gunicorn
-CMD ["gunicorn", "--bind", "0.0.0.0:8000", "config.wsgi:application"]
+CMD ["gunicorn", "--bind", "0.0.0.0:8000", "core.wsgi:application"]

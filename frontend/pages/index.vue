@@ -31,42 +31,48 @@
 
 
     <!-- Pricing Section -->
-    <section id="pricing" data-aos="fade-up" class="py-20 bg-gray-50">
+    <section id="donate" data-aos="fade-up" class="py-20 bg-gray-50">
       <div class="container mx-auto px-4">
         <div class="flex flex-col md:flex-row items-center">
           <div class="md:w-1/2 mb-8 md:mb-0">
             <NuxtLink to="https://polar.sh/daytistics/donate">
               <div
-                class="bg-gray-50 rounded-lg p-6 shadow-md hover:shadow-xl transition duration-300 ease-in-out flex flex-row items-center gap-4">
+                class="bg-gray-100 rounded-lg p-6 shadow-md hover:shadow-xl transition duration-300 ease-in-out flex flex-row items-center gap-4">
                 <Heart class="h-64 w-64 text-red-500" />
                 <div class="text-gray-900">
                   <h3 class="text-2xl font-semibold mb-2">Donate to Us</h3>
-                  <p class="text-gray-900">
-                  <div class="flex flex-col gap-3">
-                    <span class="text-gray-900">Thanks to every donation, we can continue to improve Daytistics and
-                      provide better services to our users. Our current goal is to...
-                    </span>
+                  <div class="text-gray-900">
+                    <div class="flex flex-col gap-3">
+                      <span class="text-gray-900">Thanks to every donation, we can continue to improve Daytistics and
+                        provide better services to our users. Our current goal is to...
+                      </span>
 
-                    <h4 class="text-xl font-semibold text-gray-900">Cover the Expenses</h4>
-                    <div class="w-full text-gray-900 rounded-full dark:bg-gray-700">
-                      <div
-                        class="bg-red-600 text-xs font-medium text-blue-100 text-center p-0.5 leading-none rounded-full"
-                        style="width: 45%"> 45%</div>
+                      <h4 class="text-xl font-semibold text-gray-900">Cover the Expenses</h4>
+                      <div class="w-full text-gray-900 rounded-full bg-gray-200">
+                        <div
+                          class="bg-red-600 text-xs font-medium text-white text-center p-0.5 leading-none rounded-full"
+                          style="width: 45%"> 45%</div>
+                      </div>
                     </div>
                   </div>
-                  </p>
                 </div>
               </div>
             </NuxtLink>
           </div>
           <div class="md:w-1/2 md:pl-12">
-            <h2 class="text-3xl font-bold text-gray-900 mb-4">Pricing</h2>
-            <p class="text-gray-600 mb-6">At Daytistics, we're dedicated to helping individuals gain better insights
-              into their lives through self-reflection. By tracking daily activities and well-being, users can identify
-              patterns that lead to more informed decisions and improved well-being.</p>
-            <p class="text-gray-600 mb-6">Founded in 2024, we're still at the beginning of our journey. However, our
-              commitment to transparency, privacy, and open-source development ensures that every user has full control
-              over their data while we grow with the community.</p>
+            <h2 class="text-3xl font-bold text-gray-900 mb-4">Donate</h2>
+            <p class="text-gray-600 mb-6">
+
+              To keep Daytistics free for everyone, we rely on donations from our users. Your contribution helps us to
+              improve our services and cover the costs of running the platform. Every donation, no matter how small,
+              makes a difference.
+
+            </p>
+            <p class="text-gray-600 mb-6">If you decide to donate, you won't see any ads on the platform, and you'll
+              receive a special badge to show your support. We appreciate every donation and thank you for your
+              generosity.
+
+            </p>
 
           </div>
         </div>
@@ -149,10 +155,10 @@
 import { ref } from 'vue';
 import { MenuIcon, Heart, CheckIcon, Brain, ShieldIcon, UsersIcon, ActivitySquareIcon, Book, ChartColumnIcon, Server, X } from 'lucide-vue-next';
 
+const router = useRouter();
+
 const mobileMenuOpen = ref(false);
 const newsletterEmail = ref('');
-
-const router = useRouter();
 
 function openPlanModal(index: number) {
   alert(`Plan ${index + 1} selected`);
@@ -176,8 +182,8 @@ const features = [
   },
   {
     icon: Brain,
-    title: 'Predictor & Suggestor',
-    description: 'Use AI-powered tools to predict patterns and suggest improvements based on your tracked data.'
+    title: 'Suggestions',
+    description: 'Use AI-powered tools to suggest improvements based on your tracked data.'
   },
   {
     icon: UsersIcon,

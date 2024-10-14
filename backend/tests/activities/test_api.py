@@ -31,7 +31,7 @@ class TestListActivities:
     def authenticated_client(self, activities_client, users_client):
         user = CustomUserFactory.create(is_active=True)
         response = users_client.post(
-            "/login/", json={"email": user.email, "password": "password123"}
+            "/login", json={"email": user.email, "password": "password123"}
         )
         access_token = response.json()["accessToken"]
         activities_client.headers.update({"Authorization": f"Bearer {access_token}"})
