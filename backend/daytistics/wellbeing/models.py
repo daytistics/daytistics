@@ -2,8 +2,11 @@ from django.db import models
 from ..daytistics.models import Daytistic
 
 
-# Create your models here.
 class WellbeingEntry(models.Model):
+    """
+    Model representing a wellbeing entry. A wellbeing entry is a specific type of wellbeing that a user has rated on a specific day.
+    """
+
     daytistic = models.ForeignKey(
         Daytistic, on_delete=models.CASCADE, related_name="wellbeing_entries"
     )
@@ -13,6 +16,9 @@ class WellbeingEntry(models.Model):
     rating = models.IntegerField(default=5)
 
 
-# Wellbeing Type Model
 class WellbeingType(models.Model):
+    """
+    Model representing a wellbeing type. A wellbeing type is a specific type of wellbeing that a user can rate
+    """
+
     name = models.CharField(max_length=255)

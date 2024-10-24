@@ -7,9 +7,7 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
             !isTokenExpired(useCookie('refresh_token').value as string)
         ) {
             if (!(await renewAuth())) {
-                await useNuxtApp().runWithContext(() =>
-                    navigateTo('/auth/login')
-                );
+                await useNuxtApp().runWithContext(() => navigateTo('/login'));
                 return;
             }
         }

@@ -74,7 +74,7 @@ def list_daytistics(request):
     This endpoint lists all Daytistics for the current user. It is protected by JWT authentication. The Daytistics are paginated with a page size of 5.
 
     **Query:**
-        - page: int - The page number to retrieve
+        page: int - The page number to retrieve
 
     **Response:**
         200: List[DaytisticResponse] - A list of Daytistics
@@ -99,10 +99,15 @@ def get_daytistic(request, daytistic_id: int):
 
     This endpoint retrieves a single Daytistic for the current user by its ID. It is protected by JWT authentication.
 
-    **Response:**
-        DaytisticResponse - The Daytistic with the given ID
+    **Query:**
+        daytistic_id: int - The ID of the Daytistic to retrieve
 
+    **Response:**
+        200: DaytisticResponse - The Daytistic object as JSON
+        404: Message - Daytistic not found
+        500: Message - Internal server error
     """
+
     if not Daytistic.objects.filter(user=request.user, id=daytistic_id).exists():
         return 404, {"detail": "Daytistic not found"}
 
@@ -119,6 +124,26 @@ def get_daytistic(request, daytistic_id: int):
 def add_activity_to_daytistic(
     request, daytistic_id: int, payload: AddActivityEntryRequest
 ):
+    """
+    POST-Endpoint to add an Activity to a Daytistic.
+
+    This endpoint adds an Activity to a Daytistic for the current user. It is protected by JWT authentication.
+
+    **Path:**
+        daytistic_id: int - The ID of the Daytistic to add the Activity to
+
+    **Body:**
+        id: int - The ID of the Activity
+        start_time: int - The start time of the Activity in minutes since midnight
+        end_time: int - The end time of the Activity in minutes since midnight
+
+    **Response:**
+        201: AddActivityEntryResponse - A list of all Activities in the Daytistic
+        404: Message - Daytistic not found
+        422: Message - Invalid start time, end time, or Activity overlaps with existing Activity
+        500: Message - Internal server error
+    """
+
     activity_id = payload.id
     start_time = payload.start_time
     end_time = payload.end_time

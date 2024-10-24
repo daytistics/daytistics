@@ -1,4 +1,4 @@
-from typing import List, Optional, NewType
+from typing import List, Optional
 
 from ninja import Schema
 

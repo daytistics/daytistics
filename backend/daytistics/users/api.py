@@ -1,45 +1,6 @@
-# from django.http import HttpResponse
-# from django.shortcuts import render
-# from requests import Response
-# from rest_framework.views import APIView
-# from django.core.mail import EmailMessage
-# from django.template.loader import render_to_string
-# from django.contrib.sites.shortcuts import get_current_site
-# from django.utils.http import urlsafe_base64_encode
-# from django.utils.encoding import force_bytes
-# from daytistics.users.models import CustomUser
-# from django.shortcuts import redirect
-# from django.utils.encoding import force_str
-# from django.utils.http import urlsafe_base64_decode
-# from django.contrib.auth import get_user_model
-# from django.contrib.auth.models import User
-# from .tokens import account_activation_token
-# from daytistics.utils.validation import is_valid_email, is_valid_username, is_valid_password
-# from daytistics.utils.api import success_response, error_response
-# from rest_framework_simplejwt.authentication import JWTAuthentication
-# from rest_framework_simplejwt.tokens import RefreshToken, OutstandingToken
-# from .serializers import CustomUserSerializer
-# from django.utils import timezone
-
-
-# class CheckAuthView(APIView):
-#     authentication_classes = [JWTAuthentication]
-
-#     def get(self, request):
-#         return success_response({'message': 'You are authenticated!'}, 200)
-
-# class DataView(APIView):
-#     authentication_classes = [JWTAuthentication]
-
-#     def get(self, request):
-#         serializer = CustomUserSerializer(request.user)
-#         return success_response(serializer.data, 200)
-
 from django.core.mail import EmailMessage
 from django.conf import settings
-from django.http import HttpRequest
 from django.template.loader import render_to_string
-from django.contrib.sites.shortcuts import get_current_site
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes, force_str
 from django.contrib.auth import get_user_model
@@ -69,6 +30,19 @@ router = Router()
 
 @router.get("/activate/{uidb64}/{token}", response={200: Message, 400: Message})
 def activate(request, uidb64: str, token: str):
+    """
+    GET-Endpoint to activate a user account. This endpoint activates a user account using the provided activation link. It responds with a message indicating the success or failure of the activation.
+
+    **Path**:
+        uidb64: str - The user ID encoded in base64
+        token: str - The activation token
+
+    **Response**:
+        200: Message - Account activated successfully
+        400: Message - Activation link is invalid
+        500: Message - Internal server error
+    """
+
     User = get_user_model()
 
     try:
@@ -88,7 +62,29 @@ def activate(request, uidb64: str, token: str):
 
 @router.post("register", response={201: Message, 400: Message})
 def register(request, data: UserRegisterRequest):
+    """
+    POST-Endpoint to register a new user. This endpoint registers a new user with the provided data. It responds with a message indicating the success or failure of the registration.
+
+    **Body**:
+        username: str - The username of the user
+        email: str - The email of the user
+        password1: str - The password of the user
+        password2: str - The password confirmation
+
+    **Response**:
+        201: Message - Please check your email to verify your account.
+        400: Message - Invalid username, email, password, or passwords do not match.
+        500: Message - Internal server error
+    """
+
     def _send_verification_email(user):
+        """
+        Send a verification email to the user.
+
+        Args:
+            user (CustomUser): The user to send the verification email to.
+        """
+
         mail_subject = "Activate your user account."
         message = render_to_string(
             "emails/account_activation.html",
@@ -137,6 +133,20 @@ def register(request, data: UserRegisterRequest):
 
 @router.post("login", response={200: JwtTokensResponse, 400: Message, 404: Message})
 def login(request, data: UserLoginRequest):
+    """
+    POST-Endpoint to log in a user. This endpoint logs in a user with the provided credentials. It responds with JWT tokens if the login is successful.
+
+    **Body**:
+        email: str - The email of the user
+        password: str - The password of the user
+
+    **Response**:
+        200: JwtTokensResponse - The JWT tokens
+        400: Message - Email and password are required, invalid email, or invalid credentials
+        404: Message - User not found
+        500: Message - Internal server error
+    """
+
     email = data.email
     password = data.password
 
@@ -160,7 +170,7 @@ def login(request, data: UserLoginRequest):
 
         refresh = RefreshToken.for_user(user)
         return 200, {
-            "accessToken": str(refresh.access_token),
+            "accessToken": str(refresh.access_token),  # type: ignore
             "refreshToken": str(refresh),
         }
 
@@ -169,6 +179,14 @@ def login(request, data: UserLoginRequest):
 
 @router.get("/profile", response={200: UserProfileResponse}, auth=JWTAuth())
 def get_user_profile(request):
+    """
+    GET-Endpoint to retrieve the user profile. This endpoint returns the profile of the current user. It is protected by JWT authentication.
+
+    **Response**:
+        200: UserProfileResponse - The user profile
+        500: Message - Internal server error
+    """
+
     user = request.user
     profile = {
         "username": user.username,

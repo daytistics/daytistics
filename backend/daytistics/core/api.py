@@ -29,9 +29,8 @@ def get_csrf_token(request):
     It responds with a JSON object containing the CSRF token.
 
     **Response:**
-        JSON: A JSON object containing the CSRF token.
-               - 200: A json object containing the CSRF token.
-               - 500: Internal server error.
+        200: dict - A JSON object containing the CSRF token
+        500: dict - Internal server error
     """
 
     csrf_token = get_token(request)

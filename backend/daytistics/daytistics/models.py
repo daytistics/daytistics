@@ -27,8 +27,12 @@ class Daytistic(models.Model):
     @property
     def total_duration(self):
         """
-        Returns the total duration of all activities in the daytistic.
+        Calculate the total duration of all activities in the daytistic.
+
+        Returns:
+            int: The total duration of all activities in the daytistic
         """
+
         return sum(activity.duration for activity in self.activities.all())
 
     def __str__(self):

@@ -1,8 +1,11 @@
+import { meta } from 'eslint-plugin-prettier';
+import { name } from 'eslint-plugin-prettier/recommended';
 import type { build } from 'nuxt';
 import type { devtools } from 'vue';
 
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
+    // NUXT CONFIGURATION
     compatibilityDate: '2024-04-03',
     ssr: false,
     devtools: {
@@ -12,9 +15,11 @@ export default defineNuxtConfig({
             enabled: true,
         },
     },
+
     build: {
         transpile: ['@vuepic/vue-datepicker'],
     },
+
     components: [
         { path: '~/components/daytistic', prefix: 'Daytistic' },
         { path: '~/components/dashboard', prefix: 'Dashboard' },
@@ -29,14 +34,9 @@ export default defineNuxtConfig({
         },
     },
 
-    modules: [
-        '@nuxt/image',
-        '@nuxtjs/tailwindcss',
-        '@nuxt/test-utils/module',
-        '@pinia/nuxt',
-        'nuxt-aos',
-    ],
+    css: ['~/assets/css/fonts.css', '~/assets/css/tailwind.css'],
 
+    // NITRO CONFIGURATION
     nitro: {
         devProxy: {
             '/api': {
@@ -46,7 +46,16 @@ export default defineNuxtConfig({
         },
     },
 
+    // MODULES & MODULE CONFIGURATION
+    modules: [
+        '@nuxt/image',
+        '@nuxtjs/tailwindcss',
+        '@nuxt/test-utils/module',
+        '@pinia/nuxt',
+        'nuxt-aos',
+    ],
+
     image: {
-        dir: 'assets/graphics',
+        dir: 'assets/media',
     },
 });

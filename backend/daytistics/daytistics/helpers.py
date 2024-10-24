@@ -8,6 +8,14 @@ from ..activities.models import ActivityEntry
 def build_daytistic_response(
     daytistic: Daytistic,
 ) -> dict:
+    """
+    Build a response schema for a Daytistic. This function takes a Daytistic object and returns a dictionary with the response schema.
+
+    Args:
+        daytistic (Daytistic): The Daytistic object to build the response schema for.
+    Returns:
+        dict: The response schema for the Daytistic.
+    """
 
     user = CustomUser.objects.get(id=daytistic.user.pk)
 
@@ -66,6 +74,15 @@ def build_daytistic_response(
 
 
 def build_activity_response(activity: ActivityEntry) -> Dict[str, Union[int, str]]:
+    """
+    Build a response schema for an ActivityEntry. This function takes an ActivityEntry object and returns a dictionary with the response schema.
+
+    Args:
+        activity (ActivityEntry): The ActivityEntry object to build the response schema for.
+
+    Returns:
+        Dict[str, Union[int, str]]: The response schema for the ActivityEntry.
+    """
 
     return {
         "id": activity.pk,

@@ -38,6 +38,7 @@ nav:
       - Become a Contributor: "developers/become-a-contributor.md"
       - Docs & Tutorials:
           - Where are the Docs?: "developers/docs/where-are-the-docs.md"
+          - How to Write a Docstring?: "developers/docs/how-to-write-a-docstring.md"
 
 plugins:
   - search

@@ -7,14 +7,10 @@ export default defineNuxtPlugin((nuxtApp) => {
             const accessTokenCookie = useCookie('access_token');
             const { renewAuth, isTokenExpired } = useAuth();
 
-            if (useRoute().path.includes('dashboard')) {
-                if (isTokenExpired(accessTokenCookie.value as string)) {
-                    if (!(await renewAuth())) {
-                        await nuxtApp.runWithContext(() =>
-                            navigateTo('/auth/login')
-                        );
-                        return;
-                    }
+            if (isTokenExpired(accessTokenCookie.value as string)) {
+                if (!(await renewAuth())) {
+                    await nuxtApp.runWithContext(() => navigateTo('/login'));
+                    return;
                 }
             }
 
@@ -44,7 +40,7 @@ export default defineNuxtPlugin((nuxtApp) => {
 
         async onResponseError({ response }) {
             if (response.status === 401) {
-                await nuxtApp.runWithContext(() => navigateTo('/auth/login'));
+                await nuxtApp.runWithContext(() => navigateTo('/login'));
             }
         },
     });

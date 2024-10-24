@@ -1,11 +1,13 @@
 from pathlib import Path
 import os
 from dotenv import load_dotenv
-from daytistics.core.settings.constants import *
 from datetime import timedelta
+
+from daytistics.core.settings.constants import *
 
 
 load_dotenv()
+
 
 # DJANGO SETTINGS
 
@@ -13,7 +15,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
 SECRET_KEY = os.getenv("DJANGO_SECRET_KEY")
 
-ALLOWED_HOSTS = os.getenv("DJANGO_ALLOWED_HOSTS").split(", ")
+ALLOWED_HOSTS = str(os.getenv("DJANGO_ALLOWED_HOSTS")).split(", ")
 
 ROOT_URLCONF = "daytistics.core.urls"
 
@@ -74,7 +76,6 @@ ACCOUNT_USERNAME_REQUIRED = True
 ACCOUNT_SIGNUP_PASSWORD_ENTER_TWICE = False
 ACCOUNT_LOGIN_ON_EMAIL_CONFIRMATION = True
 
-
 AUTH_USER_MODEL = "users.CustomUser"
 
 AUTHENTICATION_BACKENDS = [
@@ -96,6 +97,16 @@ AUTH_PASSWORD_VALIDATORS = [
         "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
     },
 ]
+
+NINJA_JWT = {"ACCESS_TOKEN_LIFETIME": timedelta(seconds=20)}
+
+
+# CSRF SETTINGS
+
+CSRF_USE_SESSIONS = True
+
+CSRF_COOKIE_NAME = "csrf_token"
+
 
 # TEMPLATE SETTINGS
 
@@ -119,10 +130,6 @@ TEMPLATES = [
         },
     },
 ]
-
-# JWT SETTINGS
-
-NINJA_JWT = {"ACCESS_TOKEN_LIFETIME": timedelta(seconds=20)}
 
 # STATIC FILES SETTINGS
 
@@ -159,7 +166,3 @@ USE_L10N = True
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 NPM_BIN_PATH = "/usr/bin/npm"
-
-CSRF_USE_SESSIONS = True
-
-CSRF_COOKIE_NAME = "csrf_token"

@@ -1,10 +1,8 @@
-import json
-import os
-
 from django.conf import settings
 from django.apps import AppConfig
 
 
+# TODO: ActivityTypes should be created if the user makes a input and it'S not similar to the existing ones. That means, that this function won't be used in the future.
 class ActivitiesConfig(AppConfig):
     default_auto_field = "django.db.models.BigAutoField"
     name = "daytistics.activities"
