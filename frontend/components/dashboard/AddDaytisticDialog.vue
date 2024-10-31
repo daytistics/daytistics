@@ -132,7 +132,10 @@
                                 />
                             </svg>
                         </div>
-                        <CommonDatepicker class="w-fit" />
+                        <CommonDatepicker
+                            @update="form.handleDateUpdate"
+                            class="w-fit"
+                        />
                     </div>
                 </div>
             </div>
@@ -165,7 +168,7 @@
 </template>
 
 <script lang="ts" setup>
-const emits = defineEmits(['close']);
+const emit = defineEmits(['close']);
 
 const props = defineProps<{
     open: boolean;
@@ -176,16 +179,16 @@ const form = useForm();
 
 const isOpen = ref(false);
 
+function closeDialog() {
+    emit('close');
+}
+
 onUpdated(() => {
     isOpen.value = props.open;
 });
 
-function closeDialog() {
-    emits('close');
-}
-
 function useForm() {
-    const date = useState<Date | null>('datepickerValue');
+    const date = ref<Date | null>(null);
 
     const submit = async () => {
         if (!date.value) {
@@ -196,7 +199,11 @@ function useForm() {
         await createDaytistic((date.value as Date).toISOString().split('T')[0]);
     };
 
-    return { date, submit };
+    const handleDateUpdate = (newDate: Date) => {
+        date.value = newDate;
+    };
+
+    return { date, submit, handleDateUpdate };
 }
 
 function useDaytisticsCreationAPI() {

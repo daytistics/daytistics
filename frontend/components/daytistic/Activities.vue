@@ -1,4 +1,9 @@
 <template>
+    <DaytisticAddActivityDialog
+        :open="isAddingActivity"
+        @close="isAddingActivity = false"
+    />
+
     <div v-if="daytistic">
         <div class="flex items-center mb-6">
             <h2
@@ -8,9 +13,7 @@
                 Activities
             </h2>
             <button
-                data-modal-target="add-activity-modal"
-                data-modal-show="add-activity-modal"
-                @click="openModal"
+                @click="isAddingActivity = true"
                 class="text-indigo-600 hover:text-indigo-800 flex items-center transition duration-150 ease-in-out"
             >
                 <Plus class="w-5 h-5 mr-1" />
@@ -66,6 +69,8 @@ import type { Daytistic } from '~/types/daytistics';
 const props = defineProps<{
     daytistic: Daytistic;
 }>();
+
+const isAddingActivity = ref(false);
 
 function formatTimeWindow(startTime: number, endTime: number): string {
     const startHours = Math.floor(startTime / 60);

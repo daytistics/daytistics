@@ -6,8 +6,6 @@ from datetime import timedelta
 from daytistics.core.settings.constants import *
 
 
-load_dotenv()
-
 
 # DJANGO SETTINGS
 
@@ -15,13 +13,13 @@ BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
 SECRET_KEY = os.getenv("DJANGO_SECRET_KEY")
 
-ALLOWED_HOSTS = str(os.getenv("DJANGO_ALLOWED_HOSTS")).split(", ")
+ALLOWED_HOSTS = str(os.getenv("DJANGO_ALLOWED_HOSTS")).split(",")
 
 ROOT_URLCONF = "daytistics.core.urls"
 
 WSGI_APPLICATION = "daytistics.core.wsgi.application"
 
-SITE_URL = "http://localhost:3000"
+SITE_URL = "http://127.0.0.1:8000"
 
 TESTING = False
 

@@ -1,6 +1,8 @@
 import { jwtDecode } from 'jwt-decode';
 
 export const useAuth = () => {
+    const { $api } = useNuxtApp();
+
     async function verifyAuth() {
         const accessTokenCookie = useCookie('access_token');
         let verified = false;
@@ -10,21 +12,18 @@ export const useAuth = () => {
         }
 
         try {
-            await useFetch('/api/token/verify', {
-                server: true,
+            await $api('/api/token/verify', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRFToken': await obtainToken(),
-                },
                 body: {
                     token: accessTokenCookie.value,
                 },
+
                 onResponseError: ({ response }) => {
                     if (response.status === 401) {
                         verified = false;
                     }
                 },
+
                 onResponse: ({ response }) => {
                     if (response.status === 200) {
                         verified = true;
@@ -41,21 +40,9 @@ export const useAuth = () => {
     async function renewAuth() {
         const refreshTokenCookie = useCookie('refresh_token');
 
-        if (
-            !refreshTokenCookie ||
-            typeof refreshTokenCookie.value !== 'string'
-        ) {
-            return false;
-        }
-
         try {
-            const response = await useFetch('/api/token/refresh', {
-                server: true,
+            await $api('/api/token/refresh', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRFToken': await obtainToken(),
-                },
                 body: JSON.stringify({ refresh: refreshTokenCookie.value }),
 
                 onResponse: ({ response }) => {

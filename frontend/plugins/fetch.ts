@@ -1,51 +1,43 @@
 // FIXME; Why the fuck says the server sometimes that the access token is invalid, even though it was renewed 2ms before?????
 
 export default defineNuxtPlugin((nuxtApp) => {
-    const api = $fetch.create({
-        baseURL: process.env.BACKEND_URL,
-        async onRequest({ request, options, error }) {
-            const accessTokenCookie = useCookie('access_token');
-            const { renewAuth, isTokenExpired } = useAuth();
+    const api = 0; // $fetch.create({
+    //     baseURL: `${useRuntimeConfig().public.backendUrl}`,
+    //     credentials: 'include',
+    //     async onRequest({ options }) {
+    //         const accessTokenCookie = useCookie('access_token');
+    //         const { renewAuth, isTokenExpired } = useAuth();
+    //         const { obtainToken } = useCsrf();
 
-            if (isTokenExpired(accessTokenCookie.value as string)) {
-                if (!(await renewAuth())) {
-                    await nuxtApp.runWithContext(() => navigateTo('/login'));
-                    return;
-                }
-            }
+    //         if (!useCookie('csrf_token').value) {
+    //             await obtainToken();
+    //         }
 
-            const csrfToken = await obtainToken();
+    //         if (useCookie('refresh_token').value) {
+    //             if (isTokenExpired(accessTokenCookie.value as string)) {
+    //                 if (!(await renewAuth())) {
+    //                     await nuxtApp.runWithContext(() =>
+    //                         navigateTo('/login')
+    //                     );
+    //                     return;
+    //                 }
+    //             }
+    //             headers.set(
+    //                 'Authorization',
+    //                 `Bearer ${accessTokenCookie.value}`
+    //             );
+    //         }
+    //     },
 
-            console.log('CSRF token:', csrfToken);
+    //     async onResponseError({ response, options }) {
+    //         if (response.status == 401) {
+    //             useCookie('access_token').value = null;
+    //             useCookie('refresh_token').value = null;
+    //             await nuxtApp.runWithContext(() => navigateTo('/login'));
+    //         }
+    //     },
+    // });
 
-            // Add the access token to the request
-            const headers = (options.headers ||= {});
-            if (Array.isArray(headers)) {
-                headers.push([
-                    'Authorization',
-                    `Bearer ${accessTokenCookie.value}`,
-                ]);
-                headers.push(['X-CSRFToken', csrfToken as string]);
-            } else if (headers instanceof Headers) {
-                headers.set(
-                    'Authorization',
-                    `Bearer ${accessTokenCookie.value}`
-                );
-                headers.set('X-CSRFToken', csrfToken as string);
-            } else {
-                headers.Authorization = `Bearer ${accessTokenCookie.value}`;
-                headers['X-CSRFToken'] = csrfToken as string;
-            }
-        },
-
-        async onResponseError({ response }) {
-            if (response.status === 401) {
-                await nuxtApp.runWithContext(() => navigateTo('/login'));
-            }
-        },
-    });
-
-    // Expose to useNuxtApp().$api
     return {
         provide: {
             api,

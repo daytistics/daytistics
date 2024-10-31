@@ -28,23 +28,31 @@ export default defineNuxtConfig({
 
     runtimeConfig: {
         public: {
+            backendUrl: process.env.BACKEND_URL,
             imprintAddress: process.env.IMPRINT_ADDRESS,
             imprintPublisher: process.env.IMPRINT_PUBLISHER,
             imprintEmail: process.env.IMPRINT_EMAIL,
         },
     },
 
-    css: ['~/assets/css/fonts.css', '~/assets/css/tailwind.css'],
-
     // NITRO CONFIGURATION
     nitro: {
         devProxy: {
             '/api': {
-                target: 'http://127.0.0.1:8000/api',
+                target: `${process.env.BACKEND_URL}/api`,
                 changeOrigin: true,
+                prependPath: true,
             },
         },
     },
+
+    app: {
+        head: {
+            link: [{ rel: 'icon', type: 'image/x-icon', href: '/favicon.png' }],
+        },
+    },
+
+    css: ['~/assets/css/fonts.css', '~/assets/css/tailwind.css'],
 
     // MODULES & MODULE CONFIGURATION
     modules: [
@@ -53,6 +61,7 @@ export default defineNuxtConfig({
         '@nuxt/test-utils/module',
         '@pinia/nuxt',
         'nuxt-aos',
+        // '@sidebase/nuxt-auth',
     ],
 
     image: {

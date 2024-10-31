@@ -23,4 +23,8 @@ definePageMeta({
 onMounted(async () => {
     await userStore.fetchUser();
 });
+
+useHead({
+    title: 'Daytistics • Dashboard',
+});
 </script>

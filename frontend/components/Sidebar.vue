@@ -26,10 +26,10 @@
             </NuxtLink>
 
             <NuxtLink
-                to="/family"
+                to="/chat"
                 class="p-1.5 text-gray-700 focus:outline-nones transition-colors duration-200 rounded-lg dark:text-gray-200 dark:hover:bg-gray-800 hover:bg-gray-100"
             >
-                <Users class="w-6 h-6" />
+                <MessageCircleCode class="w-6 h-6" />
             </NuxtLink>
         </nav>
 
@@ -63,6 +63,8 @@ import {
     Home,
     LogOut,
     LucideHouse,
+    MessageCircleCode,
+    MessageSquare,
     Settings,
     ShieldAlert,
     Users,

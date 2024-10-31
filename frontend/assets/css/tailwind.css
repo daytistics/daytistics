@@ -9,4 +9,7 @@
     .card {
         @apply bg-gray-50 shadow-gray-300 shadow-xl rounded-lg p-4;
     }
+    .input {
+        @apply bg-gray-50 border leading-none border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-secondary focus:border-secondary-dark block w-full p-3;
+    }
 }

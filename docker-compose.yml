@@ -1,0 +1,71 @@
+services:
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: mydb
+      POSTGRES_USER: myuser
+      POSTGRES_PASSWORD: mypassword
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  django:
+    image: python:3.12-slim
+    volumes:
+      - ./backend:/app # Mount the backend code
+      - ./.venv:/app/.venv # Persist Poetry environments
+    working_dir: /app
+    command: >
+      /bin/sh -c "pip install poetry &&
+      poetry install --no-root &&
+      poetry run python manage.py runserver 0.0.0.0:8000"
+    environment:
+      DATABASE_URL: postgres://myuser:mypassword@postgres:5432/mydb
+      DJANGO_SECRET_KEY: "xuh%bc^1$m575%mv@@t87=f6_(i)%c=3jt-+obn&e%=+8qbm!f"
+      DJANGO_ALLOWED_HOSTS: "*"
+      CORS_ALLOWED_ORIGINS: "http://localhost:3000,
+        https://localhost:3000"
+      CSRF_TRUSTED_ORIGINS: "http://localhost:3000,
+        https://localhost:3000"
+      CSRF_ALLOWED_ORIGINS: "http://localhost:3000,
+        https://localhost:3000"
+      FRONTEND_URL: http://localhost:3000
+    ports:
+      - "8000:8000"
+    depends_on:
+      - postgres
+
+  nuxt:
+    image: oven/bun:latest
+    volumes:
+      - ./frontend:/app
+    working_dir: /app
+    command: >
+      /bin/sh -c "bun install &&
+      bun run dev --host=0.0.0.0 --port=3000"
+    environment:
+      BACKEND_URL: http://localhost:8000
+    ports:
+      - "3000:3000"
+    depends_on:
+      - django
+
+  mkdocs:
+    image: python:3.12-slim
+    volumes:
+      - ./docs:/app
+    working_dir: /app
+    command: >
+      /bin/sh -c "apt-get update &&
+      apt-get install -y libcairo2 libpango1.0-0 &&
+      pip install poetry &&
+      poetry install --no-root &&
+      poetry run mkdocs serve --dev-addr=0.0.0.0:4000"
+    environment:
+      LD_LIBRARY_PATH: "/usr/lib/x86_64-linux-gnu"
+    ports:
+      - "4000:4000"
+
+volumes:
+  postgres_data:

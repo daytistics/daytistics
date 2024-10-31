@@ -174,13 +174,14 @@ function useLoginAPI() {
     const { $api } = useNuxtApp();
     const login = async (email: string, password: string) => {
         try {
-            await $api('/api/users/login', {
+            await useCustomFetch('/api/users/login', {
                 method: 'POST',
                 body: {
                     email,
                     password,
                 },
                 onResponse: ({ request, response, options }) => {
+                    debugger;
                     if (response.status === 200) {
                         const accessToken = response._data.accessToken;
                         const refreshToken = response._data.refreshToken;
@@ -198,7 +199,6 @@ function useLoginAPI() {
         } catch (error: any) {
             showErrorDialog({
                 message: 'An error occurred while logging in.',
-                error: error.data.detail,
             });
         }
     };

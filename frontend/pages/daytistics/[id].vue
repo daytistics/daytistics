@@ -1,8 +1,8 @@
 <template>
-    <DaytisticAddActivityModal
+    <!-- <DaytisticAddActivityModal
         @submit="fetchDaytistic"
         :date="daytistic?.date"
-    />
+    /> -->
 
     <div
         class="min-h-screen bg-gray-100 py-8 px-4 sm:px-6 lg:px-8 w-full bg-gradient-to-t from-primary to-green-300"
@@ -60,11 +60,19 @@ async function fetchDaytistic(): Promise<void> {
         })) as Daytistic;
 
         daytistic.value = response;
+
+        useHead({
+            title: `Daytistics • ${new Date(daytistic?.value?.date).toLocaleDateString()}`,
+        });
     } catch (error) {
         console.error('Error fetching daytistic:', error);
         useRouter().push('/');
     }
 }
+
+useHead({
+    title: `Daytistics • Loading...`,
+});
 
 definePageMeta({
     layout: 'dashboard',
