@@ -2,9 +2,7 @@
     <div
         class="min-h-screen bg-gradient-to-br from-green-400 to-blue-500 flex items-center justify-center p-4"
     >
-        <div
-            class="max-w-md w-full bg-white rounded-lg shadow-xl overflow-hidden"
-        >
+        <div class="max-w-md w-full bg-white rounded-lg shadow-xl overflow-hidden">
             <div class="p-6 sm:p-8">
                 <div class="flex justify-center mb-8">
                     <img
@@ -21,9 +19,7 @@
                     class="space-y-6"
                 >
                     <div>
-                        <label class="text-base font-medium text-gray-900">
-                            User Name
-                        </label>
+                        <label class="text-base font-medium text-gray-900"> User Name </label>
                         <div class="mt-2">
                             <input
                                 placeholder="Full Name"
@@ -50,9 +46,7 @@
                     </div>
                     <div>
                         <div class="flex items-center justify-between">
-                            <label
-                                class="text-sm font-medium text-gray-700 block mb-2"
-                            >
+                            <label class="text-sm font-medium text-gray-700 block mb-2">
                                 Password
                             </label>
                         </div>
@@ -68,9 +62,7 @@
                     </div>
                     <div>
                         <div class="flex items-center justify-between">
-                            <label
-                                class="text-sm font-medium text-gray-700 block mb-2"
-                            >
+                            <label class="text-sm font-medium text-gray-700 block mb-2">
                                 Repeat Password
                             </label>
                         </div>
@@ -184,7 +176,6 @@ function useRegisterAPI() {
             },
         }).catch((error) => {
             console.log(error);
-            debugger;
             showErrorDialog({
                 message: 'An error occurred while registering your account.',
                 error: error.data.message,

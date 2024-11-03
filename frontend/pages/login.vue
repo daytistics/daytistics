@@ -59,9 +59,7 @@
     <div
         class="min-h-screen bg-gradient-to-br from-green-400 to-blue-500 flex items-center justify-center flex-col p-4"
     >
-        <div
-            class="max-w-md w-full bg-white rounded-lg shadow-xl overflow-hidden"
-        >
+        <div class="max-w-md w-full bg-white rounded-lg shadow-xl overflow-hidden">
             <div class="p-6 sm:p-8">
                 <div class="flex justify-center mb-8">
                     <NuxtImg
@@ -139,20 +137,10 @@
 </template>
 
 <script lang="ts" setup>
-const auth = useAuth();
-
-const { update: updateUser } = useUserStore();
 const { showErrorDialog } = useErrorDialogStore();
 
 const form = useForm();
 const loginAPI = useLoginAPI();
-
-onMounted(async () => {
-    if (await auth.verifyAuth()) {
-        updateUser();
-        useRouter().push('/');
-    }
-});
 
 function useForm() {
     const email = ref<string>('');
@@ -160,7 +148,6 @@ function useForm() {
 
     const submit = async () => {
         loginAPI.login(email.value, password.value);
-        updateUser();
     };
 
     return {
@@ -171,31 +158,10 @@ function useForm() {
 }
 
 function useLoginAPI() {
-    const { $api } = useNuxtApp();
     const login = async (email: string, password: string) => {
         try {
-            await useCustomFetch('/api/users/login', {
-                method: 'POST',
-                body: {
-                    email,
-                    password,
-                },
-                onResponse: ({ request, response, options }) => {
-                    debugger;
-                    if (response.status === 200) {
-                        const accessToken = response._data.accessToken;
-                        const refreshToken = response._data.refreshToken;
-
-                        const accessTokenCookie = useCookie('access_token');
-                        const refreshTokenCookie = useCookie('refresh_token');
-
-                        accessTokenCookie.value = accessToken;
-                        refreshTokenCookie.value = refreshToken;
-
-                        useRouter().push('/');
-                    }
-                },
-            });
+            await useAuthStore().login(email, password);
+            useRouter().push('/');
         } catch (error: any) {
             showErrorDialog({
                 message: 'An error occurred while logging in.',

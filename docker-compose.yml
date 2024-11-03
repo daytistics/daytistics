@@ -1,3 +1,4 @@
+name: daytistics
 services:
   postgres:
     image: postgres:16
@@ -24,13 +25,10 @@ services:
       DATABASE_URL: postgres://myuser:mypassword@postgres:5432/mydb
       DJANGO_SECRET_KEY: "xuh%bc^1$m575%mv@@t87=f6_(i)%c=3jt-+obn&e%=+8qbm!f"
       DJANGO_ALLOWED_HOSTS: "*"
-      CORS_ALLOWED_ORIGINS: "http://localhost:3000,
-        https://localhost:3000"
-      CSRF_TRUSTED_ORIGINS: "http://localhost:3000,
-        https://localhost:3000"
-      CSRF_ALLOWED_ORIGINS: "http://localhost:3000,
-        https://localhost:3000"
-      FRONTEND_URL: http://localhost:3000
+      CORS_ALLOWED_ORIGINS: "http://localhost:3000"
+      CSRF_TRUSTED_ORIGINS: "http://localhost:3000"
+      CSRF_ALLOWED_ORIGINS: "http://localhost:3000"
+      FRONTEND_URL: http://nuxt:3000
     ports:
       - "8000:8000"
     depends_on:
@@ -45,7 +43,7 @@ services:
       /bin/sh -c "bun install &&
       bun run dev --host=0.0.0.0 --port=3000"
     environment:
-      BACKEND_URL: http://localhost:8000
+      API_ADDRESS: http://django:8000
     ports:
       - "3000:3000"
     depends_on:

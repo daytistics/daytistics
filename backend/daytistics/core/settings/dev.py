@@ -6,7 +6,7 @@ DEBUG = True
 
 CSRF_TRUSTED_ORIGINS = os.getenv("CSRF_TRUSTED_ORIGINS", "").split(",")
 CSRF_ALLOWED_ORIGINS = os.getenv("CSRF_ALLOWED_ORIGINS", "").split(",")
-
+CSRF_COOKIE_SECURE = False
 
 # CORS SETTINGS
 

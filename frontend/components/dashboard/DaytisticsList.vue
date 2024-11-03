@@ -6,9 +6,7 @@
 
     <div class="bg-white shadow overflow-hidden sm:rounded-lg">
         <div class="px-4 py-5 sm:px-6 flex flex-row gap-3">
-            <h3 class="text-lg leading-6 font-medium text-gray-900">
-                Your Daytistics
-            </h3>
+            <h3 class="text-lg leading-6 font-medium text-gray-900">Your Daytistics</h3>
             <button
                 @click="isAddingDaytistic = true"
                 class="text-secondary hover:text-secondary-dark flex items-center transition duration-150 ease-in-out"
@@ -41,14 +39,8 @@
                             <div class="flex items-center space-x-4">
                                 <Calendar class="h-6 w-6 text-gray-400" />
                                 <div class="flex-1 min-w-0">
-                                    <p
-                                        class="text-sm font-medium text-gray-900 truncate"
-                                    >
-                                        {{
-                                            new Date(
-                                                daytistic.date
-                                            ).toLocaleDateString()
-                                        }}
+                                    <p class="text-sm font-medium text-gray-900 truncate">
+                                        {{ new Date(daytistic.date).toLocaleDateString() }}
                                     </p>
                                     <p class="text-sm text-gray-500 truncate">
                                         {{ daytistic.total_activities }}
@@ -128,7 +120,6 @@ function useListDaytisticsAPI() {
 
     const list = async (page: number) => {
         return $api(`/api/daytistics/list?page=${page}`, {
-            server: false,
             method: 'GET',
         });
     };

@@ -28,21 +28,7 @@ export default defineNuxtConfig({
 
     runtimeConfig: {
         public: {
-            backendUrl: process.env.BACKEND_URL,
-            imprintAddress: process.env.IMPRINT_ADDRESS,
-            imprintPublisher: process.env.IMPRINT_PUBLISHER,
-            imprintEmail: process.env.IMPRINT_EMAIL,
-        },
-    },
-
-    // NITRO CONFIGURATION
-    nitro: {
-        devProxy: {
-            '/api': {
-                target: `${process.env.BACKEND_URL}/api`,
-                changeOrigin: true,
-                prependPath: true,
-            },
+            apiAddress: process.env.API_ADDRESS,
         },
     },
 

@@ -1,52 +1,58 @@
 {
-    "name": "nuxt-app",
-    "private": true,
-    "type": "module",
-    "scripts": {
-        "build": "nuxt build",
-        "dev": "nuxt dev",
-        "generate": "nuxt generate",
-        "preview": "nuxt preview",
-        "postinstall": "nuxt prepare"
-    },
-    "dependencies": {
-        "@headlessui/vue": "^1.7.23",
-        "@nuxt/image": "^1.8.0",
-        "@nuxtjs/tailwindcss": "^6.12.1",
-        "@nuxtjs/toast": "^3.3.1",
-        "@pinia/nuxt": "^0.5.4",
-        "@sidebase/nuxt-auth": "^0.9.4",
-        "@vuepic/vue-datepicker": "^9.0.3",
-        "chart.js": "^4.4.4",
-        "eslint-config-prettier": "^9.1.0",
-        "eslint-plugin-prettier": "^5.2.1",
-        "flowbite": "^2.5.1",
-        "generate-license-file": "^3.5.1",
-        "i": "^0.3.7",
-        "install": "^0.13.0",
-        "jwt-decode": "^4.0.0",
-        "lucide-vue-next": "^0.441.0",
-        "npm": "^10.8.3",
-        "nuxt": "^3.13.0",
-        "nuxt-aos": "^1.2.5",
-        "prettier": "^3.3.3",
-        "vue": "3.5.4",
-        "vue-router": "latest"
-    },
-    "prettier": {
-        "trailingComma": "es5",
-        "tabWidth": 4,
-        "semi": true,
-        "singleQuote": true,
-        "singleAttributePerLine": true
-    },
-    "devDependencies": {
-        "@nuxt/devtools": "^1.5.0",
-        "@nuxt/test-utils": "^3.14.3",
-        "@playwright/test": "^1.48.1",
-        "@vue/test-utils": "^2.4.6",
-        "happy-dom": "^15.7.4",
-        "playwright-core": "^1.47.2",
-        "vitest": "^2.1.1"
-    }
+  "name": "nuxt-app",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "nuxt build",
+    "dev": "nuxt dev",
+    "generate": "nuxt generate",
+    "preview": "nuxt preview",
+    "postinstall": "nuxt prepare"
+  },
+  "dependencies": {
+    "@headlessui/vue": "^1.7.23",
+    "@nuxt/image": "^1.8.0",
+    "@nuxtjs/tailwindcss": "^6.12.1",
+    "@nuxtjs/toast": "^3.3.1",
+    "@pinia/nuxt": "^0.5.4",
+    "@sidebase/nuxt-auth": "^0.9.4",
+    "@vuepic/vue-datepicker": "^9.0.3",
+    "chart.js": "^4.4.4",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-prettier": "^5.2.1",
+    "flowbite": "^2.5.1",
+    "generate-license-file": "^3.5.1",
+    "i": "^0.3.7",
+    "install": "^0.13.0",
+    "jwt-decode": "^4.0.0",
+    "lucide-vue-next": "^0.441.0",
+    "npm": "^10.8.3",
+    "nuxt": "^3.13.0",
+    "nuxt-aos": "^1.2.5",
+    "prettier": "^3.3.3",
+    "vue": "3.5.4",
+    "vue-router": "latest"
+  },
+  "devDependencies": {
+    "@nuxt/devtools": "^1.5.0",
+    "@nuxt/test-utils": "^3.14.3",
+    "@playwright/test": "^1.48.1",
+    "@vue/test-utils": "^2.4.6",
+    "happy-dom": "^15.7.4",
+    "playwright-core": "^1.47.2",
+    "vitest": "^2.1.1",
+    "@types/bun": "latest"
+  },
+  "module": "index.ts",
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "prettier": {
+    "trailingComma": "es5",
+    "tabWidth": 4,
+    "semi": true,
+    "singleQuote": true,
+    "singleAttributePerLine": true,
+    "printWidth": 100
+  }
 }

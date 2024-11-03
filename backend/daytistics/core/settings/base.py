@@ -6,7 +6,6 @@ from datetime import timedelta
 from daytistics.core.settings.constants import *
 
 
-
 # DJANGO SETTINGS
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
@@ -50,8 +49,8 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",
-    "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
+    "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
@@ -100,11 +99,7 @@ NINJA_JWT = {"ACCESS_TOKEN_LIFETIME": timedelta(seconds=20)}
 
 
 # CSRF SETTINGS
-
-CSRF_USE_SESSIONS = True
-
 CSRF_COOKIE_NAME = "csrf_token"
-
 
 # TEMPLATE SETTINGS
 

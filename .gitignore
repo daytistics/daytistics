@@ -191,3 +191,7 @@ logs
 # Bun files
 *.bun
 bun.lockb
+
+# Docker composed postgres data
+
+data/postgres

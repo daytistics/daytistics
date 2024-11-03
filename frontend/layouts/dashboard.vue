@@ -11,9 +11,4 @@
     </div>
 </template>
 
-<script lang="ts" setup>
-onMounted(() => {
-    const { update } = useUserStore();
-    update();
-});
-</script>
+<script lang="ts" setup></script>

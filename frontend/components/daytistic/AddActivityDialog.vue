@@ -38,9 +38,7 @@
                         >Start time:</label
                     >
                     <div class="relative">
-                        <CommonTimepicker
-                            @update="form.handleStartTimeUpdate"
-                        />
+                        <CommonTimepicker @update="form.handleStartTimeUpdate" />
                     </div>
                 </div>
                 <div>
@@ -128,7 +126,6 @@ function useForm() {
             ? endTime.value.hours * 60 + endTime.value.minutes
             : 0;
         await add(formattedStartTime, formattedEndTime);
-        closeDialog();
     };
 
     const setError = (message: string) => {
@@ -170,13 +167,14 @@ function useActivitiesAPI() {
     const { $api } = useNuxtApp();
 
     const add = async (startTime: number, endTime: number) => {
+        // CURRENT PROBLEM: CREATION NOT WORKING
         const id = useRoute().params.id;
+        debugger;
         try {
             await $api(`/api/daytistics/${id}/add-activity`, {
-                server: false,
                 method: 'POST',
                 body: {
-                    id: form.activityType.value,
+                    id: form.activityType,
                     start_time: startTime,
                     end_time: endTime,
                 },
@@ -184,10 +182,12 @@ function useActivitiesAPI() {
                     if (response.status === 201) {
                         emit('submit');
                         useModal().closeModal();
+                        debugger;
                     }
                 },
                 onResponseError: ({ request, response, options }) => {
                     form.setError(response._data.detail);
+                    debugger;
                 },
             });
         } catch (error) {
