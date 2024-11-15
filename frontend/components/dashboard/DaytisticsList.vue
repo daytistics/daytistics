@@ -9,15 +9,24 @@
             <h3 class="text-lg leading-6 font-medium text-gray-900">Your Daytistics</h3>
             <button
                 @click="isAddingDaytistic = true"
-                class="text-secondary hover:text-secondary-dark flex items-center transition duration-150 ease-in-out"
+                class="text-day-secondary hover:text-day-tertiary flex items-center transition duration-150 ease-in-out"
             >
                 <Plus class="w-5 h-5 mr-1" />
                 <span class="text-sm font-medium">Add New</span>
             </button>
         </div>
         <div class="border-t border-gray-200">
-            <div class="px-4 py-5 sm:p-6">
-                <div class="flex items-center justify-between mb-4">
+            <div
+                class="flex justify-center my-20"
+                v-if="isFetching"
+            >
+                <Loader />
+            </div>
+            <div
+                v-else
+                class="px-4 py-5 sm:p-6"
+            >
+                <!-- <div class="flex items-center justify-between mb-4">
                     <input
                         type="text"
                         placeholder="Search date..."
@@ -28,15 +37,15 @@
                     >
                         Search
                     </button>
-                </div>
+                </div> -->
                 <ul class="divide-y divide-gray-200">
                     <li
                         v-for="(daytistic, index) in daytistics"
                         :key="index"
                         class="py-4 cursor-pointer hover:bg-gray-50"
                     >
-                        <NuxtLink :to="`/daytistics/${daytistic.id}`">
-                            <div class="flex items-center space-x-4">
+                        <NuxtLink :to="`/app/daytistics/${daytistic.id}`">
+                            <div class="flex items-center space-x-4 px-3">
                                 <Calendar class="h-6 w-6 text-gray-400" />
                                 <div class="flex-1 min-w-0">
                                     <p class="text-sm font-medium text-gray-900 truncate">
@@ -45,7 +54,7 @@
                                     <p class="text-sm text-gray-500 truncate">
                                         {{ daytistic.total_activities }}
                                         Activities /
-                                        {{ daytistic.total_duration }}
+                                        {{ readableTotalDuration(daytistic.total_duration) }}
                                     </p>
                                 </div>
                             </div>
@@ -103,6 +112,7 @@ const listDaytisticsAPI = useListDaytisticsAPI();
 
 const currentPage = ref(1);
 const totalPages = ref(1);
+const isFetching = ref(false);
 const isAddingDaytistic = ref(false);
 
 watch(currentPage, async (newPage) => {
@@ -125,12 +135,22 @@ function useListDaytisticsAPI() {
     };
 
     const loadPage = async (page: number) => {
+        isFetching.value = true;
+
         const response: any = await list(page);
         daytistics.value = response.items;
         totalPages.value = Math.ceil(response.count / 5);
+
+        isFetching.value = false;
     };
     return {
         loadPage,
     };
 }
+
+const readableTotalDuration = (duration: number) => {
+    const hours = Math.floor(duration / 60);
+    const minutes = duration % 60;
+    return `${hours}h ${minutes}m`;
+};
 </script>

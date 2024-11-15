@@ -10,17 +10,13 @@
             <button
                 @click="toggleDiaryEdit"
                 class="text-indigo-600 hover:text-indigo-800 flex items-center transition duration-150 ease-in-out"
-                :aria-label="
-                    isEditingDiary ? 'Cancel editing' : 'Edit diary entry'
-                "
+                :aria-label="isEditingDiary ? 'Cancel editing' : 'Edit diary entry'"
             >
                 <component
                     :is="isEditingDiary ? X : Edit2"
                     class="w-5 h-5 mr-1"
                 />
-                <span class="text-sm font-medium">{{
-                    isEditingDiary ? 'Cancel' : 'Edit'
-                }}</span>
+                <span class="text-sm font-medium">{{ isEditingDiary ? 'Cancel' : 'Edit' }}</span>
             </button>
         </div>
         <div class="bg-gray-50 p-6 rounded-lg shadow-sm">
@@ -32,9 +28,7 @@
                     {{ props.daytistic.diary.entry }}
                 </p>
                 <div class="mt-6">
-                    <h3 class="text-lg font-medium text-gray-900 mb-3">
-                        Moment of Happiness
-                    </h3>
+                    <h3 class="text-lg font-medium text-gray-900 mb-3">Moment of Happiness</h3>
                     <p class="text-gray-700">
                         {{ props.daytistic.diary.moment_of_happiness }}
                     </p>
@@ -87,8 +81,7 @@ const { isEditingDiary, editedDiaryEntry, editedMomentOfHappiness } = useForm();
 const toggleDiaryEdit = () => {
     if (isEditingDiary.value) {
         editedDiaryEntry.value = props.daytistic.diary.entry;
-        editedMomentOfHappiness.value =
-            props.daytistic.diary.moment_of_happiness;
+        editedMomentOfHappiness.value = props.daytistic.diary.moment_of_happiness;
     }
     isEditingDiary.value = !isEditingDiary.value;
 };
@@ -103,8 +96,7 @@ function useForm() {
         (newDaytistic) => {
             if (newDaytistic && newDaytistic.diary) {
                 editedDiaryEntry.value = newDaytistic.diary.entry;
-                editedMomentOfHappiness.value =
-                    newDaytistic.diary.moment_of_happiness;
+                editedMomentOfHappiness.value = newDaytistic.diary.moment_of_happiness;
             }
         },
         { immediate: true }

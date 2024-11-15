@@ -47,6 +47,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    "corsheaders.middleware.CorsMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -56,7 +57,6 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "allauth.account.middleware.AccountMiddleware",
-    "corsheaders.middleware.CorsMiddleware",
 ]
 
 
@@ -100,6 +100,7 @@ NINJA_JWT = {"ACCESS_TOKEN_LIFETIME": timedelta(seconds=20)}
 
 # CSRF SETTINGS
 CSRF_COOKIE_NAME = "csrf_token"
+CSRF_USE_SESSIONS = False
 
 # TEMPLATE SETTINGS
 

@@ -79,6 +79,11 @@ export const useAuthStore = defineStore({
         async refreshAuth(): Promise<void> {
             this.status = AuthenticationStatus.PENDING;
             const refreshTokenCookie = useCookie('refresh_token');
+
+            if (!(typeof refreshTokenCookie.value === 'string')) {
+                return;
+            }
+
             try {
                 await $fetch('/api/token/refresh', {
                     method: 'POST',
@@ -112,10 +117,20 @@ export const useAuthStore = defineStore({
          */
         async isAuthenticated(): Promise<boolean> {
             this.status = AuthenticationStatus.PENDING;
+
+            if (this.isAuthExpired()) {
+                await this.refreshAuth();
+            }
+
             await $fetch('/api/token/verify', {
                 method: 'POST',
                 body: {
                     token: useCookie('access_token').value,
+                },
+                headers: {
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': await this.getCsrfToken(),
                 },
 
                 onResponse: ({ response }) => {

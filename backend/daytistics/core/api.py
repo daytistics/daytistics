@@ -7,7 +7,7 @@ from ..users.api import router as users_router
 from ..daytistics.api import router as daytistics_router
 
 api = NinjaExtraAPI(
-    csrf=True,
+    csrf=False,
     version="0.1.0",
     title="Backend API",
     description="API for interacting with the Daytistics backend",
@@ -32,6 +32,10 @@ def get_csrf_token(request):
         200: dict - A JSON object containing the CSRF token
         500: dict - Internal server error
     """
-
     csrf_token = get_token(request)
     return 200, {"csrf_token": csrf_token}
+
+
+@api.get("debug")
+def debug_csrf(request):
+    return 200, "Debugging CSRF"

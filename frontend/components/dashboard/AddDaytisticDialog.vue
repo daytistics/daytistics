@@ -121,7 +121,7 @@ function useDaytisticsCreationAPI() {
             onResponse: ({ request, response, options }) => {
                 if (response.status === 201) {
                     console.log('Success');
-                    useRouter().push(`/daytistics/${response._data.id}`);
+                    useRouter().push(`/app/daytistics/${response._data.id}`);
                 }
             },
             onResponseError: ({ request, response, options }) => {

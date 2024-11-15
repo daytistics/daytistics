@@ -12,20 +12,6 @@
             </NuxtLink>
 
             <NuxtLink
-                to="/"
-                class="text-gray-700 focus:outline-nones transition-colors duration-200 rounded-lg hover:bg-gray-100"
-            >
-                <LucideHouse class="w-6 h-6" />
-            </NuxtLink>
-
-            <NuxtLink
-                href="/relations"
-                class="p-1.5 text-gray-700 focus:outline-nones transition-colors duration-200 rounded-lg hover:bg-gray-100"
-            >
-                <BarChartIcon class="w-6 h-6" />
-            </NuxtLink>
-
-            <NuxtLink
                 to="/chat"
                 class="p-1.5 text-gray-700 focus:outline-nones transition-colors duration-200 rounded-lg hover:bg-gray-100"
             >
@@ -34,13 +20,6 @@
         </nav>
 
         <div class="flex flex-col space-y-6">
-            <span
-                to="/admin"
-                class="p-1.5 text-gray-700 focus:outline-nones transition-colors duration-200 rounded-lg hover:bg-gray-100 hover:cursor-not-allowed"
-            >
-                <ShieldAlert class="w-6 h-6" />
-            </span>
-
             <NuxtLink
                 to="/settings"
                 class="p-1.5 text-gray-700 focus:outline-nones transition-colors duration-200 rounded-lg hover:bg-gray-100"

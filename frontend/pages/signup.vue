@@ -5,8 +5,8 @@
         <div class="max-w-md w-full bg-white rounded-lg shadow-xl overflow-hidden">
             <div class="p-6 sm:p-8">
                 <div class="flex justify-center mb-8">
-                    <img
-                        src="/assets/graphics/images/logo.png"
+                    <NuxtImg
+                        src="/images/logo.png"
                         alt="Logo"
                         class="h-12 w-auto"
                     />

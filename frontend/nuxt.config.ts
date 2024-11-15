@@ -1,13 +1,7 @@
-import { meta } from 'eslint-plugin-prettier';
-import { name } from 'eslint-plugin-prettier/recommended';
-import type { build } from 'nuxt';
-import type { devtools } from 'vue';
-
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
     // NUXT CONFIGURATION
     compatibilityDate: '2024-04-03',
-    ssr: false,
     devtools: {
         enabled: true,
 
@@ -20,15 +14,12 @@ export default defineNuxtConfig({
         transpile: ['@vuepic/vue-datepicker'],
     },
 
-    components: [
-        { path: '~/components/daytistic', prefix: 'Daytistic' },
-        { path: '~/components/dashboard', prefix: 'Dashboard' },
-        '~/components',
-    ],
+    components: [{ path: '~/components/global', pathPrefix: false }, '~/components'],
 
     runtimeConfig: {
         public: {
             apiAddress: process.env.API_ADDRESS,
+            isSelfHosted: process.env.SELF_HOSTED === 'true',
         },
     },
 
@@ -38,7 +29,7 @@ export default defineNuxtConfig({
         },
     },
 
-    css: ['~/assets/css/fonts.css', '~/assets/css/tailwind.css'],
+    css: ['~/assets/css/tailwind.css'],
 
     // MODULES & MODULE CONFIGURATION
     modules: [

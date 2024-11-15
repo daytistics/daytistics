@@ -10,12 +10,11 @@ export default {
     theme: {
         extend: {
             colors: {
-                primary: '#0e9f6e',
-                secondary: '#057a55',
-                accent: '#3f83f8',
-                'primary-dark': '#16a34a',
-                'secondary-dark': '#046c4e',
-                'accent-dark': '#3f83f8',
+                'day-primary': '#0e9f6e',
+                'day-secondary': '#057a55',
+                'day-tertiary': '#046c4e',
+                'day-gradient-from': '#4ade80',
+                'day-gradient-to': '#3b82f6',
             },
             spacing: {
                 '75px': '75px',

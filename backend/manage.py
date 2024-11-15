@@ -11,6 +11,18 @@ def main():
         "DJANGO_SETTINGS_MODULE",
         os.getenv("DJANGO_SETTINGS_MODULE", "daytistics.core.settings.dev"),
     )
+
+    from django.conf import settings
+
+    if settings.DEBUG:
+        try:
+            import debugpy
+            debugpy.listen(("0.0.0.0", 5678))
+            debugpy.breakpoint()
+        except RuntimeError:
+            print("Error starting debugger. Is the debugger already running?")
+
+
     try:
         from django.core.management import execute_from_command_line
     except ImportError as exc:

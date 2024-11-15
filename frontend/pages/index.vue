@@ -1,21 +1,13 @@
 <template>
-    <div class="flex flex-col min-h-screen bg-gradient-to-t from-primary to-green-300 w-full">
-        <main class="flex-1 py-6">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col gap-4">
-                <!-- <DashboardFrequencyHistogram /> -->
-                <DashboardDaytisticsList />
-            </div>
-        </main>
-    </div>
+    <LandingJumbotron />
+    <!-- <LandingStats /> -->
+    <LandingFeatures />
+    <hr />
+    <LandingFAQ />
 </template>
 
-<script lang="ts" setup>
+<script setup lang="ts">
 definePageMeta({
-    layout: 'dashboard',
-    middleware: 'auth',
-});
-
-useHead({
-    title: 'Daytistics • Dashboard',
+    layout: 'landing',
 });
 </script>
