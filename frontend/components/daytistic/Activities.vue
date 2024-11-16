@@ -39,12 +39,7 @@
                             {{ activity.name }}
                         </p>
                         <p class="text-sm text-gray-500">
-                            {{
-                                formatTimeWindow(
-                                    activity.start_time,
-                                    activity.end_time
-                                )
-                            }}
+                            {{ formatTimeWindow(activity.start_time, activity.end_time) }}
                         </p>
                     </div>
                     <div class="flex items-center">
@@ -62,7 +57,6 @@
 </template>
 
 <script lang="ts" setup>
-import { initModals, Modal } from 'flowbite';
 import { ChevronRight, Plus } from 'lucide-vue-next';
 import type { Daytistic } from '~/types/daytistics';
 
@@ -87,16 +81,4 @@ const formatDuration = (minutes: number) => {
     const mins = minutes % 60;
     return hours > 0 ? `${hours}h ${mins}m` : `${mins}m`;
 };
-
-function openModal() {
-    const modalElement = document.getElementById(
-        'add-activity-modal'
-    ) as HTMLElement;
-    const modal = new Modal(modalElement);
-    modal.show();
-}
-
-onMounted(() => {
-    initModals();
-});
 </script>

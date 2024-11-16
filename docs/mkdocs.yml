@@ -11,8 +11,8 @@ theme:
     code: Roboto markdown_extensions
   palette:
     - scheme: default
-      primary: green
-      accent: purple
+      primary: custom
+      accent: custom
       toggle:
         icon: material/weather-sunny
         name: Switch to dark mode
@@ -34,7 +34,6 @@ nav:
 
   - For Developers:
       - Code of Conduct: "developers/code-of-conduct.md"
-      - Technology Stack: "developers/technology-stack.md"
       - Become a Contributor: "developers/become-a-contributor.md"
       - Docs & Tutorials:
           - Where are the Docs?: "developers/docs/where-are-the-docs.md"

@@ -1,35 +1,37 @@
 <template>
-    <div class="max-w-3xl mx-auto p-4 sm:p-6 lg:p-8">
-        <h2 class="text-3xl font-bold text-gray-900 mb-8 text-center">
-            Frequently Asked Questions
-        </h2>
-        <div class="space-y-4 flex flex-col justify-center items-center">
-            <div
-                v-for="(item, index) in faqItems"
-                :key="index"
-                class="border border-gray-200 rounded-xl min-w-[800px]"
-            >
-                <button
-                    @click="toggleItem(index)"
-                    class="flex justify-between items-center w-full p-4 text-left focus:outline-none"
-                    :aria-expanded="item.isOpen"
-                    :aria-controls="`faq-answer-${index}`"
-                >
-                    <span class="text-lg font-medium text-gray-900">{{ item.question }}</span>
-                    <ChevronDownIcon
-                        :class="[
-                            'w-5 h-5 text-gray-500 transition-transform duration-200',
-                            { 'transform rotate-180': item.isOpen },
-                        ]"
-                    />
-                </button>
-                <hr />
+    <div class="">
+        <div class="max-w-3xl mx-auto p-4 sm:p-6 lg:p-8">
+            <h2 class="text-3xl font-bold text-gray-900 mb-8 text-center">
+                Frequently Asked Questions
+            </h2>
+            <div class="space-y-4 flex flex-col justify-center items-center">
                 <div
-                    v-show="item.isOpen"
-                    :id="`faq-answer-${index}`"
-                    class="px-4 py-4"
+                    v-for="(item, index) in faqItems"
+                    :key="index"
+                    class="border border-gray-200 rounded-xl min-w-full md:min-w-[800px] bg-white shadow-day-primary/30 shadow-md"
                 >
-                    <p class="text-gray-600">{{ item.answer }}</p>
+                    <button
+                        @click="toggleItem(index)"
+                        class="flex justify-between items-center w-full p-4 text-left focus:outline-none"
+                        :aria-expanded="item.isOpen"
+                        :aria-controls="`faq-answer-${index}`"
+                    >
+                        <span class="text-lg font-medium text-gray-900">{{ item.question }}</span>
+                        <ChevronDownIcon
+                            :class="[
+                                'w-5 h-5 text-gray-500 transition-transform duration-200',
+                                { 'transform rotate-180': item.isOpen },
+                            ]"
+                        />
+                    </button>
+                    <hr />
+                    <div
+                        v-show="item.isOpen"
+                        :id="`faq-answer-${index}`"
+                        class="px-4 py-4"
+                    >
+                        <p class="text-gray-600">{{ item.answer }}</p>
+                    </div>
                 </div>
             </div>
         </div>

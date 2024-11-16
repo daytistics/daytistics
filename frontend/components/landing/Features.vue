@@ -1,50 +1,52 @@
 <template>
-    <div class="container mx-auto px-6 py-16">
-        <div class="flex flex-col md:flex-row items-center justify-between gap-8">
-            <div class="w-full md:w-1/4 space-y-4">
-                <Card
-                    v-for="(feature, index) in features.slice(0, 3)"
-                    :key="index"
-                    :clickable="true"
-                    :class="{
-                        shadow: activeFeature === index,
-                    }"
-                    @click="activeFeature = index"
-                    class="flex flex-col justify-center items-center gap-2"
-                >
-                    <h3 class="font-bold text-lg">{{ feature.title }}</h3>
-                    <component
-                        :is="feature.icon"
-                        class="w-14 h-auto text-day-primary"
-                    />
-                </Card>
-            </div>
+    <div>
+        <div class="container mx-auto px-6 py-16">
+            <div class="flex flex-col md:flex-row items-center justify-between gap-8">
+                <div class="w-full md:w-1/4 space-y-4">
+                    <Card
+                        v-for="(feature, index) in features.slice(0, 3)"
+                        :key="index"
+                        :clickable="true"
+                        :class="{
+                            shadow: activeFeature === index,
+                        }"
+                        @click="activeFeature = index"
+                        class="flex flex-col justify-center items-center gap-2"
+                    >
+                        <h3 class="font-bold text-lg">{{ feature.title }}</h3>
+                        <component
+                            :is="feature.icon"
+                            class="w-14 h-auto text-day-primary"
+                        />
+                    </Card>
+                </div>
 
-            <LandingFeaturesScreen>
-                <NuxtImg
-                    :key="activeFeature"
-                    src="/images/app-placeholder.jpg"
-                    :alt="features[activeFeature].title"
-                    class="w-full h-auto rounded"
-                />
-            </LandingFeaturesScreen>
-            <div class="w-full md:w-1/4 space-y-4">
-                <Card
-                    v-for="(feature, index) in features.slice(3)"
-                    :key="index"
-                    :clickable="true"
-                    :class="{
-                        shadow: activeFeature === index,
-                    }"
-                    @click="activeFeature = index"
-                    class="flex flex-col justify-center items-center gap-2"
-                >
-                    <h3 class="font-bold text-lg">{{ feature.title }}</h3>
-                    <component
-                        :is="feature.icon"
-                        class="w-14 h-auto text-day-primary"
+                <LandingFeaturesScreen>
+                    <NuxtImg
+                        :key="activeFeature"
+                        src="/images/app-placeholder.jpg"
+                        :alt="features[activeFeature].title"
+                        class="w-full h-auto rounded"
                     />
-                </Card>
+                </LandingFeaturesScreen>
+                <div class="w-full md:w-1/4 space-y-4">
+                    <Card
+                        v-for="(feature, index) in features.slice(3)"
+                        :key="index"
+                        :clickable="true"
+                        :class="{
+                            shadow: activeFeature === index,
+                        }"
+                        @click="activeFeature = index"
+                        class="flex flex-col justify-center items-center gap-2"
+                    >
+                        <h3 class="font-bold text-lg">{{ feature.title }}</h3>
+                        <component
+                            :is="feature.icon"
+                            class="w-14 h-auto text-day-primary"
+                        />
+                    </Card>
+                </div>
             </div>
         </div>
     </div>

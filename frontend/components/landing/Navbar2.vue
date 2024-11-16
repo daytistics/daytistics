@@ -1,7 +1,7 @@
 <template>
     <div class="fixed top-0 left-0 right-0 z-50">
-        <div class="bg-purple-50 bg-opacity-80 backdrop-blur-sm text-gray-900 shadow-md">
-            <div class="max-w-screen-xl mx-auto px-4 py-5">
+        <div class="bg-white/60 bg-opacity-80 backdrop-blur-sm text-gray-900 shadow-md">
+            <div class="mx-auto px-4 py-5">
                 <div class="flex items-center justify-between">
                     <NuxtLink
                         to="/"
@@ -10,10 +10,11 @@
                         Daytistics
                     </NuxtLink>
 
-                    <div class="hidden md:flex space-x-4 items-center">
-                        <template
+                    <div class="hidden md:flex space-x-4 items-center justify-center">
+                        <div
                             v-for="item in homeSections"
                             :key="item.title"
+                            class="flex flex-row items-center justify-center"
                         >
                             <NuxtLink
                                 :to="item.link"
@@ -21,7 +22,7 @@
                             >
                                 {{ item.title }}
                             </NuxtLink>
-                        </template>
+                        </div>
 
                         <Menu
                             as="div"
@@ -45,7 +46,7 @@
                                 leave-to-class="transform scale-95 opacity-0"
                             >
                                 <MenuItems
-                                    class="absolute right-0 mt-2 w-56 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none z-[50]"
+                                    class="absolute right-0 mt-2 w-56 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none z-[60]"
                                 >
                                     <div class="px-1 py-1">
                                         <MenuItem
@@ -55,6 +56,7 @@
                                             )"
                                         >
                                             <NuxtLink
+                                                v-if="action.link"
                                                 :to="action.link"
                                                 :class="[
                                                     active
@@ -69,6 +71,22 @@
                                                 />
                                                 <span>{{ action.title }}</span>
                                             </NuxtLink>
+                                            <span
+                                                v-else-if="action.function"
+                                                @click="action.function"
+                                                :class="[
+                                                    active
+                                                        ? 'bg-day-primary text-white'
+                                                        : 'text-gray-900',
+                                                    'group flex w-full items-center rounded-md px-2 py-2 text-sm',
+                                                ]"
+                                            >
+                                                <component
+                                                    :is="action.icon"
+                                                    class="w-5 mr-2"
+                                                />
+                                                <span>{{ action.title }}</span>
+                                            </span>
                                         </MenuItem>
                                     </div>
                                     <div
@@ -96,7 +114,7 @@
 
                     <button
                         @click="isMenuOpen = !isMenuOpen"
-                        class="md:hidden focus:outline-none"
+                        class="md:hidden focus:outline-none z-50"
                     >
                         <MenuIcon
                             v-if="!isMenuOpen"
@@ -121,7 +139,7 @@
         >
             <div
                 v-if="isMenuOpen"
-                class="md:hidden bg-purple-50 bg-opacity-80 backdrop-blur-sm shadow-md"
+                class="md:hidden bg-purple-50 bg-opacity-80 backdrop-blur-sm shadow-md fixed top-[72px] left-0 right-0 z-40"
             >
                 <div class="px-2 pt-2 pb-3 space-y-1">
                     <NuxtLink
@@ -140,7 +158,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 import { Menu, MenuButton, MenuItems, MenuItem } from '@headlessui/vue';
 import { ChevronDownIcon, MenuIcon, XIcon, Home } from 'lucide-vue-next';
 import { HandCoinsIcon, LogInIcon, NotebookPen, Settings, LogOut } from 'lucide-vue-next';
@@ -150,10 +168,8 @@ const isMenuOpen = ref(false);
 const isAuthenticated = ref(false);
 
 const homeSections = [
-    { title: 'Features', link: '/#features' },
-    { title: 'Pricing', link: '/#pricing' },
-    { title: 'Self-Hosting', link: '/#self-hosting' },
-    { title: 'FAQ', link: '/#faq' },
+    { title: "We're hiring 💻", link: '/#features' },
+    { title: 'Feedback ⭐', link: '/#features' },
 ];
 
 const userActions = [
@@ -161,7 +177,12 @@ const userActions = [
     { title: 'Sign Up', link: '/signup', icon: NotebookPen, authRequired: false },
     { title: 'Dashboard', link: '/app', icon: Home, authRequired: true },
     { title: 'Settings', link: '/settings', icon: Settings, authRequired: true },
-    { title: 'Log Out', link: '/logout', icon: LogOut, authRequired: true },
+    {
+        title: 'Log Out',
+        function: () => console.log('Logging out'),
+        icon: LogOut,
+        authRequired: true,
+    },
 ];
 
 onMounted(async () => {

@@ -1,19 +1,8 @@
-.construction-site {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-
-  & > p {
-    font-size: 1.3rem;
-    margin-bottom: 1rem;
-    text-transform: uppercase;
-    font-weight: 600;
-  }
-
-  & > img {
-    width: 100%;
-    max-width: 400px;
-  }
+:root {
+  --md-primary-fg-color: #0e9f6e;
+  --md-primary-fg-color--light: #0e9f6e;
+  --md-primary-fg-color--dark: #0e9f6e;
+  --md-accent-fg-color: #057a55;
+  --md-accent-fg-color--light: #057a55;
+  --md-accent-fg-color--dark: #057a55;
 }

@@ -1,6 +1,5 @@
 export default defineNuxtPlugin((nuxtApp) => {
     const authStore = useAuthStore();
-
     const api = $fetch.create({
         async onResponseError({ response }) {
             if (response.status === 401) {

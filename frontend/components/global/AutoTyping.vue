@@ -5,11 +5,9 @@
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue';
 
-const texts = [
-    'Willkommen zur selbstschreibenden Text-Demo.',
-    'Dieser Text schreibt und löscht sich selbst.',
-    'Perfekt für dynamische Inhalte.',
-];
+const props = defineProps({
+    texts: Array,
+});
 
 const displayedText = ref('');
 const currentTextIndex = ref(0);
@@ -17,7 +15,7 @@ const isDeleting = ref(false);
 let typingInterval = null;
 
 const typeText = () => {
-    const currentText = texts[currentTextIndex.value];
+    const currentText = props.texts[currentTextIndex.value];
     const speed = isDeleting.value ? 50 : 100;
 
     if (!isDeleting.value && displayedText.value === currentText) {
@@ -28,7 +26,7 @@ const typeText = () => {
 
     if (isDeleting.value && displayedText.value === '') {
         isDeleting.value = false;
-        currentTextIndex.value = (currentTextIndex.value + 1) % texts.length;
+        currentTextIndex.value = (currentTextIndex.value + 1) % props.texts.length;
         setTimeout(typeText, 500);
         return;
     }

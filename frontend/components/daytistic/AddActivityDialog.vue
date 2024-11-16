@@ -1,5 +1,5 @@
 <template>
-    <CommonDialog
+    <Dialog
         title="Add Activity"
         :open="isOpen"
         max-width="max-w-md"
@@ -13,28 +13,15 @@
                 <div class="col-span-2">
                     <label
                         for="type"
-                        class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                        class="block mb-2 text-sm font-medium text-gray-900"
                         >What activity did you do that day?</label
                     >
-                    <select
-                        id="activity-type"
-                        v-model="form.activityType"
-                        required
-                        class="input"
-                    >
-                        <option
-                            v-for="activity in activities"
-                            :key="activity.id"
-                            :value="activity.id"
-                        >
-                            {{ activity.name }}
-                        </option>
-                    </select>
+                    <AutoCompleteInput :items="activities as unknown as string[]" />
                 </div>
                 <div>
                     <label
                         for="start-time"
-                        class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                        class="block mb-2 text-sm font-medium text-gray-900"
                         >Start time:</label
                     >
                     <div class="relative">
@@ -44,7 +31,7 @@
                 <div>
                     <label
                         for="end-time"
-                        class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                        class="block mb-2 text-sm font-medium text-gray-900"
                         >End time:</label
                     >
                     <div class="relative">
@@ -79,11 +66,10 @@
                 </button>
             </div>
         </form>
-    </CommonDialog>
+    </Dialog>
 </template>
 
 <script lang="ts" setup>
-import { initModals, Modal } from 'flowbite';
 import type { ActivityType } from '~/types/activities';
 
 const emit = defineEmits(['submit', 'close']);
@@ -152,16 +138,6 @@ function useForm() {
     };
 }
 
-function useModal() {
-    const modal = new Modal(document.getElementById('add-activity-modal'));
-
-    const closeModal = () => {
-        modal?.hide();
-    };
-
-    return { closeModal };
-}
-
 function useActivitiesAPI() {
     const activities = ref<ActivityType[]>([]);
     const { $api } = useNuxtApp();
@@ -181,7 +157,6 @@ function useActivitiesAPI() {
                 onResponse: ({ request, response, options }) => {
                     if (response.status === 201) {
                         emit('submit');
-                        useModal().closeModal();
                         debugger;
                     }
                 },
@@ -215,7 +190,6 @@ function useActivitiesAPI() {
     };
 
     onMounted(async () => {
-        initModals();
         await fetch();
     });
 

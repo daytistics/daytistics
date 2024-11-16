@@ -1,12 +1,14 @@
 <template>
     <footer class="bg-slate-50">
         <div class="mx-auto w-full max-w-screen-xl p-4 py-6 lg:py-8">
-            <div class="sm:flex sm:items-center sm:justify-between text-sm text-gray-500">
-                <span class="sm:text-center"
+            <div
+                class="flex flex-col md:flex-row sm:items-center sm:justify-between text-sm text-gray-500"
+            >
+                <span class="text-center"
                     >Made with &#129505; by the contributors of Daytistics.
                 </span>
-                <div class="flex flex-row justify-center items-center">
-                    <div class="flex flex-row justify-center items-center border-r px-4 gap-3">
+                <div class="flex flex-col text-center md:flex-row justify-center items-center">
+                    <div class="flex flex-row justify-center items-center border-r px-4 gap-3 mt-2">
                         <NuxtLink
                             v-for="page in legalPages"
                             :to="page.to"
@@ -14,7 +16,7 @@
                             {{ page.title }}
                         </NuxtLink>
                     </div>
-                    <div class="flex mt-4 sm:justify-center sm:mt-0 pl-4">
+                    <div class="flex mt-4 sm:justify-center sm:mt-0 md:pl-4">
                         <a
                             href="#"
                             class="text-gray-500 hover:text-gray-900"

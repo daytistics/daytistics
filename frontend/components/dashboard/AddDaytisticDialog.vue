@@ -1,5 +1,5 @@
 <template>
-    <CommonDialog
+    <Dialog
         title="Add Daytistic"
         :open="isOpen"
         max-width="max-w-md"
@@ -64,7 +64,7 @@
                 <span>Add</span>
             </button>
         </form>
-    </CommonDialog>
+    </Dialog>
 </template>
 
 <script lang="ts" setup>

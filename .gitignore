@@ -195,3 +195,7 @@ bun.lockb
 # Docker composed postgres data
 
 data/postgres
+
+# VS Code Workspace
+
+.vscode/**.code-workspace

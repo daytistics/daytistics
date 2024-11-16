@@ -3,7 +3,7 @@
         class="flex flex-col items-center w-16 h-screen py-8 overflow-y-auto bg-white border-r rtl:border-l rtl:border-r-0"
     >
         <nav class="flex flex-col flex-1 space-y-6 items-center">
-            <NuxtLink to="/">
+            <NuxtLink to="/app">
                 <NuxtImg
                     class="w-12 h-auto"
                     src="/images/logo.png"
@@ -28,7 +28,6 @@
             </NuxtLink>
             <button
                 type="button"
-                @click="askLogout"
                 class="p-1.5 text-gray-700 focus:outline-nones transition-colors duration-200 rounded-lg hover:bg-gray-100"
             >
                 <LogOut class="w-6 h-6" />
@@ -51,11 +50,4 @@ import {
 } from 'lucide-vue-next';
 
 const authStore = useAuthStore();
-
-function askLogout() {
-    if (confirm('Are you sure you want to log out?')) {
-        authStore.logout();
-        useRouter().push('/login');
-    }
-}
 </script>
