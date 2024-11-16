@@ -84,9 +84,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ArrowBigLeftDash } from 'lucide-vue-next';
-
-const { showErrorDialog } = useErrorDialogStore();
+import { useToast } from 'vue-toastification';
 
 const form = useForm();
 const loginAPI = useLoginAPI();
@@ -112,9 +110,7 @@ function useLoginAPI() {
             await useAuthStore().login(email, password);
             await useRouter().push('/app');
         } catch (error: any) {
-            showErrorDialog({
-                message: 'An error occurred while logging in.',
-            });
+            useToast().error(error.data.detail);
         }
     };
 

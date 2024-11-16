@@ -8,7 +8,9 @@
                     >Made with &#129505; by the contributors of Daytistics.
                 </span>
                 <div class="flex flex-col text-center md:flex-row justify-center items-center">
-                    <div class="flex flex-row justify-center items-center border-r px-4 gap-3 mt-2">
+                    <div
+                        class="flex flex-row justify-center items-center border-r px-4 gap-3 mt-2 md:mt-0"
+                    >
                         <NuxtLink
                             v-for="page in legalPages"
                             :to="page.to"

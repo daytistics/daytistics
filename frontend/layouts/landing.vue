@@ -1,7 +1,5 @@
 <template>
-    <!--    <LandingNavBar class="z-50" />-->
-    <LandingNavbar2 />
-    <!-- <LandingHeader /> -->
+    <LandingNavbar />
     <div class="min-h-screen flex flex-col font-inter z-10 relative">
         <slot></slot>
     </div>
@@ -9,4 +7,8 @@
     <LandingFooter />
 </template>
 
-<script setup lang="ts"></script>
+<script setup lang="ts">
+useHead({
+    title: 'Welcome to Daytistics',
+});
+</script>
