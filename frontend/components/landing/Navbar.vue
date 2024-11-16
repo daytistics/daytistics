@@ -71,7 +71,7 @@
                                                 />
                                                 <span>{{ action.title }}</span>
                                             </NuxtLink>
-                                            <span
+                                            <button
                                                 v-else-if="action.function"
                                                 @click="action.function"
                                                 :class="[
@@ -86,7 +86,7 @@
                                                     class="w-5 mr-2"
                                                 />
                                                 <span>{{ action.title }}</span>
-                                            </span>
+                                            </button>
                                         </MenuItem>
                                     </div>
                                     <div
@@ -179,7 +179,7 @@ const userActions = [
     { title: 'Settings', link: '/settings', icon: Settings, authRequired: true },
     {
         title: 'Log Out',
-        function: () => console.log('Logging out'),
+        function: async () => await useAuthStore().logout(),
         icon: LogOut,
         authRequired: true,
     },
