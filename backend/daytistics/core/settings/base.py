@@ -95,8 +95,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-NINJA_JWT = {"ACCESS_TOKEN_LIFETIME": timedelta(seconds=20)}
-
 
 # CSRF SETTINGS
 CSRF_COOKIE_NAME = "csrf_token"
