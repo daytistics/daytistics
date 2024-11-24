@@ -28,6 +28,8 @@ jobs:
       - name: Set Up Test Database
         env:
           DJANGO_SETTINGS_MODULE: tests.settings
+          DJANGO_SECRET_KEY: "RtcPToOOZ82erjag0zAVAQ3mmha9MrTx"
+          DJANGO_ALLOWED_HOSTS: "localhost,example.com"
         run: |
           cd backend
           poetry run python manage.py migrate --noinput
@@ -35,6 +37,8 @@ jobs:
       - name: Run PyTest
         env:
           DJANGO_SETTINGS_MODULE: tests.settings
+          DJANGO_SECRET_KEY: "RtcPToOOZ82erjag0zAVAQ3mmha9MrTx"
+          DJANGO_ALLOWED_HOSTS: "localhost,example.com"
         run: |
           cd backend
           poetry run pytest
