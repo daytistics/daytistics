@@ -13,19 +13,21 @@ jobs:
   build_docs:
     name: Build and Deploy Documentation
     runs-on: ubuntu-latest
-    container:
-      image: python:3.12-slim
-    continue-on-error: true # Allow failure
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      - name: Setup MkDocs
+      - name: Install Dependencies
         run: |
           pip install mkdocs mkdocs-material
 
-      - name: Build and Deploy
+      - name: Build Documentation
+        run: |
+          cd docs
+          mkdocs build
+
+      - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./docs/site
+          publish_dir: docs/site

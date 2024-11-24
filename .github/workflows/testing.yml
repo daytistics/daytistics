@@ -25,11 +25,19 @@ jobs:
           cd backend
           poetry install --no-root
 
+      - name: Set Up Test Database
+        env:
+          DJANGO_SETTINGS_MODULE: tests.settings
+        run: |
+          cd backend
+          poetry run python manage.py migrate --noinput
+
       - name: Run PyTest
+        env:
+          DJANGO_SETTINGS_MODULE: tests.settings
         run: |
           cd backend
           poetry run pytest
-
   vitest:
     name: Frontend Unit Tests
     runs-on: ubuntu-latest
@@ -42,9 +50,9 @@ jobs:
       - name: Install Dependencies
         run: |
           cd frontend
-          bun install vitest
+          bun install 
 
       - name: Run Vitest
         run: |
           cd frontend
-          bunx vitest
+          bunx vitest 
