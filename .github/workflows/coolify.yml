@@ -1,0 +1,20 @@
+name:
+
+on:
+  push:
+    branches:
+      - this-branch-does-not-exist-because-this-workflow-shall-not-be-triggered
+  pull_request:
+
+jobs:
+  notify_webhook:
+    name: Notify Webhook
+    runs-on: ubuntu-latest
+    container:
+      image: curlimages/curl:latest
+    steps:
+      - name: Call Webhook
+        env:
+          WEBHOOK_URL: $ {{ secrets.WEBHOOK_URL }}
+        run: |
+          curl -X POST -H "Content-Type: application/json" -d '{"status":"success"}' $WEBHOOK_URL

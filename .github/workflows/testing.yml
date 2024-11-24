@@ -1,0 +1,50 @@
+name: Testing
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  pytest:
+    name: Backend Integration/Unit Tests
+    runs-on: ubuntu-latest
+    container:
+      image: python:3.12-slim
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Install Poetry
+        run: |
+          pip install poetry
+
+      - name: Install Dependencies
+        run: |
+          cd backend
+          poetry install --no-root
+
+      - name: Run PyTest
+        run: |
+          cd backend
+          poetry run pytest tests
+
+  vitest:
+    name: Frontend Unit Tests
+    runs-on: ubuntu-latest
+    container:
+      image: oven/bun:latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Install Dependencies
+        run: |
+          cd frontend
+          bun install vitest
+
+      - name: Run Vitest
+        run: |
+          cd frontend
+          bun run test:unit
