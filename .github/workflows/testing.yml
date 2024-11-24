@@ -28,7 +28,7 @@ jobs:
       - name: Run PyTest
         run: |
           cd backend
-          poetry run pytest tests
+          poetry run pytest
 
   vitest:
     name: Frontend Unit Tests
@@ -47,4 +47,4 @@ jobs:
       - name: Run Vitest
         run: |
           cd frontend
-          bun run test:unit
+          bunx vitest

@@ -14,7 +14,7 @@ jobs:
     name: Build and Deploy Documentation
     runs-on: ubuntu-latest
     container:
-      image: python:3.10
+      image: python:3.12-slim
     continue-on-error: true # Allow failure
     steps:
       - name: Checkout Code
