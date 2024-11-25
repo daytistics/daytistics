@@ -42,11 +42,12 @@ jobs:
         run: |
           cd backend
           poetry run pytest
+
   vitest:
     name: Frontend Unit Tests
     runs-on: ubuntu-latest
     container:
-      image: oven/bun:latest
+      image: node:22
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
@@ -54,9 +55,14 @@ jobs:
       - name: Install Dependencies
         run: |
           cd frontend
-          bun install 
+          npm install
+
+      - name: Prepare Nuxt Environment
+        run: |
+          cd frontend
+          npm nuxt prepare
 
       - name: Run Vitest
         run: |
           cd frontend
-          bunx vitest 
+          npm vitest --run
