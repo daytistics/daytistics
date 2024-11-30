@@ -1,102 +1,119 @@
-<template>
-    <div>
-        <div class="container mx-auto px-6 py-16">
-            <div class="flex flex-col md:flex-row items-center justify-between gap-8">
-                <div class="w-full md:w-1/4 space-y-4">
-                    <Card
-                        v-for="(feature, index) in features.slice(0, 3)"
-                        :key="index"
-                        :clickable="true"
-                        :class="{
-                            shadow: activeFeature === index,
-                        }"
-                        @click="activeFeature = index"
-                        class="flex flex-col justify-center items-center gap-2"
-                    >
-                        <h3 class="font-bold text-lg">{{ feature.title }}</h3>
-                        <component
-                            :is="feature.icon"
-                            class="w-14 h-auto text-day-primary"
-                        />
-                    </Card>
-                </div>
-
-                <LandingFeaturesScreen>
-                    <NuxtImg
-                        :key="activeFeature"
-                        src="/images/app-placeholder.jpg"
-                        :alt="features[activeFeature].title"
-                        class="w-full h-auto rounded"
-                    />
-                </LandingFeaturesScreen>
-                <div class="w-full md:w-1/4 space-y-4">
-                    <Card
-                        v-for="(feature, index) in features.slice(3)"
-                        :key="index"
-                        :clickable="true"
-                        :class="{
-                            shadow: activeFeature === index,
-                        }"
-                        @click="activeFeature = index"
-                        class="flex flex-col justify-center items-center gap-2"
-                    >
-                        <h3 class="font-bold text-lg">{{ feature.title }}</h3>
-                        <component
-                            :is="feature.icon"
-                            class="w-14 h-auto text-day-primary"
-                        />
-                    </Card>
-                </div>
-            </div>
-        </div>
-    </div>
-</template>
-
 <script setup lang="ts">
 import { ref } from 'vue';
 
-import { Bot, ChartBar, DollarSign, RollerCoaster, Server, Trophy } from 'lucide-vue-next';
-
-const features = [
+const featuresItems = ref([
     {
-        title: 'Activity-Tracking',
-        icon: RollerCoaster,
+        icon: `<svg width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+                     <path d="M30.8811 5.28745H30.7123V4.49995C30.7123 2.58745 29.1373 1.01245 27.2248 1.01245H11.6436C9.73108 1.01245 8.15608 2.58745 8.15608 4.49995V5.28745H6.18733C4.89358 5.28745 3.82483 6.3562 3.82483 7.64995V15.525C3.82483 16.8187 4.89358 17.8875 6.18733 17.8875H21.0373V19.6875C19.4061 19.9687 18.1686 21.4312 18.1686 23.1187V31.5C18.1686 33.4125 19.7436 34.9875 21.6561 34.9875H22.8936C24.8061 34.9875 26.3811 33.4125 26.3811 31.5V23.1187C26.3811 21.4312 25.1436 19.9687 23.5123 19.6875V17.6625C23.5123 16.3687 22.4436 15.3 21.1498 15.3H6.35608V7.8187H8.09983V8.6062C8.09983 10.5187 9.67483 12.0937 11.5873 12.0937H27.1123C29.0248 12.0937 30.5998 10.5187 30.5998 8.6062V7.8187H30.7686C31.4436 7.8187 32.0061 7.2562 32.0061 6.5812C32.0061 5.9062 31.6123 5.28745 30.8811 5.28745ZM23.9061 23.1187V31.5C23.9061 32.0625 23.4561 32.5125 22.8936 32.5125H21.6561C21.0936 32.5125 20.6436 32.0625 20.6436 31.5V23.1187C20.6436 22.5562 21.0936 22.1062 21.6561 22.1062H22.8936C23.4561 22.1062 23.9061 22.5562 23.9061 23.1187ZM28.1811 8.6062C28.1811 9.1687 27.7311 9.6187 27.1686 9.6187H11.6436C11.0811 9.6187 10.6311 9.1687 10.6311 8.6062V4.49995C10.6311 3.93745 11.0811 3.48745 11.6436 3.48745H27.1686C27.7311 3.48745 28.1811 3.93745 28.1811 4.49995V8.6062V8.6062Z" fill="white"/>
+                  </svg>`,
+        title: `UX & UI Design with Development`,
+        details: ' Lorem Ipsum is simply dummy text of the printing and industry.',
+        button: {
+            link: '#',
+            text: 'Learn More',
+        },
     },
     {
-        title: 'Wellbeing-Tracking',
-        icon: Trophy,
+        icon: ` <svg width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+                     <g clip-path="url(#clip0_1697_2734)">
+                        <path d="M14.1186 13.2749C14.1186 15.5249 15.9186 17.3249 18.1686 17.3249C20.4186 17.3249 22.2186 15.5249 22.2186 13.2749C22.2186 11.0249 20.4186 9.22488 18.1686 9.22488C15.9748 9.16863 14.1186 11.0249 14.1186 13.2749ZM20.0248 13.2749C20.0248 14.2874 19.1811 15.0749 18.2248 15.0749C17.2686 15.0749 16.4248 14.2311 16.4248 13.2749C16.4248 12.3186 17.2686 11.4749 18.2248 11.4749C19.1811 11.4749 20.0248 12.2624 20.0248 13.2749Z" fill="white"/>
+                        <path d="M4.55606 17.8312C4.83731 17.8312 5.06231 17.7187 5.23106 17.6062L9.22481 14.4562C9.73106 14.0624 9.78731 13.3874 9.39356 12.8812C8.99981 12.3749 8.32481 12.3187 7.81856 12.7124L5.79356 14.3437C7.25606 8.60615 12.3186 4.6124 18.2248 4.6124C24.1311 4.6124 29.2498 8.60615 30.7123 14.3437C30.8811 14.9624 31.4998 15.2999 32.0623 15.1312C32.6811 14.9624 33.0186 14.3437 32.8498 13.7812C31.1623 7.03115 25.0873 2.30615 18.1686 2.30615C11.3061 2.30615 5.34356 6.91865 3.59981 13.5562L2.30606 11.8124C1.91231 11.3062 1.23731 11.1937 0.731061 11.5874C0.224811 11.9812 0.112311 12.6562 0.506061 13.1624L3.65606 17.3812C3.82481 17.6062 4.10606 17.7749 4.38731 17.8312C4.44356 17.8312 4.49981 17.8312 4.55606 17.8312Z" fill="white"/>
+                        <path d="M35.3248 25.1999L33.1311 20.4187C33.0186 20.1374 32.7936 19.9124 32.4561 19.7999C32.1748 19.6874 31.8373 19.7437 31.5561 19.8562L26.9998 22.1062C26.4373 22.3874 26.2123 23.0624 26.4936 23.6249C26.7748 24.1874 27.4498 24.4124 28.0123 24.1312L30.2061 23.0624C29.1936 25.7624 27.3373 27.9562 25.0311 29.4187V24.1312C25.0311 21.2624 22.8936 18.8999 20.2498 18.8999H15.9186C13.2748 18.8999 11.1373 21.2624 11.1373 24.1874V29.2499C8.77483 27.6749 6.97483 25.3687 6.07483 22.5562C5.90608 21.9937 5.23108 21.6562 4.66858 21.8249C4.10608 21.9937 3.76858 22.6687 3.93733 23.2312C5.96233 29.4187 11.6998 33.5812 18.2248 33.5812C24.4686 33.5812 30.0373 29.7562 32.2873 23.9624L33.2436 26.0999C33.4123 26.4937 33.8623 26.7749 34.2561 26.7749C34.4248 26.7749 34.5936 26.7187 34.7061 26.6624C35.3248 26.4374 35.5498 25.7624 35.3248 25.1999ZM13.3873 30.4312V24.1312C13.3873 22.4437 14.5123 21.0937 15.9186 21.0937H16.9311V24.9749C16.9311 25.5937 17.4373 26.0999 18.0561 26.0999C18.6748 26.0999 19.1811 25.5937 19.1811 24.9749V21.0937H20.2498C21.6561 21.0937 22.7811 22.4437 22.7811 24.0749V30.4874C21.3186 31.0499 19.7998 31.3312 18.1686 31.3312C16.4811 31.3874 14.8498 31.0499 13.3873 30.4312Z" fill="white"/>
+                     </g>
+                     <defs>
+                        <clipPath id="clip0_1697_2734">
+                           <rect width="36" height="36" fill="white"/>
+                        </clipPath>
+                     </defs>
+                  </svg>`,
+        title: `General Consulting Solutions`,
+        details: ' Lorem Ipsum is simply dummy text of the printing and industry.',
+        button: {
+            link: '#',
+            text: 'Learn More',
+        },
     },
     {
-        title: 'Recommendations',
-        icon: Bot,
+        icon: `<svg width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+                     <g clip-path="url(#clip0_1697_2807)">
+                        <path d="M33.7498 31.05H30.7123V19.9688C30.7123 18.1688 29.2498 16.7625 27.5061 16.7625H24.2436C22.4436 16.7625 21.0373 18.225 21.0373 19.9688V31.05H17.6623V11.475C17.6623 9.67505 16.1998 8.2688 14.4561 8.2688H11.1936C9.39358 8.2688 7.98734 9.7313 7.98734 11.475V31.05H3.54359V3.6563C3.54359 2.9813 2.98109 2.36255 2.24984 2.36255C1.51859 2.36255 0.956085 2.92505 0.956085 3.6563V31.1625C0.956085 32.4563 2.02484 33.5813 3.37484 33.5813H33.7498C34.4248 33.5813 35.0436 33.0188 35.0436 32.2875C35.0436 31.5563 34.4248 31.05 33.7498 31.05ZM10.5186 31.05V11.475C10.5186 11.0813 10.8561 10.8 11.1936 10.8H14.4561C14.8498 10.8 15.1311 11.1375 15.1311 11.475V31.05H10.5186V31.05ZM23.5686 31.05V19.9688C23.5686 19.575 23.9061 19.2938 24.2436 19.2938H27.5061C27.8998 19.2938 28.1811 19.6313 28.1811 19.9688V31.05H23.5686Z" fill="white"/>
+                     </g>
+                     <defs>
+                        <clipPath id="clip0_1697_2807">
+                           <rect width="36" height="36" fill="white"/>
+                        </clipPath>
+                     </defs>
+                  </svg>`,
+        title: `Business Analytics & Branding`,
+        details: ' Lorem Ipsum is simply dummy text of the printing and industry.',
+        button: {
+            link: '#',
+            text: 'Learn More',
+        },
     },
     {
-        title: 'Visualizations',
-        icon: ChartBar,
+        icon: `<svg width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+                     <path d="M31.4436 1.01245H26.8873C25.0873 1.01245 23.5686 2.36245 23.3998 4.1062L9.67483 5.4562H4.55608C2.64358 5.4562 1.06858 6.97495 1.06858 8.8312V18.1125C1.06858 19.4062 1.85608 20.5875 2.98108 21.15L4.94983 32.0062C5.34358 33.75 6.97483 35.0437 8.83108 35.0437C10.0686 35.0437 11.2498 34.4812 12.0373 33.525C12.7123 32.6812 12.9936 31.6125 12.7686 30.6L11.2498 21.825L23.3436 24.1875C23.4561 26.0437 24.9748 27.5062 26.8311 27.5062H31.3873C33.2998 27.5062 34.9311 25.9312 34.9311 23.9625V4.49995C34.9311 2.58745 33.3561 1.01245 31.4436 1.01245ZM11.0248 7.87495L23.3436 6.63745V21.6L11.0248 19.1812V7.87495ZM3.59983 8.8312C3.59983 8.43745 3.99358 7.98745 4.55608 7.98745H8.49358V18.9562H4.55608C4.04983 18.9562 3.59983 18.5625 3.59983 18.1125V8.8312V8.8312ZM10.0686 31.95C9.78733 32.2875 9.33733 32.5125 8.83108 32.5125C8.15608 32.5125 7.53733 32.0625 7.42483 31.5562L5.62483 21.4875H8.60608L10.2373 31.05V31.1062C10.3498 31.5 10.1811 31.7812 10.0686 31.95ZM32.3998 23.9625C32.3998 24.525 31.9498 24.975 31.3873 24.975H26.8311C26.2686 24.975 25.8186 24.525 25.8186 23.9625V4.49995C25.8186 3.93745 26.2686 3.48745 26.8311 3.48745H31.3873C31.9498 3.48745 32.3998 3.93745 32.3998 4.49995V23.9625Z" fill="white"/>
+                  </svg>`,
+        title: `Digital Marketing & SEO Solutions`,
+        details: ' Lorem Ipsum is simply dummy text of the printing and industry.',
+        button: {
+            link: '#',
+            text: 'Learn More',
+        },
     },
-    {
-        title: 'Fair Pricing',
-        icon: DollarSign,
-    },
-    {
-        title: 'Self-Hosting',
-        icon: Server,
-    },
-];
-
-const activeFeature = ref(0);
-
-const featureCutIndex = features.length; // 2;
+]);
 </script>
 
-<style scoped>
-.fade-enter-active,
-.fade-leave-active {
-    transition: opacity 0.5s ease;
-}
+<template>
+    <!-- ====== Services Section Start -->
+    <section class="pt-20 pb-8 lg:pt-[120px] lg:pb-[70px]">
+        <div class="container mx-auto">
+            <div class="-mx-4 flex flex-wrap">
+                <div class="w-full px-4">
+                    <div class="mb-[60px] max-w-[510px] lg:mb-[70px]">
+                        <span class="text-primary mb-2 block text-lg font-semibold">
+                            What we Serve
+                        </span>
+                        <h2
+                            class="text-dark mb-3 text-3xl leading-[1.2] font-bold sm:text-4xl md:text-[40px]"
+                        >
+                            Our Best Services
+                        </h2>
+                        <p class="text-body-color text-base">
+                            There are many variations of passages of Lorem Ipsum available but the
+                            majority have suffered alteration in some form.
+                        </p>
+                    </div>
+                </div>
+            </div>
 
-.fade-enter-from,
-.fade-leave-to {
-    opacity: 0;
-}
-</style>
+            <div class="-mx-4 flex flex-wrap">
+                <template
+                    v-for="(item, index) in featuresItems"
+                    :key="index"
+                >
+                    <div class="w-full px-4 md:w-1/2 lg:w-1/4">
+                        <div class="group mb-12">
+                            <div
+                                class="bg-primary relative z-10 mb-8 xl:mb-[50px] flex h-[70px] w-[70px] items-center justify-center rounded-[14px]"
+                            >
+                                <span
+                                    class="bg-primary absolute top-0 left-0 z-[-1] flex h-[70px] w-[70px] rotate-[25deg] items-center justify-center rounded-[14px] bg-opacity-30 duration-300 group-hover:rotate-45"
+                                ></span>
+                                <span v-html="item.icon"></span>
+                            </div>
+                            <h4 class="text-dark mb-3 text-xl font-bold">
+                                {{ item.title }}
+                            </h4>
+                            <p class="text-body-color mb-9">
+                                {{ item.details }}
+                            </p>
+                        </div>
+                    </div>
+                </template>
+            </div>
+        </div>
+    </section>
+    <!-- ====== Services Section End -->
+</template>

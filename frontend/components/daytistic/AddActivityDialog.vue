@@ -25,7 +25,7 @@
                         >Start time:</label
                     >
                     <div class="relative">
-                        <CommonTimepicker @update="form.handleStartTimeUpdate" />
+                        <TimePicker @update="form.handleStartTimeUpdate" />
                     </div>
                 </div>
                 <div>
@@ -35,7 +35,7 @@
                         >End time:</label
                     >
                     <div class="relative">
-                        <CommonTimepicker @update="form.handleEndTimeUpdate" />
+                        <TimePicker @update="form.handleEndTimeUpdate" />
                     </div>
                 </div>
             </div>
@@ -145,7 +145,7 @@ function useActivitiesAPI() {
     const add = async (startTime: number, endTime: number) => {
         // CURRENT PROBLEM: CREATION NOT WORKING
         const id = useRoute().params.id;
-        debugger;
+
         try {
             await $api(`/api/daytistics/${id}/add-activity`, {
                 method: 'POST',
@@ -157,12 +157,10 @@ function useActivitiesAPI() {
                 onResponse: ({ request, response, options }) => {
                     if (response.status === 201) {
                         emit('submit');
-                        debugger;
                     }
                 },
                 onResponseError: ({ request, response, options }) => {
                     form.setError(response._data.detail);
-                    debugger;
                 },
             });
         } catch (error) {

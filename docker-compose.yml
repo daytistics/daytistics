@@ -15,6 +15,7 @@ services:
     image: python:3.12-slim
     volumes:
       - ./backend:/app
+      - ./backend/.venv:/app/.venv
     working_dir: /app
     command: >
       /bin/sh -c "pip install poetry &&
@@ -49,22 +50,6 @@ services:
       - "3000:3000"
     depends_on:
       - django
-
-  mkdocs:
-    image: python:3.12-slim
-    volumes:
-      - ./docs:/app
-    working_dir: /app
-    command: >
-      /bin/sh -c "apt-get update &&
-      apt-get install -y libcairo2 libpango1.0-0 &&
-      pip install poetry &&
-      poetry install --no-root &&
-      poetry run mkdocs serve --dev-addr=0.0.0.0:4000"
-    environment:
-      LD_LIBRARY_PATH: "/usr/lib/x86_64-linux-gnu"
-    ports:
-      - "4000:4000"
 
 volumes:
   postgres_data:

@@ -1,4 +1,4 @@
-export interface ActivityType {
+interface ActivityType {
     id: number;
     name: string;
     category: string;
@@ -6,10 +6,12 @@ export interface ActivityType {
     active: boolean;
 }
 
-export interface ActivityEntry {
+interface ActivityEntry {
     id: number;
     name: string;
     duration: number;
     start_time: number;
     end_time: number;
 }
+
+export type { ActivityEntry, ActivityType };

@@ -12,7 +12,7 @@
         <div class="fixed inset-0 flex w-screen items-center justify-center p-4 z-50">
             <DialogPanel
                 class="w-full shadow-md rounded-xl bg-white p-5"
-                :class="props.maxWidth || 'max-w-lg'"
+                :class="`max-w-${size} min-w-${size}`"
             >
                 <div class="flex flex-row justify-between items-center">
                     <DialogTitle class="font-semibold text-xl">{{ title }}</DialogTitle>
@@ -42,8 +42,8 @@ const emits = defineEmits(['close']);
 const props = defineProps<{
     title: string;
     open: boolean;
+    size: 'sm' | 'md' | 'lg';
     description?: string;
-    maxWidth?: string;
 }>();
 
 onMounted(() => {

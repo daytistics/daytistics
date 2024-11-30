@@ -1,193 +1,289 @@
 <template>
-    <div class="fixed top-0 left-0 right-0 z-50">
-        <div class="bg-white/60 bg-opacity-80 backdrop-blur-sm text-gray-900 shadow-md">
-            <div class="mx-auto px-4 py-5">
-                <div class="flex items-center justify-between">
-                    <NuxtLink
-                        to="/"
-                        class="flex items-center text-2xl font-black uppercase text-transparent bg-gradient-to-tr bg-clip-text from-day-primary to-day-secondary transition hover:scale-105"
+    <header class="relative isolate z-50 bg-transparent">
+        <nav
+            class="mx-auto flex max-w-7xl items-center justify-between p-6 lg:px-8"
+            aria-label="Global"
+        >
+            <div class="flex lg:flex-1">
+                <a
+                    href="#"
+                    class="-m-1.5 p-1.5"
+                >
+                    <span class="sr-only">Your Contribute</span>
+                    <NuxtImg
+                        class="h-10 w-auto"
+                        src="/images/logo.png"
+                        alt=""
+                    />
+                </a>
+            </div>
+            <div class="flex lg:hidden">
+                <button
+                    type="button"
+                    class="-m-2.5 inline-flex items-center justify-center rounded-md p-2.5 text-gray-700"
+                    @click="mobileMenuOpen = true"
+                >
+                    <span class="sr-only">Open main menu</span>
+                    <MenuIcon
+                        class="size-6"
+                        aria-hidden="true"
+                    />
+                </button>
+            </div>
+            <PopoverGroup class="hidden lg:flex lg:gap-x-12">
+                <Popover>
+                    <PopoverButton
+                        class="flex items-center gap-x-1 text-sm/6 font-semibold text-gray-900"
                     >
                         Daytistics
-                    </NuxtLink>
-
-                    <div class="hidden md:flex space-x-4 items-center justify-center">
-                        <div
-                            v-for="item in homeSections"
-                            :key="item.title"
-                            class="flex flex-row items-center justify-center"
-                        >
-                            <NuxtLink
-                                :to="item.link"
-                                class="hover:text-day-primary transition"
-                            >
-                                {{ item.title }}
-                            </NuxtLink>
-                        </div>
-
-                        <Menu
-                            as="div"
-                            class="relative"
-                        >
-                            <MenuButton class="flex items-center space-x-2 focus:outline-none">
-                                <NuxtImg
-                                    src="/images/logo.png"
-                                    alt="Logo"
-                                    class="w-8 h-8 rounded-full"
-                                />
-                                <ChevronDownIcon class="w-4 h-4" />
-                            </MenuButton>
-
-                            <transition
-                                enter-active-class="transition duration-100 ease-out"
-                                enter-from-class="transform scale-95 opacity-0"
-                                enter-to-class="transform scale-100 opacity-100"
-                                leave-active-class="transition duration-75 ease-in"
-                                leave-from-class="transform scale-100 opacity-100"
-                                leave-to-class="transform scale-95 opacity-0"
-                            >
-                                <MenuItems
-                                    class="absolute right-0 mt-2 w-56 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none z-[60]"
-                                >
-                                    <div class="px-1 py-1">
-                                        <MenuItem
-                                            v-slot="{ active }"
-                                            v-for="action in userActions.filter(
-                                                (action) => action.authRequired == isAuthenticated
-                                            )"
-                                        >
-                                            <NuxtLink
-                                                v-if="action.link"
-                                                :to="action.link"
-                                                :class="[
-                                                    active
-                                                        ? 'bg-day-primary text-white'
-                                                        : 'text-gray-900',
-                                                    'group flex w-full items-center rounded-md px-2 py-2 text-sm',
-                                                ]"
-                                            >
-                                                <component
-                                                    :is="action.icon"
-                                                    class="w-5 mr-2"
-                                                />
-                                                <span>{{ action.title }}</span>
-                                            </NuxtLink>
-                                            <button
-                                                v-else-if="action.function"
-                                                @click="action.function"
-                                                :class="[
-                                                    active
-                                                        ? 'bg-day-primary text-white'
-                                                        : 'text-gray-900',
-                                                    'group flex w-full items-center rounded-md px-2 py-2 text-sm',
-                                                ]"
-                                            >
-                                                <component
-                                                    :is="action.icon"
-                                                    class="w-5 mr-2"
-                                                />
-                                                <span>{{ action.title }}</span>
-                                            </button>
-                                        </MenuItem>
-                                    </div>
-                                    <div
-                                        class="px-1 py-1"
-                                        v-if="isAuthenticated"
-                                    >
-                                        <MenuItem v-slot="{ active }">
-                                            <span
-                                                :class="[
-                                                    active
-                                                        ? 'bg-day-primary text-white'
-                                                        : 'text-gray-900',
-                                                    'group flex w-full items-center rounded-md px-2 py-2 text-sm',
-                                                ]"
-                                            >
-                                                <HandCoinsIcon class="w-5 mr-2" />
-                                                10k Tokens
-                                            </span>
-                                        </MenuItem>
-                                    </div>
-                                </MenuItems>
-                            </transition>
-                        </Menu>
-                    </div>
-
-                    <button
-                        @click="isMenuOpen = !isMenuOpen"
-                        class="md:hidden focus:outline-none z-50"
-                    >
-                        <MenuIcon
-                            v-if="!isMenuOpen"
-                            class="w-6 h-6"
+                        <ChevronDownIcon
+                            class="size-5 flex-none text-gray-400"
+                            aria-hidden="true"
                         />
-                        <XIcon
-                            v-else
-                            class="w-6 h-6"
+                    </PopoverButton>
+
+                    <transition
+                        enter-active-class="transition ease-out duration-200"
+                        enter-from-class="opacity-0 -translate-y-1"
+                        enter-to-class="opacity-100 translate-y-0"
+                        leave-active-class="transition ease-in duration-150"
+                        leave-from-class="opacity-100 translate-y-0"
+                        leave-to-class="opacity-0 -translate-y-1"
+                    >
+                        <PopoverPanel
+                            class="absolute inset-x-0 top-0 -z-10 bg-white pt-14 shadow-lg ring-1 ring-gray-900/5"
+                        >
+                            <div
+                                class="mx-auto grid max-w-7xl grid-cols-4 gap-x-4 px-6 py-10 lg:px-8 xl:gap-x-8"
+                            >
+                                <div
+                                    v-for="item in Daytisticss"
+                                    :key="item.name"
+                                    class="group relative rounded-lg p-6 text-sm/6 hover:bg-gray-50"
+                                >
+                                    <div
+                                        class="flex size-11 items-center justify-center rounded-lg bg-gray-50 group-hover:bg-white"
+                                    >
+                                        <component
+                                            :is="item.icon"
+                                            class="size-6 text-gray-600 group-hover:text-primary"
+                                            aria-hidden="true"
+                                        />
+                                    </div>
+                                    <a
+                                        :href="item.href"
+                                        class="mt-6 block font-semibold text-gray-900"
+                                    >
+                                        {{ item.name }}
+                                        <span class="absolute inset-0" />
+                                    </a>
+                                    <p class="mt-1 text-gray-600">
+                                        {{ item.description }}
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="bg-gray-50">
+                                <div class="mx-auto max-w-7xl px-6 lg:px-8">
+                                    <div
+                                        class="grid grid-cols-3 divide-x divide-gray-900/5 border-x border-gray-900/5"
+                                    >
+                                        <a
+                                            v-for="item in callsToAction"
+                                            :key="item.name"
+                                            :href="item.href"
+                                            class="flex items-center justify-center gap-x-2.5 p-3 text-sm/6 font-semibold text-gray-900 hover:bg-gray-100"
+                                        >
+                                            <component
+                                                :is="item.icon"
+                                                class="size-5 flex-none text-gray-400"
+                                                aria-hidden="true"
+                                            />
+                                            {{ item.name }}
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </PopoverPanel>
+                    </transition>
+                </Popover>
+
+                <NuxtLink
+                    to="#features"
+                    class="text-sm/6 font-semibold text-gray-900"
+                    >Features</NuxtLink
+                >
+                <a
+                    href="#"
+                    class="text-sm/6 font-semibold text-gray-900"
+                    >Pricing</a
+                >
+                <a
+                    href="#"
+                    class="text-sm/6 font-semibold text-gray-900"
+                    >Contribute</a
+                >
+            </PopoverGroup>
+            <div class="hidden lg:flex lg:flex-1 lg:justify-end">
+                <a
+                    href="#"
+                    class="text-sm/6 font-semibold text-gray-900"
+                    >Log in <span aria-hidden="true">&rarr;</span></a
+                >
+            </div>
+        </nav>
+        <Dialog
+            class="lg:hidden"
+            @close="mobileMenuOpen = false"
+            :open="mobileMenuOpen"
+        >
+            <div class="fixed inset-0 z-10" />
+            <DialogPanel
+                class="fixed inset-y-0 right-0 z-10 w-full overflow-y-auto bg-white px-6 py-6 sm:max-w-sm sm:ring-1 sm:ring-gray-900/10"
+            >
+                <div class="flex items-center justify-between">
+                    <a
+                        href="#"
+                        class="-m-1.5 p-1.5"
+                    >
+                        <span class="sr-only">Your Contribute</span>
+                        <img
+                            class="h-8 w-auto"
+                            src="https://tailwindui.com/plus/img/logos/mark.svg?color=indigo&shade=600"
+                            alt=""
+                        />
+                    </a>
+                    <button
+                        type="button"
+                        class="-m-2.5 rounded-md p-2.5 text-gray-700"
+                        @click="mobileMenuOpen = false"
+                    >
+                        <span class="sr-only">Close menu</span>
+                        <X
+                            class="size-6"
+                            aria-hidden="true"
                         />
                     </button>
                 </div>
-            </div>
-        </div>
-
-        <transition
-            enter-active-class="transition duration-300 ease-out"
-            enter-from-class="transform -translate-y-full opacity-0"
-            enter-to-class="transform translate-y-0 opacity-100"
-            leave-active-class="transition duration-200 ease-in"
-            leave-from-class="transform translate-y-0 opacity-100"
-            leave-to-class="transform -translate-y-full opacity-0"
-        >
-            <div
-                v-if="isMenuOpen"
-                class="md:hidden bg-purple-50 bg-opacity-80 backdrop-blur-sm shadow-md fixed top-[72px] left-0 right-0 z-40"
-            >
-                <div class="px-2 pt-2 pb-3 space-y-1">
-                    <NuxtLink
-                        v-for="item in homeSections"
-                        :key="item.title"
-                        :to="item.link"
-                        class="block px-3 py-2 rounded-md text-base font-medium hover:text-day-primary transition"
-                        @click="isMenuOpen = false"
-                    >
-                        {{ item.title }}
-                    </NuxtLink>
+                <div class="mt-6 flow-root">
+                    <div class="-my-6 divide-y divide-gray-500/10">
+                        <div class="space-y-2 py-6">
+                            <Disclosure
+                                as="div"
+                                class="-mx-3"
+                                v-slot="{ open }"
+                            >
+                                <DisclosureButton
+                                    class="flex w-full items-center justify-between rounded-lg py-2 pl-3 pr-3.5 text-base/7 font-semibold text-gray-900 hover:bg-gray-50"
+                                >
+                                    Daytistics
+                                    <ChevronDownIcon
+                                        :class="[open ? 'rotate-180' : '', 'size-5 flex-none']"
+                                        aria-hidden="true"
+                                    />
+                                </DisclosureButton>
+                                <DisclosurePanel class="mt-2 space-y-2">
+                                    <DisclosureButton
+                                        v-for="item in [...Daytisticss, ...callsToAction]"
+                                        :key="item.name"
+                                        as="a"
+                                        :href="item.href"
+                                        class="block rounded-lg py-2 pl-6 pr-3 text-sm/7 font-semibold text-gray-900 hover:bg-gray-50"
+                                        >{{ item.name }}</DisclosureButton
+                                    >
+                                </DisclosurePanel>
+                            </Disclosure>
+                            <a
+                                href="#"
+                                class="-mx-3 block rounded-lg px-3 py-2 text-base/7 font-semibold text-gray-900 hover:bg-gray-50"
+                                >Features</a
+                            >
+                            <NuxtLink
+                                to="#pricing"
+                                class="-mx-3 block rounded-lg px-3 py-2 text-base/7 font-semibold text-gray-900 hover:bg-gray-50"
+                                >Pricing</NuxtLink
+                            >
+                            <a
+                                href="#"
+                                class="-mx-3 block rounded-lg px-3 py-2 text-base/7 font-semibold text-gray-900 hover:bg-gray-50"
+                                >Contribute</a
+                            >
+                        </div>
+                        <div class="py-6">
+                            <a
+                                href="#"
+                                class="-mx-3 block rounded-lg px-3 py-2.5 text-base/7 font-semibold text-gray-900 hover:bg-gray-50"
+                                >Log in</a
+                            >
+                        </div>
+                    </div>
                 </div>
-            </div>
-        </transition>
-    </div>
+            </DialogPanel>
+        </Dialog>
+    </header>
 </template>
 
-<script setup lang="ts">
-import { ref, onMounted } from 'vue';
-import { Menu, MenuButton, MenuItems, MenuItem } from '@headlessui/vue';
-import { ChevronDownIcon, MenuIcon, XIcon, Home } from 'lucide-vue-next';
-import { HandCoinsIcon, LogInIcon, NotebookPen, Settings, LogOut } from 'lucide-vue-next';
-import { useAuthStore } from '~/stores/auth-store';
+<script setup>
+import { ref } from 'vue';
+import {
+    Dialog,
+    DialogPanel,
+    Disclosure,
+    DisclosureButton,
+    DisclosurePanel,
+    Popover,
+    PopoverButton,
+    PopoverGroup,
+    PopoverPanel,
+} from '@headlessui/vue';
+import {
+    X,
+    ChartPieIcon,
+    TextCursorIcon,
+    Fingerprint,
+    SquareIcon,
+    CircleIcon,
+    PhoneIcon,
+    RectangleVerticalIcon,
+    ChevronDownIcon,
+    MenuIcon,
+    Book,
+    HelpCircle,
+    Speech,
+    Star,
+} from 'lucide-vue-next';
+import DiscordIcon from '../icons/DiscordIcon.vue';
 
-const isMenuOpen = ref(false);
-const isAuthenticated = ref(false);
-
-const homeSections = [
-    { title: "We're hiring 💻", link: '/#features' },
-    { title: 'Feedback ⭐', link: '/#features' },
-];
-
-const userActions = [
-    { title: 'Log In', link: '/login', icon: LogInIcon, authRequired: false },
-    { title: 'Sign Up', link: '/signup', icon: NotebookPen, authRequired: false },
-    { title: 'Dashboard', link: '/app', icon: Home, authRequired: true },
-    { title: 'Settings', link: '/settings', icon: Settings, authRequired: true },
+const Daytisticss = [
     {
-        title: 'Log Out',
-        function: async () => await useAuthStore().logout(),
-        icon: LogOut,
-        authRequired: true,
+        name: 'Dashboard',
+        description: 'Get to know your well-being better and improve it',
+        href: '#',
+        icon: ChartPieIcon,
+    },
+    {
+        name: 'Documentation',
+        description: 'Learn how to use Daytistics and get the most out of it',
+        href: '#',
+        icon: Book,
+    },
+    {
+        name: 'Testimonials',
+        description: 'See what our users say about Daytistics',
+        href: '#',
+        icon: Star,
+    },
+    {
+        name: 'Discord',
+        description: 'Join our Discord community and get help from others',
+        href: '#',
+        icon: DiscordIcon,
     },
 ];
+const callsToAction = [
+    { name: 'Watch demo', href: '#', icon: CircleIcon },
+    { name: 'Contact us', href: '#', icon: PhoneIcon },
+    { name: 'Give us feedback', href: '#', icon: RectangleVerticalIcon },
+];
 
-onMounted(async () => {
-    if (import.meta.client) {
-        isAuthenticated.value = await useAuthStore().isAuthenticated();
-    }
-});
+const mobileMenuOpen = ref(false);
 </script>

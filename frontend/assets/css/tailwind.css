@@ -1,4 +1,5 @@
-@import "fonts.css";
+@import 'fonts.css';
+@import 'vue-datepicker.css';
 
 @tailwind base;
 @tailwind components;
@@ -6,10 +7,10 @@
 
 @layer components {
     .button {
-        @apply inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-day-secondary hover:bg-day-tertiary;
+        @apply inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-secondary hover:bg-tertiary;
     }
 
     .input {
-        @apply bg-gray-50 border leading-none border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-day-secondary focus:border-day-tertiary block w-full p-3;
+        @apply bg-day-gray-light border leading-none border-day-gray-medium text-dark text-sm rounded-lg focus:ring-secondary focus:border-tertiary block w-full p-3;
     }
 }

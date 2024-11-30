@@ -1,38 +1,36 @@
 <template>
-    <Dialog
-        :open="open"
-        class="relative z-50"
-    >
-        <div
-            class="fixed inset-0 bg-black/30"
-            aria-hidden="true"
-        />
-
-        <div
-            class="fixed inset-0 flex w-screen items-center justify-center p-4"
+    <ClientOnly>
+        <Dialog
+            :open="open"
+            class="relative z-50"
         >
-            <DialogPanel
-                class="w-full shadow-md rounded-xl bg-white p-5"
-                :class="props.maxWidth || 'max-w-lg'"
-            >
-                <div class="flex flex-row justify-between items-center">
-                    <DialogTitle class="font-semibold text-xl">{{
-                        title
-                    }}</DialogTitle>
+            <div
+                class="fixed inset-0 bg-black/30"
+                aria-hidden="true"
+            />
 
-                    <button
-                        type="button"
-                        @click="closeDialog"
-                    >
-                        <X />
-                    </button>
-                </div>
-                <div class="mt-3">
-                    <slot />
-                </div>
-            </DialogPanel>
-        </div>
-    </Dialog>
+            <div class="fixed inset-0 flex w-screen items-center justify-center p-4">
+                <DialogPanel
+                    class="w-full shadow-md rounded-xl bg-white p-5"
+                    :class="props.maxWidth || 'max-w-lg'"
+                >
+                    <div class="flex flex-row justify-between items-center">
+                        <DialogTitle class="font-semibold text-xl">{{ title }}</DialogTitle>
+
+                        <button
+                            type="button"
+                            @click="closeDialog"
+                        >
+                            <X />
+                        </button>
+                    </div>
+                    <div class="mt-3">
+                        <slot />
+                    </div>
+                </DialogPanel>
+            </div>
+        </Dialog>
+    </ClientOnly>
 </template>
 
 <script lang="ts" setup>

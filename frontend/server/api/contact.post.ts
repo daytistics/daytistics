@@ -1,1 +1,0 @@
-defineEventHandler(async (event) => {});

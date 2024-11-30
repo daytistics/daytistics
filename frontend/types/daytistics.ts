@@ -1,4 +1,4 @@
-export interface Daytistic {
+interface Daytistic {
     id: number;
     date: string;
     average_wellbeing: number;
@@ -15,24 +15,22 @@ export interface Daytistic {
         date_joined: string;
         last_login: string;
     };
-    wellbeing: [
-        {
-            id: 0;
-            name: string;
-            rating: number;
-        },
-    ];
-    activities: [
-        {
-            id: number;
-            name: string;
-            duration: number;
-            start_time: number;
-            end_time: number;
-        },
-    ];
+    wellbeing: {
+        id: number;
+        name: string;
+        rating: number;
+    }[];
+    activities: {
+        id: number;
+        name: string;
+        duration: number;
+        start_time: number;
+        end_time: number;
+    }[];
     diary: {
         entry: string;
         moment_of_happiness: string;
     };
 }
+
+export type { Daytistic };

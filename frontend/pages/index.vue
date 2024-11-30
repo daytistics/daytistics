@@ -1,9 +1,11 @@
 <template>
     <LandingJumbotron />
-    <!-- <LandingStats /> -->
+    <hr />
     <LandingFeatures />
     <hr />
-    <LandingFAQ />
+    <LandingPricing />
+    <hr />
+    <LandingNewsletter />
 </template>
 
 <script setup lang="ts">

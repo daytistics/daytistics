@@ -108,7 +108,7 @@ function useLoginAPI() {
     const login = async (email: string, password: string) => {
         try {
             await useAuthStore().login(email, password);
-            await useRouter().push('/app');
+            await navigateTo('/dashboard');
         } catch (error: any) {
             useToast().error(error.data.detail);
         }

@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia';
-import { AuthenticationStatus, type User } from '~/types/user-types';
+import { AuthenticationStatus, type User } from '~/types/user';
 import { jwtDecode } from 'jwt-decode';
+import { useToast } from 'vue-toastification';
 
 export const useAuthStore = defineStore({
     id: 'authStore',
@@ -68,7 +69,7 @@ export const useAuthStore = defineStore({
          * @param username
          * @throws {Error} If the registration fails. This error is the error returned by the server
          */
-        async register(email: string, password: string, username: string): Promise<boolean> {
+        async register(_email: string, _password: string, _username: string): Promise<boolean> {
             return true;
         },
 
@@ -139,7 +140,7 @@ export const useAuthStore = defineStore({
                     }
                 },
             });
-            // @ts-ignore
+            // @ts-expect-error(TypeScript does not recognize that status could be modified in onResponse)
             return this.status === AuthenticationStatus.AUTHENTICATED;
         },
 
@@ -156,8 +157,9 @@ export const useAuthStore = defineStore({
 
             try {
                 const decoded = jwtDecode(token);
+
                 return (decoded.exp as number) < Date.now() / 1000;
-            } catch (error) {
+            } catch {
                 return true;
             }
         },
@@ -176,10 +178,8 @@ export const useAuthStore = defineStore({
                     onResponse: ({ response }) => {
                         this.csrfToken = response._data.csrf_token;
                     },
-                }).catch((error) => {
-                    useErrorDialogStore().showErrorDialog({
-                        message: 'An error occurred while generating the CSRF token',
-                    });
+                }).catch(() => {
+                    useToast().error('Please refresh the page and try again');
                 });
             }
 

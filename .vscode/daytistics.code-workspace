@@ -14,6 +14,9 @@
 		}
 	],
 	"settings": {
-		"vitest.nodeExecutable": "~/.nvm/versions/node/v22.11.0/bin/node"
+		"vitest.nodeExecutable": "~/.nvm/versions/node/v22.11.0/bin/node",
+		"yaml.schemas": {
+			"https://json.schemastore.org/github-issue-config.json": "file:///home/leo/development/daytistics/app/.github/ISSUE_TEMPLATE/config.yml"
+		}
 	}
 }

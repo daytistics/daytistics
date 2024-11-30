@@ -15122,7 +15122,7 @@ The following npm packages may be included in this product:
  - vscode-jsonrpc@6.0.0
  - vscode-languageclient@7.0.0
  - vscode-languageserver-protocol@3.16.0
- - vscode-languageserver-textdocument@1.0.12
+ - vscode-languageserver-strokedocument@1.0.12
  - vscode-languageserver-types@3.16.0
  - vscode-languageserver@7.0.0
 

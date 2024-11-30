@@ -1,9 +1,10 @@
-export default defineNuxtRouteMiddleware(async (to, from) => {
+export default defineNuxtRouteMiddleware(async () => {
     const { isAuthExpired, refreshAuth } = useAuthStore();
+
     if (isAuthExpired()) {
         try {
             await refreshAuth();
-        } catch (error) {
+        } catch {
             return navigateTo('/login');
         }
     }

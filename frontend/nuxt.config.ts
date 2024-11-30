@@ -14,7 +14,11 @@ export default defineNuxtConfig({
         transpile: ['@vuepic/vue-datepicker'],
     },
 
-    components: [{ path: '~/components/global', pathPrefix: false }, '~/components'],
+    components: [
+        { path: '~/components/global', pathPrefix: false },
+        { path: '~/components/icons', pathPrefix: false },
+        '~/components',
+    ],
 
     runtimeConfig: {
         public: {
@@ -38,10 +42,23 @@ export default defineNuxtConfig({
         '@nuxt/test-utils/module',
         '@pinia/nuxt',
         'nuxt-aos',
-        // '@sidebase/nuxt-auth',
+        'floating-vue/nuxt',
+        '@nuxt/eslint',
     ],
+
+    tailwindcss: {
+        cssPath: ['~/assets/css/tailwind.css', { injectPosition: 'last' }],
+    },
 
     image: {
         dir: 'assets/media',
+    },
+
+    postcss: {
+        plugins: {
+            autoprefixer: {},
+            tailwindcss: {},
+            'postcss-nested': {},
+        },
     },
 });
