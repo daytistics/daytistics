@@ -1,0 +1,21 @@
+{
+    "name": "FastAPI-Container",
+    "dockerComposeFile": [
+        "../docker-compose.yml",
+        "docker-compose.yml"
+    ],
+
+    "service": "fastapi",
+    "workspaceFolder": "/workspace",
+
+    "customizations": {
+        "vscode": {
+            "settings": {},
+            "extensions": [
+                "ms-python.python",
+                "eamodio.gitlens",
+                "editorconfig.editorconfig"
+            ]
+        }
+    }
+}

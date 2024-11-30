@@ -1,0 +1,12 @@
+name: daytistics-fastapi-eval
+
+
+services:
+  fastapi:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - 8000:8000
+    volumes:
+      - .:/app
