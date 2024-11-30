@@ -1,3 +1,6 @@
+> [!IMPORTANT]
+> We are currently migrating our backend from Django + REST to FastAPI + GraphQL. We look forward to receiving contributions. Take a look at the `fastapi-gql-migration` branch.
+
 <img src="./media/logo.png" width="200px" />
 
 # Welcome to Daytistics

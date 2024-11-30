@@ -1,7 +1,0 @@
-contact_links:
-  - name: Feature Requests
-    url: https://github.com/daytistics/daytistics/discussions/new?category=ideas
-    about: Please add any Feature Requests as a Github Discussion using the form in this issue.
-  - name: Documentation 
-    url: https://github.com/daytistics/docs
-    about: Please check out our documentation repository for any documentation requests.
