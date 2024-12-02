@@ -1,0 +1,46 @@
+name: Linting
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  pylint:
+    name: Run PyLint
+    runs-on: ubuntu-latest
+    container:
+      image: python:3.12-slim
+    continue-on-error: true # Allow failure
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Install Dependencies
+        run: |
+          pip install pylint
+
+      - name: Run PyLint
+        run: |
+          pylint backend/**/*.py
+
+  eslint:
+    name: Run ESLint
+    runs-on: ubuntu-latest
+    container:
+      image: oven/bun:latest
+    continue-on-error: true # Allow failure
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Install Dependencies
+        run: |
+          cd frontend
+          bun add eslint @eslint/js typescript typescript-eslint
+
+      - name: Run ESLint
+        run: |
+          cd frontend
+          bunx eslint .
