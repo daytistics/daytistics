@@ -1,9 +1,21 @@
 [project]
-name = "fastapi-eval"
+name = "daytistics-backend"
 version = "0.1.0"
-description = "Add your description here"
+description = "Backend for Daytistics"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
+    "alembic>=1.14.0",
     "fastapi[standard]>=0.115.5",
+    "passlib[bcrypt]>=1.7.4",
+    "psycopg2-binary>=2.9.10",
+    "pyjwt[crypto]>=2.10.1",
+    "sqlmodel>=0.0.22",
+    "strawberry-graphql[fastapi]>=0.253.0",
+    "strawberry-sqlalchemy-mapper>=0.5.0",
+]
+
+[dependency-groups]
+dev = [
+    "ruff>=0.8.1",
 ]

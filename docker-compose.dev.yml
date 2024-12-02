@@ -3,9 +3,9 @@ services:
   database:
     image: postgres:16
     environment:
-      POSTGRES_DB: mydb
-      POSTGRES_USER: myuser
-      POSTGRES_PASSWORD: mypassword
+      POSTGRES_DB: daytisticsdev
+      POSTGRES_USER: daytisticsdev
+      POSTGRES_PASSWORD: daytisticsdev
     ports:
       - "5432:5432"
     volumes:
@@ -17,8 +17,15 @@ services:
       dockerfile: Dockerfile.dev
     ports:
       - 8000:8000
+      - 5678:5678
     volumes:
       - ./backend:/app
+    environment:
+      - DATABASE_NAME=daytisticsdev
+      - DATABASE_USER=daytisticsdev
+      - DATABASE_PASSWORD=daytisticsdev
+      - DATABASE_HOST=database
+      - DATABASE_PORT=5432
     depends_on:
       - database
 
