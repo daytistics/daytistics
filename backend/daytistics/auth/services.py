@@ -1,37 +1,66 @@
-from typing import Optional
+from typing import Annotated
+from datetime import datetime, timedelta
 
 import jwt
-from sqlmodel import Session, select
 from fastapi import Depends
+from passlib.context import CryptContext
 
-from daytistics.config import JWT_AUTH_ALGORITHM, SECRET_KEY
+from daytistics.config import SecurityConfig
 from daytistics.exceptions import ConfigurationError
-from daytistics.dependencies import get_session
 from .models import User
+
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 
 class AuthentificationService:
-    @staticmethod
-    def get_user_by_access_token(
-        access_token: str, session: Session = Depends(get_session)
-    ) -> Optional[User]:
-        if SECRET_KEY is None:
-            raise ConfigurationError(
-                "SECRET_KEY environment variable is required for JWT authentication"
-            )
+    def generate_access_token(
+        self, user: User, config: Annotated[SecurityConfig, Depends()]
+    ) -> str:
+        exp = datetime.utcnow() + timedelta(minutes=config.ACCESS_TOKEN_EXPIRE_MINUTES)
 
-        try:
-            payload = jwt.decode(
-                access_token, SECRET_KEY, algorithms=[JWT_AUTH_ALGORITHM]
-            )
-            user_id = payload.get("sub")
-            token_type = payload.get("type")
+        payload = {
+            "sub": user.id,
+            "type": "access",
+            "exp": exp,
+        }
 
-            if token_type != "access":
-                return None
+        if config.SECRET_KEY is None:
+            raise ConfigurationError("SECRET_KEY is not set")
 
-            statement = select(User).where(User.id == int(user_id))
-            user = session.exec(statement).first()
-            return user
-        except jwt.PyJWTError:
-            return None
+        return jwt.encode(
+            payload, config.SECRET_KEY, algorithm=config.JWT_AUTH_ALGORITHM
+        )
+
+    def generate_refresh_token(
+        self, user: User, config: Annotated[SecurityConfig, Depends()]
+    ) -> str:
+        exp = datetime.utcnow() + timedelta(minutes=config.REFRESH_TOKEN_EXPIRE_MINUTES)
+
+        payload = {
+            "sub": user.id,
+            "type": "refresh",
+            "exp": exp,
+        }
+
+        if config.SECRET_KEY is None:
+            raise ConfigurationError("SECRET_KEY is not set")
+
+        return jwt.encode(
+            payload, config.SECRET_KEY, algorithm=config.JWT_AUTH_ALGORITHM
+        )
+
+    def decode_token(
+        self, token: str, config: Annotated[SecurityConfig, Depends()]
+    ) -> dict:
+        if config.SECRET_KEY is None:
+            raise ConfigurationError("SECRET_KEY is not set")
+
+        return jwt.decode(
+            token, config.SECRET_KEY, algorithms=[config.JWT_AUTH_ALGORITHM]
+        )
+
+    def get_password_hash(self, password: str) -> str:
+        return pwd_context.hash(password)
+
+    def verify_password(self, plain_password: str, hashed_password: str) -> bool:
+        return pwd_context.verify(plain_password, hashed_password)

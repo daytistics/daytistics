@@ -13,9 +13,3 @@ class User(SQLModel, table=True):
     is_superuser: bool = False
     last_login: Optional[datetime] = None
     date_joined: Optional[datetime] = None
-
-    def generate_jwt_access_token(self):
-        pass
-
-    def generate_jwt_refresh_token(self):
-        pass

@@ -1,10 +1,14 @@
 from logging.config import fileConfig
+import os
 
-from sqlmodel import SQLModel
 from sqlalchemy import engine_from_config
 from sqlalchemy import pool
 
+from sqlmodel import SQLModel
+
 from alembic import context
+
+from daytistics.auth.models import *  # noqa
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
@@ -19,13 +23,15 @@ if config.config_file_name is not None:
 # for 'autogenerate' support
 # from myapp import mymodel
 # target_metadata = mymodel.Base.metadata
-
 target_metadata = SQLModel.metadata
 
 # other values from the config, defined by the needs of env.py,
 # can be acquired:
 # my_important_option = config.get_main_option("my_important_option")
 # ... etc.
+
+# Set the config value sqlalchemy.url to the value in the environment variable DATABASE_URL
+config.set_main_option("sqlalchemy.url", os.environ["DATABASE_URL"])
 
 
 def run_migrations_offline() -> None:
