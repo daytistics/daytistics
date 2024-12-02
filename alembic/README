@@ -1,1 +1,13 @@
-Generic single-database configuration.
+# Alembic
+
+## Create Migration
+
+```
+alembic revision --autogenerate -m "Initial migration"
+```
+
+## Execute Migration
+
+```
+alembic upgrade head
+```
