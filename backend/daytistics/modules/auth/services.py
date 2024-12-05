@@ -1,5 +1,5 @@
 from typing import Annotated
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 import jwt
 from fastapi import Depends
@@ -12,14 +12,16 @@ from .models import User
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 
-class AuthentificationService:
+class AuthenticationService:
     def generate_access_token(
         self, user: User, config: Annotated[SecurityConfig, Depends()]
     ) -> str:
-        exp = datetime.utcnow() + timedelta(minutes=config.ACCESS_TOKEN_EXPIRE_MINUTES)
+        exp = datetime.now(timezone.utc) + timedelta(
+            minutes=config.ACCESS_TOKEN_EXPIRE_MINUTES
+        )
 
         payload = {
-            "sub": user.id,
+            "sub": str(user.id),
             "type": "access",
             "exp": exp,
         }
@@ -34,10 +36,12 @@ class AuthentificationService:
     def generate_refresh_token(
         self, user: User, config: Annotated[SecurityConfig, Depends()]
     ) -> str:
-        exp = datetime.utcnow() + timedelta(minutes=config.REFRESH_TOKEN_EXPIRE_MINUTES)
+        exp = datetime.now(timezone.utc) + timedelta(
+            minutes=config.REFRESH_TOKEN_EXPIRE_MINUTES
+        )
 
         payload = {
-            "sub": user.id,
+            "sub": str(user.id),
             "type": "refresh",
             "exp": exp,
         }
@@ -51,13 +55,16 @@ class AuthentificationService:
 
     def decode_token(
         self, token: str, config: Annotated[SecurityConfig, Depends()]
-    ) -> dict:
+    ) -> dict | None:
         if config.SECRET_KEY is None:
             raise ConfigurationError("SECRET_KEY is not set")
 
-        return jwt.decode(
-            token, config.SECRET_KEY, algorithms=[config.JWT_AUTH_ALGORITHM]
-        )
+        try:
+            return jwt.decode(
+                token, config.SECRET_KEY, algorithms=[config.JWT_AUTH_ALGORITHM]
+            )
+        except jwt.PyJWTError as error:
+            return None
 
     def get_password_hash(self, password: str) -> str:
         return pwd_context.hash(password)

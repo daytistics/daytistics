@@ -1,0 +1,12 @@
+lgall:
+  name: Leo Gall
+  title: Core Maintainer
+  image_url: https://github.com/mrhoffnung.png
+  page: true
+  description: >
+    I'm a 16-year old Python and TypeScript Developer from Germany and the Founder of Daytistics. 
+    I'm responsible for developing new features, fixing bugs and whatever else there is to do.
+  socials:
+    github: mrhoffnung
+    linkedin: mrhoffnung
+

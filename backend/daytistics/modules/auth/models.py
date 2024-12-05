@@ -9,7 +9,10 @@ class User(SQLModel, table=True):
     username: str
     email: str
     hashed_password: str
-    is_active: bool = False
+    is_verified: bool = False
+    is_locked: bool = False
     is_superuser: bool = False
     last_login: Optional[datetime] = None
     date_joined: Optional[datetime] = None
+    created_at: datetime = Field(default=datetime.now())
+    updated_at: datetime = Field(default=datetime.now())

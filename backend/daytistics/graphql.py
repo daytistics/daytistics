@@ -2,8 +2,8 @@ import strawberry
 from fastapi import FastAPI, Depends
 from strawberry.fastapi import GraphQLRouter
 
-from daytistics.auth.graphql.query import Query as UserQuery
-from daytistics.auth.graphql.mutation import Mutation as UserMutation
+from daytistics.modules.auth.queries import Query as UserQuery
+from daytistics.modules.auth.mutations import Mutation as UserMutation
 from daytistics.dependencies import get_session
 
 

@@ -17,7 +17,8 @@
                 "python.analysis.typeCheckingMode": "standard",
                 "editor.formatOnSave": true,
                 "editor.formatOnPaste": true,
-                "dev.containers.copyGitConfig": true
+                "dev.containers.copyGitConfig": true,
+                "git.path": "/usr/bin/git"
             },
             "extensions": [
                 "ms-python.python",
@@ -26,8 +27,12 @@
                 "GitHub.copilot",
                 "charliermarsh.ruff",
                 "icrawl.discord-vscode",
-                "tamasfe.even-better-toml"
+                "tamasfe.even-better-toml",
+                "pamaron.pytest-runner",
+                "astro-build.astro-vscode",
+                "Nuxtr.nuxt-vscode-extentions"
             ]
         }
-    }
+    },
+    "postStartCommand": "apt-get update && apt-get install -y git && git config --global --add safe.directory /workspace"
 }

@@ -1,13 +1,15 @@
-> [!IMPORTANT]  
-> Daytistics is currently in development. We are working hard to bring you a first version as soon as possible. If you want to stay up-to-date, consider joining our [discord](https://discord.gg/ccud6VkTv8). 
+---
+sidebar_position: 1
+slug: /
+---
 
-<img src="./media/logo.png" width="200px" />
+# Home
 
-# Welcome to Daytistics
+:::important
 
-[![Tests](https://img.shields.io/github/actions/workflow/status/daytistics/daytistics/testing.yml?label=tests&style=for-the-badge)](https://discord.gg/ZkRTEJQ)
-[![Discord](https://img.shields.io/discord/1273182413824196633?label=discord&logo=discord&logoColor=white&style=for-the-badge&color=blue)](https://discord.gg/ccud6VkTv8)
-[![Docker Pulls](https://img.shields.io/docker/pulls/daytistics/daytistics?style=for-the-badge)](https://discord.gg/ZkRTEJQ)
+Daytistics is currently in development. We are working hard to bring you a first version as soon as possible. If you want to stay up-to-date, consider joining our [discord](https://discord.gg/ccud6VkTv8). 
+
+:::
 
 Daytistics is a self-hostable and open-source producitvity tool that helps you to track your daily activities and well-being. It is designed to help you to reflect on your day and to improve your productivity. It's built with modern technologies like FastAPI and Nuxt and places great value on user experience.
 
@@ -18,10 +20,6 @@ Let our features convince you:
 - [ ] Visualization: Visualize connections between your well-being and your activities
 - [ ] Receive Suggestions: Learn how to make your day more productive
 - [ ] Self-Hosting: Privacy is important to you? Host Daytistics on your own server!
-
-## 📖 Documentation
-
-We have a detailed documentation that explains all the features of Daytistics for users and developers. You can find the documentation at [docs.daytistics.com](https://docs.daytistics.com/).
 
 ## ❤️ Contributing & Support
 

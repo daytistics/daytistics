@@ -1,0 +1,102 @@
+name: Build Pipeline
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  pylint:
+    name: Run PyLint
+    runs-on: ubuntu-latest
+    container:
+      image: python:3.12-slim
+    continue-on-error: true # Allow failure
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Install Dependencies
+        run: |
+          pip install ruff
+
+      - name: Run Ruff
+        run: |
+          cd backend
+          ruff check 
+
+  eslint:
+    name: Run ESLint
+    runs-on: ubuntu-latest
+    container:
+      image: node:22
+    continue-on-error: true # Allow failure
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Install Dependencies
+        run: |
+          cd frontend
+          pnpm add eslint @eslint/js typescript typescript-eslint
+
+      - name: Run ESLint
+        run: |
+          cd frontend
+          pnpm eslint .
+
+  pytest:
+    name: Backend Integration/Unit Tests
+    runs-on: ubuntu-latest
+    container:
+      image: python:3.12-slim
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Install uv
+        run: |
+          pip install uv
+
+      - name: Install Dependencies
+        run: |
+          cd backend
+          uv sync
+
+      - name: Run PyTest
+        run: |
+          cd backend
+          uv run pytest
+
+  vitest:
+    name: Frontend Unit Tests
+    runs-on: ubuntu-latest
+    container:
+      image: node:22
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Install Dependencies
+        run: |
+          cd frontend
+          pnpm install
+
+      - name: Run Vitest
+        run: |
+          cd frontend
+          pnpm run test:unit
+
+  # notify_webhook:
+  #   name: Notify Webhook
+  #   runs-on: ubuntu-latest
+  #   container:
+  #     image: curlimages/curl:latest
+  #   steps:
+  #     - name: Call Webhook
+  #       env:
+  #         WEBHOOK_URL: $ {{ secrets.WEBHOOK_URL }}
+  #       run: |
+  #         curl -X POST -H "Content-Type: application/json" -d '{"status":"success"}' $WEBHOOK_URL
+

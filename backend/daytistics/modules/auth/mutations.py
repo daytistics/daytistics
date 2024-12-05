@@ -2,10 +2,9 @@ import strawberry
 from sqlmodel import Session, select
 import bcrypt
 
-from .types import UserType
-from .inputs import UserRegistrationInput, UserLoginInput
-from ..models import User
-from ..exceptions import UserAlreadyExistsError
+from .schemas import UserRegistrationInput, UserLoginInput, UserType
+from .models import User
+from .exceptions import UserAlreadyExistsError
 
 
 @strawberry.type

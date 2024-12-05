@@ -7,7 +7,9 @@ requires-python = ">=3.12"
 dependencies = [
     "alembic>=1.14.0",
     "fastapi[standard]>=0.115.5",
+    "freezegun>=1.5.1",
     "passlib[bcrypt]>=1.7.4",
+    "polyfactory>=2.18.1",
     "psycopg2-binary>=2.9.10",
     "pyjwt[crypto]>=2.10.1",
     "sqlmodel>=0.0.22",
@@ -17,5 +19,9 @@ dependencies = [
 
 [dependency-groups]
 dev = [
+    "pytest-factoryboy>=2.7.0",
+    "pytest>=8.3.4",
     "ruff>=0.8.1",
+    "faker>=33.1.0",
+    "pytest-env>=1.1.5",
 ]

@@ -36,5 +36,14 @@ services:
     depends_on:
       - backend
 
+  docs:
+    volumes:
+      - ./docs:/app
+    build:
+      context: ./docs
+      dockerfile: Dockerfile.dev
+    ports:
+      - 4000:4000
+
 volumes:
   postgres_data:

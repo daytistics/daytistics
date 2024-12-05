@@ -8,8 +8,9 @@
         "generate": "nuxt generate",
         "preview": "nuxt preview",
         "postinstall": "nuxt prepare",
-        "ci:test:unit": "nuxt prepare && vitest",
-        "lint": "eslint ."
+        "test:unit": "nuxt prepare && vitest",
+        "lint": "eslint .",
+        "format": "prettier --write ."
     },
     "dependencies": {
         "@headlessui/vue": "^1.7.23",

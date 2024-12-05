@@ -1,9 +1,9 @@
 import strawberry
 from sqlmodel import Session
 
-from ..models import User
-from ..exceptions import UserNotFoundError
-from .types import UserType
+from .models import User
+from .exceptions import UserNotFoundError
+from .schemas import UserType
 
 
 @strawberry.type
