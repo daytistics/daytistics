@@ -2,8 +2,8 @@
 
 name: Task
 description: "MAINTAINER ONLY: Submit a Task that needs to be completed"
-title: "[BUG] <Descriptive Title>"
-labels: ["type:feat"]
+title: "[TASK] <Descriptive Title>"
+labels: ["task"]
 
 body:
   - type: markdown
@@ -27,7 +27,7 @@ body:
     id: summary
     attributes:
       label: Summarize the task briefly and precisely.
-      placeholder: description, acceptance criteria, etc...
+      placeholder: Include a brief description of the task including stuff like what it is, what it does, and why it's important.
     validations:
       required: true
   - type: textarea
@@ -35,5 +35,12 @@ body:
     attributes:
       label: Proposed/Possible Solution(s)?
       placeholder: Provide as much context around the idea as possible with potential files and roadblocks that may come up.
+    validations:
+      required: false
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional Context
+      placeholder: Any additional context like links, examples or design ideas.
     validations:
       required: false
