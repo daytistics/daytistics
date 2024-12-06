@@ -38,6 +38,7 @@ jobs:
 
       - name: Install Dependencies
         run: |
+          npm install -g pnpm
           cd frontend
           pnpm add eslint @eslint/js typescript typescript-eslint
 
@@ -80,6 +81,7 @@ jobs:
 
       - name: Install Dependencies
         run: |
+          npm install -g pnpm
           cd frontend
           pnpm install
 
