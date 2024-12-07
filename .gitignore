@@ -199,3 +199,4 @@ data/postgres
 # VS Code Workspace
 
 .vscode/**.code-workspace
+node_modules

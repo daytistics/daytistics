@@ -1,41 +1,57 @@
-# Website
+# Docus Starter
 
-This website is built using [Docusaurus](https://docusaurus.io/), a modern static website generator.
+Starter template for [Docus](https://docus.dev).
 
-### Installation
+## Clone
 
-```
-$ yarn
-```
+Clone the repository (using `nuxi`):
 
-### Local Development
-
-```
-$ yarn start
+```bash
+npx nuxi init -t themes/docus
 ```
 
-This command starts a local development server and opens up a browser window. Most changes are reflected live without having to restart the server.
+## Setup
 
-### Build
+Install dependencies:
 
-```
-$ yarn build
-```
-
-This command generates static content into the `build` directory and can be served using any static contents hosting service.
-
-### Deployment
-
-Using SSH:
-
-```
-$ USE_SSH=true yarn deploy
+```bash
+yarn install
 ```
 
-Not using SSH:
+## Development
 
-```
-$ GIT_USER=<Your GitHub username> yarn deploy
+```bash
+yarn dev
 ```
 
-If you are using GitHub pages for hosting, this command is a convenient way to build the website and push to the `gh-pages` branch.
+## Edge Side Rendering
+
+Can be deployed to Vercel Functions, Netlify Functions, AWS, and most Node-compatible environments.
+
+Look at all the available presets [here](https://v3.nuxtjs.org/guide/deploy/presets).
+
+```bash
+yarn build
+```
+
+## Static Generation
+
+Use the `generate` command to build your application.
+
+The HTML files will be generated in the .output/public directory and ready to be deployed to any static compatible hosting.
+
+```bash
+yarn generate
+```
+
+## Preview build
+
+You might want to preview the result of your build locally, to do so, run the following command:
+
+```bash
+yarn preview
+```
+
+---
+
+For a detailed explanation of how things work, check out [Docus](https://docus.dev).

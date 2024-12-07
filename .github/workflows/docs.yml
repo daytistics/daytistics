@@ -1,55 +1,42 @@
+# https://github.com/actions/deploy-pages#usage
 name: Deploy to GitHub Pages
-
 on:
+  workflow_dispatch:
   push:
     branches:
       - main
-    # Review gh actions docs if you want to further define triggers, paths, etc
-    # https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#on
-
-defaults:
-  run:
-    shell: bash
-    working-directory: ./docs
-
-
 jobs:
   build:
-    name: Build Docusaurus
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
+      - run: corepack enable
       - uses: actions/setup-node@v4
         with:
-          node-version: 22
-          cache: yarn
-
-      - name: Install dependencies
-        run: yarn install --frozen-lockfile
-      - name: Build website
-        run: yarn build
-
-      - name: Upload Build Artifact
+          node-version: "20"
+      # Pick your own package manager and build script
+      - name: Building the project
+        working-directory: ./docs
+        run: |
+          npm install
+          npx nuxt build --preset github_pages
+      - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: build
-
+          path: ./docs/.output/public
+  # Deployment job
   deploy:
-    name: Deploy to GitHub Pages
+    # Add a dependency to the build job
     needs: build
-
     # Grant GITHUB_TOKEN the permissions required to make a Pages deployment
     permissions:
-      pages: write # to deploy to Pages
-      id-token: write # to verify the deployment originates from an appropriate source
-
-    # Deploy to the github-pages environment
+      pages: write      # to deploy to Pages
+      id-token: write   # to verify the deployment originates from an appropriate source
+    # Deploy to the github_pages environment
     environment:
-      name: github-pages
+      name: github_pages
       url: ${{ steps.deployment.outputs.page_url }}
-
+    # Specify runner + deployment step
     runs-on: ubuntu-latest
     steps:
       - name: Deploy to GitHub Pages
