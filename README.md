@@ -25,7 +25,7 @@ We have a detailed documentation that explains all the features of Daytistics fo
 
 ## ❤️ Contributing & Support
 
-Contributions are welcome! If you want to contribute to the project check out the [Contributors Guide](/category/contributors-guide) section in our [docs](https://docs.daytistics.com).
+Contributions are welcome! If you want to contribute to the project check out the [Contributing](https://docs.daytistics.com/developers/contribute-now) section in our [docs](https://docs.daytistics.com).
 
 If you are not a programmer, you can still contribute financially. Financial contributions help us prioritize our work on this project over others and show us that there is a real need for project development. You can donate to us via [Polar.sh](https://polar.sh/daytistics/).
 
