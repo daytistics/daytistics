@@ -13,6 +13,6 @@ class User(SQLModel, table=True):
     is_locked: bool = False
     is_superuser: bool = False
     last_login: Optional[datetime] = None
-    date_joined: Optional[datetime] = None
     created_at: datetime = Field(default=datetime.now())
-    updated_at: datetime = Field(default=datetime.now())
+    auth_provider: str = Field(default="email", include=["email", "google", "github"])
+    provider_user_id: Optional[str] = None

@@ -19,7 +19,6 @@ dependencies = [
 
 [dependency-groups]
 dev = [
-    "pytest-factoryboy>=2.7.0",
     "pytest>=8.3.4",
     "ruff>=0.8.1",
     "faker>=33.1.0",

@@ -1,12 +1,8 @@
 import pytest
 
 from sqlmodel import create_engine, Session, SQLModel, StaticPool
-from pytest_factoryboy import register
 
 from daytistics.config import SecurityConfig
-import tests.factories as factories
-
-register(factories.UserFactory)
 
 
 @pytest.fixture
