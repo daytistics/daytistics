@@ -5,7 +5,11 @@ description = "Backend for Daytistics"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
+    "aioinject>=0.35.3",
+    "aiopg>=1.4.0",
+    "aiosqlite>=0.20.0",
     "alembic>=1.14.0",
+    "asyncpg>=0.30.0",
     "fastapi[standard]>=0.115.5",
     "freezegun>=1.5.1",
     "passlib[bcrypt]>=1.7.4",
@@ -23,4 +27,5 @@ dev = [
     "ruff>=0.8.1",
     "faker>=33.1.0",
     "pytest-env>=1.1.5",
+    "pytest-asyncio>=0.25.0",
 ]

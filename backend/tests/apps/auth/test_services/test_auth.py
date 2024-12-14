@@ -4,10 +4,8 @@ import pytest
 from freezegun import freeze_time
 from sqlmodel import Session
 
-from daytistics.modules.auth.services import AuthenticationService
+from daytistics.apps.auth.services.auth import AuthenticationService
 from daytistics.config import SecurityConfig
-from tests.factories import ModernUserFactory
-from faker import Faker
 
 
 class TestAuthenticationService:
@@ -22,24 +20,20 @@ class TestAuthenticationService:
     def test_decode_token(
         self,
         service: AuthenticationService,
-        security_config: SecurityConfig,
-        session: Session,
         is_refresh_token: bool,
     ):
-        user = ModernUserFactory.build()
-        session.add(user)
-        session.commit()
-        session.refresh(user)
+        USER_ID = 1
+
+        security_config = SecurityConfig()
 
         with freeze_time(datetime.now(timezone.utc)):
             if is_refresh_token:
-                token = service.generate_refresh_token(user, security_config)
+                token = service.generate_refresh_token(USER_ID)
             else:
-                token = service.generate_access_token(user, security_config)
+                token = service.generate_access_token(USER_ID)
 
             decoded = service.decode_token(
                 token,
-                security_config,
             )
 
             if is_refresh_token:
@@ -61,13 +55,13 @@ class TestAuthenticationService:
 
             if is_refresh_token:
                 assert decoded == {
-                    "sub": str(user.id),
+                    "sub": str(USER_ID),
                     "type": "refresh",
                     "exp": expected_exp,
                 }
             else:
                 assert decoded == {
-                    "sub": str(user.id),
+                    "sub": str(USER_ID),
                     "type": "access",
                     "exp": expected_exp,
                 }

@@ -1,8 +1,8 @@
 import pytest
 
 from tests.factories import UserFactory
-from daytistics.modules.auth.repositories import UserRepository
-from daytistics.modules.auth.exceptions import UserAlreadyExistsError
+from daytistics.apps.auth.repositories import UserRepository
+from daytistics.apps.auth.exceptions import UserAlreadyExistsError
 
 
 class TestUserRepository:

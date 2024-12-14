@@ -21,7 +21,7 @@ services:
     volumes:
       - ./backend:/app
     environment:
-      DATABASE_URL: postgresql://daytistics_user:daytistics_pw@database:5432/daytistics_dev
+      DATABASE_URL: postgresql+asyncpg://daytistics_user:daytistics_pw@database:5432/daytistics_dev
     depends_on:
       - database
 

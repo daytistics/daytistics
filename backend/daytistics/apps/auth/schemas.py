@@ -18,17 +18,16 @@ class UserLoginInput:
 
 @strawberry.type
 class UserType:
-    id: int
+    id: Optional[int]
     username: str
     email: str
-    hashed_password: str
     is_verified: bool
     is_locked: bool
     is_superuser: bool
     last_login: Optional[str]
-    date_joined: Optional[str]
     created_at: str
-    updated_at: str
+    auth_provider: str
+    provider_user_id: Optional[str]
 
 
 @strawberry.type
