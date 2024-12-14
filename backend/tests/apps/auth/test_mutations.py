@@ -12,27 +12,13 @@ from sqlmodel import SQLModel
 from sqlmodel.ext.asyncio.session import AsyncSession
 from contextlib import asynccontextmanager
 
+from tests.mocking import mock_db_context
+
 
 @pytest.mark.asyncio
 class TestRegisterUserMutation:
     async def test_register_user_mutation(self, gql_schema: Schema):
-        # Mock the async context manager behavior
-        @asynccontextmanager
-        async def async_session(*args, **kwargs):
-            engine = create_async_engine(
-                "sqlite+aiosqlite:///:memory:",
-                connect_args={"check_same_thread": False},
-            )
-            async with engine.begin() as conn:
-                await conn.run_sync(SQLModel.metadata.create_all)
-            async with AsyncSession(engine) as session:
-                try:
-                    yield session
-                finally:
-                    # Clean up the whole database after the test
-                    await session.close()
-
-        with patch.object(Database, "get_async_session", async_session):
+        with mock_db_context:
             variables = {
                 "user": {
                     "email": "john.doe@example.com",

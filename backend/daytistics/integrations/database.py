@@ -1,5 +1,5 @@
 from sqlmodel.ext.asyncio.session import AsyncSession
-from sqlalchemy.ext.asyncio import create_async_engine
+from sqlalchemy.ext.asyncio import create_async_engine, AsyncEngine
 from contextlib import asynccontextmanager
 import os
 
@@ -8,15 +8,17 @@ class Database:
     def __init__(self) -> None:
         self.engine = None
 
-    def connect(self) -> None:
+    def connect(self) -> None | AsyncEngine:
         if not self.engine:
-            self.engine = create_async_engine(
-                # "sqlite+aiosqlite:///:memory:",
-                "postgresql+asyncpg://daytistics_user:daytistics_pw@database:5432/daytistics_dev"
-                # os.environ.get("DATABASE_URL", "sqlite:///db.sqlite")
-            )
+            try:
+                self.engine = create_async_engine(
+                    os.environ.get("DATABASE_URL", "sqlite:///db.sqlite")
+                )
+            except Exception as exception:
+                self.engine = None
+                raise exception
         else:
-            raise ConnectionAbortedError("Database is already connected")
+            return self.engine
 
     @asynccontextmanager
     async def get_async_session(self):
@@ -26,5 +28,8 @@ class Database:
         async with AsyncSession(self.engine) as session:
             try:
                 yield session
+            except Exception as exception:
+                await session.rollback()
+                raise exception
             finally:
                 await session.close()
