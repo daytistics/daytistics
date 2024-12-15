@@ -1,8 +1,8 @@
 ---
 name: Bug Report
 description: "Submit a bug for the latest version of Daytistics"
-title: "[BUG] <Descriptive Title>"
-labels: ["type:fix"]
+title: "🐞 <Descriptive Title>"
+labels: ["🐞 bug"]
 body:
   - type: checkboxes
     id: checks
@@ -22,8 +22,8 @@ body:
           required: true
         - label: I already read the docs and didn't find an answer.
           required: true
-        - label: This issue can be replicated on the managed-hosted site (https://daytistics.com/).
-          required: false
+        - label: Do you host Daytistics yourself?.
+          required: true
   - type: textarea
     id: description
     attributes:
@@ -52,10 +52,7 @@ body:
       description: What Deployment system are you using?
       multiple: true
       options:
-        - Docker (Linux)
-        - Docker (Windows)
-        - Docker (Synology)
-        - Docker (MAC)
+        - Docker 
         - Other (please specify below)
     validations:
       required: true
