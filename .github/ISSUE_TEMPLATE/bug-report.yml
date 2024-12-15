@@ -22,7 +22,7 @@ body:
           required: true
         - label: I already read the docs and didn't find an answer.
           required: true
-        - label: Do you host Daytistics yourself?.
+        - label: Do you host Daytistics yourself?
           required: true
   - type: textarea
     id: description
@@ -52,6 +52,7 @@ body:
       description: What Deployment system are you using?
       multiple: true
       options:
+        - Not self-hosted
         - Docker 
         - Other (please specify below)
     validations:
