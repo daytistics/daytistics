@@ -4,4 +4,4 @@ contact_links:
     about: Please add any Feature Requests as a Github Discussion using the ideas category.
   - name: Performance, Testing and Documentation Issues
     url: https://github.com/daytistics/daytistics/fork
-    about: A pull request can be created directly, which is usually merged when it reaches its goal. 
+    about: Create a pull request directly, if this achieves its goal it will be merged
