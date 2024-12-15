@@ -1,0 +1,4 @@
+- Take a look at:
+    - https://pypi.org/project/fastapi-mail/
+- Send email with an encrypted verification code 
+- Implement verification endpoint
