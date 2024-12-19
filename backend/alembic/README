@@ -1,11 +1,1 @@
-# Alembic - Database Migrations
-
-## Generating a Migration
-```
-alembic revision --autogenerate -m "Added book table"
-```
-
-## Execute Migrations
-```
-alembic upgrade head
-```
+Generic single-database configuration with an async dbapi.

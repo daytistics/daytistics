@@ -3,11 +3,11 @@ from django.conf import settings
 from django.template.loader import render_to_string
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes, force_str
-from django.contrib.auth import get_user_model
+from django.contrib.modules.users import get_user_model
 from django.utils import timezone
 from ninja import Router
 from ninja_jwt.tokens import RefreshToken
-from ninja_jwt.authentication import JWTAuth
+from ninja_jwt.modules.usersentication import JWTAuth
 
 from .tokens import account_activation_token
 from .schemes import (

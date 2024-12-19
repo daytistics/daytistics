@@ -1,4 +1,4 @@
 services:
-  backend:
+  fastapi:
     volumes:
       - .:/workspace:delegated

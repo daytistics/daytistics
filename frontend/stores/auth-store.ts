@@ -42,7 +42,7 @@ export const useAuthStore = defineStore({
                             accessTokenCookie.value = accessToken;
                             refreshTokenCookie.value = refreshToken;
 
-                            this.status = AuthenticationStatus.AUTHENTICATED;
+                            this.status = AuthenticationStatus.modules.usersENTICATED;
                         }
                     },
                 });
@@ -100,7 +100,7 @@ export const useAuthStore = defineStore({
                             const { access, refresh } = response._data;
                             useCookie('access_token').value = access;
                             refreshTokenCookie.value = refresh;
-                            this.status = AuthenticationStatus.AUTHENTICATED;
+                            this.status = AuthenticationStatus.modules.usersENTICATED;
                         }
                     },
                 });
@@ -136,12 +136,12 @@ export const useAuthStore = defineStore({
 
                 onResponse: ({ response }) => {
                     if (response.status === 200) {
-                        this.status = AuthenticationStatus.AUTHENTICATED;
+                        this.status = AuthenticationStatus.modules.usersENTICATED;
                     }
                 },
             });
             // @ts-expect-error(TypeScript does not recognize that status could be modified in onResponse)
-            return this.status === AuthenticationStatus.AUTHENTICATED;
+            return this.status === AuthenticationStatus.modules.usersENTICATED;
         },
 
         /**

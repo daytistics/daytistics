@@ -1,7 +1,7 @@
 from typing import List
 
 from ninja import Router
-from ninja_jwt.authentication import JWTAuth
+from ninja_jwt.modules.usersentication import JWTAuth
 
 from .schemes import ActivityTypeResponse
 from .models import ActivityType

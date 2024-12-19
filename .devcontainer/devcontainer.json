@@ -4,7 +4,7 @@
         "../docker-compose.dev.yml",
         "docker-compose.yml"
     ],
-    "service": "backend",
+    "service": "fastapi",
     "workspaceFolder": "/workspace",
     "customizations": {
         "vscode": {

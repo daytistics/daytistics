@@ -6,13 +6,12 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     initial = True
 
     dependencies = [
         ("daytistics", "0001_initial"),
         ("wellbeing", "0001_initial"),
-        migrations.swappable_dependency(settings.AUTH_USER_MODEL),
+        migrations.swappable_dependency(settings.modules.users_USER_MODEL),
     ]
 
     operations = [
@@ -22,7 +21,7 @@ class Migration(migrations.Migration):
             field=models.ForeignKey(
                 on_delete=django.db.models.deletion.CASCADE,
                 related_name="daytistics",
-                to=settings.AUTH_USER_MODEL,
+                to=settings.modules.users_USER_MODEL,
             ),
         ),
         migrations.AddField(

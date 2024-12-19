@@ -1,6 +1,6 @@
 name: daytistics
 services:
-  database:
+  postgres:
     image: postgres:16
     environment:
       POSTGRES_DB: daytistics_dev
@@ -10,8 +10,10 @@ services:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    networks:
+      - daytistics_network
 
-  backend:
+  fastapi:
     build:
       context: ./backend
       dockerfile: Dockerfile.dev
@@ -21,11 +23,14 @@ services:
     volumes:
       - ./backend:/app
     environment:
-      DATABASE_URL: postgresql+asyncpg://daytistics_user:daytistics_pw@database:5432/daytistics_dev
+      DATABASE_URL: postgresql+asyncpg://daytistics_user:daytistics_pw@postgres:5432/daytistics_dev
+      SECRET_KEY: "Imsupersecret"
     depends_on:
-      - database
+      - postgres
+    networks:
+      - daytistics_network
 
-  frontend:
+  nuxt:
     volumes:
       - ./frontend:/app
     build:
@@ -34,16 +39,32 @@ services:
     ports:
       - "3000:3000"
     depends_on:
-      - backend
+      - fastapi
+    networks:
+      - daytistics_network
 
-  docs:
-    volumes:
-      - ./docs:/app
-    build:
-      context: ./docs
-      dockerfile: Dockerfile.dev
+  # docs:
+  #   volumes:
+  #     - ./docs:/app
+  #   build:
+  #     context: ./docs
+  #     dockerfile: Dockerfile.dev
+  #   ports:
+  #     - 4000:4000
+
+  mailhog:
+    image: mailhog/mailhog:latest
+    container_name: mailhog
     ports:
-      - 4000:4000
+      - "1025:1025" # SMTP server
+      - "8025:8025" # Web UI
+    networks:
+      - daytistics_network
 
 volumes:
   postgres_data:
+
+
+networks:
+  daytistics_network:
+    driver: bridge

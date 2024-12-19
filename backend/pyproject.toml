@@ -11,16 +11,20 @@ dependencies = [
     "alembic>=1.14.0",
     "asgi-csrf>=0.11",
     "asyncpg>=0.30.0",
+    "fastapi-mail>=1.4.2",
     "fastapi[standard]>=0.115.5",
     "freezegun>=1.5.1",
+    "greenlet>=3.1.1",
+    "jinja2>=3.1.4",
     "passlib[bcrypt]>=1.7.4",
     "polyfactory>=2.18.1",
     "psycopg2-binary>=2.9.10",
     "pydantic-settings>=2.7.0",
     "pyjwt[crypto]>=2.10.1",
-    "sqlmodel>=0.0.22",
+    "pytest-sqlalchemy-mock>=0.1.7",
     "strawberry-graphql[fastapi]>=0.253.0",
     "strawberry-sqlalchemy-mapper>=0.5.0",
+    "uvicorn>=0.32.1",
 ]
 
 [dependency-groups]
@@ -30,4 +34,5 @@ dev = [
     "faker>=33.1.0",
     "pytest-env>=1.1.5",
     "pytest-asyncio>=0.25.0",
+    "asgi-lifespan>=2.1.0",
 ]
